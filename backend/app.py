@@ -6,6 +6,7 @@ from core.config import settings
 from db.base import Base, engine
 
 from api.routes.auth_routes import router as auth_router
+from api.routes.dataset_routes import router as pipeline_router
 
 from core.exceptions import AppException
 
@@ -20,6 +21,7 @@ def health():
   return {'success': True, 'message': 'Server reached successfully'}
 
 app.include_router(auth_router, prefix='/api/auth')
+app.include_router(pipeline_router, prefix='/api/pipeline')
 
 @app.exception_handler(AppException)
 def app_exception_handler(request : Request, exc : AppException):

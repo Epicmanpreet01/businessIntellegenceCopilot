@@ -3,12 +3,29 @@ from dateutil.parser import parse
 
 from core.exceptions import BadRequestException, NotFoundException
 
-class Preprocessor:
-  def __init__(self, key_map = None, weights=None):
+key_map={
+  'ds': ['date', 'time', 'datetime'],
+  'y': ['sales', 'profit', 'revenue', 'ammount', 'loss', 'price','cost', 'discount'],
+  'all': ['date', 'time', 'datetime', 'sales', 'profit', 'revenue', 'ammount', 'loss', 'price', 'discount', 'cost']
+},
+weights={
+  'revenue': 1.0,
+  'sales': 0.95,
+  'profit': 0.9,
+  'amount': 0.85,
+
+  'price': 0.6,
+  'cost': 0.5,
+  'loss': 0.4,
+  'discount': 0.3
+}
+
+class DataEngine:
+  def __init__(self):
     if not key_map and weights:
       raise BadRequestException('Weights can not be set without key_map')
-    self.key_map = key_map or {}
-    self.weights = weights or {}
+    self.key_map = key_map
+    self.weights = weights
     self.agg_map = {
       "revenue": "sum",
       "sales": "sum",
