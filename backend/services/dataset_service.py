@@ -21,7 +21,8 @@ def create_dataset(df : pd.DataFrame, db : Session, name : str, user_id : uuid.U
 
   dataset = Datasets(
     name = name,
-    user_id = user_id
+    user_id = user_id,
+    length = len(result)
   )  
 
   db.add(dataset)
