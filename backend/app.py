@@ -21,7 +21,7 @@ def health():
   return {'success': True, 'message': 'Server reached successfully'}
 
 app.include_router(auth_router, prefix='/api/auth')
-app.include_router(pipeline_router, prefix='/api/pipeline')
+app.include_router(pipeline_router, prefix='/api/datasets')
 
 @app.exception_handler(AppException)
 def app_exception_handler(request : Request, exc : AppException):

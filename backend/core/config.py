@@ -8,6 +8,7 @@ class Settings(BaseSettings):
   HOST : str = 'localhost'
   JWT_SECRET_KEY : str
   JWT_ALGORITHM : str = 'HS256'
+  MAX_SIZE : int = 5 * 1024 * 1024
 
   model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 

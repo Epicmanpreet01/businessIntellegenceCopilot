@@ -7,7 +7,7 @@ key_map={
   'ds': ['date', 'time', 'datetime'],
   'y': ['sales', 'profit', 'revenue', 'ammount', 'loss', 'price','cost', 'discount'],
   'all': ['date', 'time', 'datetime', 'sales', 'profit', 'revenue', 'ammount', 'loss', 'price', 'discount', 'cost']
-},
+}
 weights={
   'revenue': 1.0,
   'sales': 0.95,
