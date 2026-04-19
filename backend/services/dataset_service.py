@@ -11,33 +11,17 @@ from models.dataset_model import Datasets
 from schemas.dataset_schemas import DatasetOut
 
 
-def create_dataset(df : pd.DataFrame, db : Session, name : str, user_id : uuid.UUID) -> DatasetOut:
-  preprocesser = DataEngine()
-  
-  result = preprocesser.preprocess(df)
-
-  if result.empty:
-    raise BadRequestException(message="Data engine failed to process data, please make sure the data is proper time series data")
-
+def create_dataset_entry(db : Session, name : str, user_id : uuid.UUID):
   dataset = Datasets(
     name = name,
     user_id = user_id,
-    length = len(result)
+    length=0
   )  
 
   db.add(dataset)
   db.flush()
 
-  records = result.assign(dataset_id=dataset.id)[['dataset_id', 'ds', 'y']].to_dict('records')
-  
-  try:
-    db.bulk_insert_mappings(ProcessedData, records)
-    db.commit()
-  except Exception:
-    db.rollback()
-    raise
-
-  return DatasetOut.model_validate(dataset)
+  return dataset
 
 def fetch_datasets(db : Session, user_id : uuid.UUID) -> List[DatasetOut]:
   stmt = select(Datasets).where(Datasets.user_id == user_id)

@@ -9,12 +9,14 @@ from core.exceptions import BadRequestException
 from db.session import get_db
 from api.dependencies.auth_dep import get_curr_user_id
 from services.dataset_service import (
-  create_dataset,
+  create_dataset_entry,
   fetch_dataset_by_id,
   fetch_datasets,
   remove_dataset
 )
 from schemas.common import APIResponse
+from orchestrators.pipeline import run_dataset_pipeline
+from schemas.dataset_schemas import DatasetOut
 
 router = APIRouter()
 
@@ -34,12 +36,18 @@ async def upload(file : UploadFile, db : Session = Depends(get_db), user_id : uu
   
   filename = file.filename
 
-  dataset = create_dataset(data, db, filename, user_id)
+  # Adds dataset entry to the database without commiting to initialize metadata about dataset and getting unique id for the session before starting analytical pipeline
+  dataset = create_dataset_entry(db, filename, user_id)
+
+  # Running pipeline
+  run_dataset_pipeline(dataset.id,data, db)
+
+  db.refresh(dataset)
 
   return APIResponse(
     success=True,
     message="Successfully created dataset",
-    data=dataset
+    data=DatasetOut.model_validate(dataset)
   )
 
 @router.get('/', response_model=APIResponse)
