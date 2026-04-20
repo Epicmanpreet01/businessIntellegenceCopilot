@@ -18,6 +18,11 @@ class Insights(Base):
 
   summary: Mapped[str] = mapped_column(String, nullable=False)
 
-  reasons: Mapped[dict] = mapped_column(JSONB, nullable=False)
+  # ["Overall decline", "Weekend dips"]
+  reasons: Mapped[list] = mapped_column(JSONB, nullable=False)
 
-  recommendations: Mapped[dict] = mapped_column(JSONB, nullable=False)
+  # ["Run weekend promotions", "Increase marketing"]
+  recommendations: Mapped[list] = mapped_column(JSONB, nullable=False)
+
+  # "high" | "medium" | "low"
+  confidence: Mapped[str] = mapped_column(String, nullable=False)
