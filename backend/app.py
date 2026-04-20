@@ -10,7 +10,12 @@ from api.routes.dataset_routes import router as pipeline_router
 
 from core.exceptions import AppException
 
-from schemas.common import APIResponse
+from models.dataset_model import Datasets
+from models.analytics_model import Analytics
+from models.forecast_model import Forecasts
+from models.insights_model import Insights
+from models.processed_data_model import ProcessedData
+from models.user_model import Users
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)

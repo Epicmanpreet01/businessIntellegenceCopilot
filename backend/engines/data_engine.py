@@ -229,4 +229,24 @@ class DataEngine:
       return None
 
     return result
+  
+  def infer_freq(self,df : pd.DataFrame):
+    if 'ds' not in df.columns:
+      raise BadRequestException('Data must contain datetime column')
     
+    df = df.sort_values('ds')
+    diffs = df['ds'].diff().dropna()
+
+    most_common_diff = diffs.mode()[0]
+
+    days = most_common_diff.days
+
+    if days == 1:
+      return 'D'
+    elif 6 <= days <= 8:
+      return 'W'
+    elif 28 <= days <= 31:
+      return 'M'
+    else:
+      return 'D'
+  

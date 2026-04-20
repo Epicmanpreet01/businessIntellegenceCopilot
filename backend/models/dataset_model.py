@@ -24,7 +24,9 @@ class Datasets(Base):
 
   name: Mapped[str] = mapped_column(String(30), nullable=False)
 
-  length : Mapped[int] = mapped_column(Integer, nullable=False)
+  length : Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+  freq : Mapped[str] = mapped_column(String(1), nullable=False, default='D')
 
   created_at: Mapped[datetime] = mapped_column(
     DateTime(timezone=True),
