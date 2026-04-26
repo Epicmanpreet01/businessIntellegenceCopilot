@@ -4,8 +4,7 @@ import pandas as pd
 import uuid
 from typing import List
 
-from engines.data_engine import DataEngine
-from core.exceptions import BadRequestException, NotFoundException
+from core.exceptions import NotFoundException
 from models.processed_data_model import ProcessedData
 from models.dataset_model import Datasets
 from schemas.dataset_schemas import DatasetOut
@@ -57,3 +56,23 @@ def remove_dataset(dataset_id : uuid.UUID, db : Session, user_id : uuid.UUID) ->
   db.commit()
 
   return DatasetOut.model_validate(dataset)
+
+def fetch_processed_data(dataset_id : uuid.UUID, db : Session, user_id : uuid.UUID):
+  stmt = (
+    select(ProcessedData)
+      .join(Datasets,ProcessedData.dataset_id == Datasets.id)
+      .where(
+        and_(
+          ProcessedData.dataset_id == dataset_id,
+          Datasets.user_id == user_id
+        )
+      )
+      .order_by(ProcessedData.ds.asc())
+  )
+  processed_data = db.execute(stmt).all()
+
+  if not processed_data:
+    raise NotFoundException(message="Data not found")
+  
+  return processed_data
+  
