@@ -7,7 +7,7 @@ from models.dataset_model import Datasets
 
 from core.exceptions import NotFoundException
 
-def fetch_forecast_report(dataset_id: uuid.UUID, user_id: uuid.UUID,db: Session):
+def fetch_forecast_data(dataset_id: uuid.UUID, user_id: uuid.UUID,db: Session):
   stmt = (
     select(Forecasts.ds, Forecasts.yhat)
       .join(Datasets,Forecasts.dataset_id == Datasets.id)

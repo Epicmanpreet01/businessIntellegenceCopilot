@@ -6,16 +6,10 @@ from core.config import settings
 from db.base import Base, engine
 
 from api.routes.auth_routes import router as auth_router
-from api.routes.dataset_routes import router as pipeline_router
+from api.routes.dataset_routes import router as datasets_router
+from api.routes.analytics_routes import router as analytics_router
 
 from core.exceptions import AppException
-
-from models.dataset_model import Datasets
-from models.analytics_model import Analytics
-from models.forecast_model import Forecasts
-from models.insights_model import Insights
-from models.processed_data_model import ProcessedData
-from models.user_model import Users
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -26,7 +20,8 @@ def health():
   return {'success': True, 'message': 'Server reached successfully'}
 
 app.include_router(auth_router, prefix='/api/auth')
-app.include_router(pipeline_router, prefix='/api/datasets')
+app.include_router(datasets_router, prefix='/api/datasets')
+app.include_router(analytics_router,prefix='/api/analytics')
 
 @app.exception_handler(AppException)
 def app_exception_handler(request : Request, exc : AppException):

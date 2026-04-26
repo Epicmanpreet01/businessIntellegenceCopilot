@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Dict, List
 import uuid
 
@@ -10,3 +10,5 @@ class AnalyticsEngineOut(BaseModel):
   anomaly_summary : Dict
   seasonality : Dict
   forecast: Dict
+
+  model_config = ConfigDict(from_attributes=True)

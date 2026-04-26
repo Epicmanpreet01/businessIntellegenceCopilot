@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 import uuid
 
 class InsightEngineOut(BaseModel):
@@ -7,3 +7,5 @@ class InsightEngineOut(BaseModel):
   reasons : list[str]
   recommendations : list[str]
   confidence : str
+
+  model_config = ConfigDict(from_attributes=True)
