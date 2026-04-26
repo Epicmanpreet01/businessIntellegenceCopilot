@@ -9,7 +9,7 @@ from core.exceptions import NotFoundException
 
 def fetch_forecast_report(dataset_id: uuid.UUID, user_id: uuid.UUID,db: Session):
   stmt = (
-    select(Forecasts)
+    select(Forecasts.ds, Forecasts.yhat)
       .join(Datasets,Forecasts.dataset_id == Datasets.id)
       .where(
         and_(
@@ -23,6 +23,13 @@ def fetch_forecast_report(dataset_id: uuid.UUID, user_id: uuid.UUID,db: Session)
 
   if not forecasts:
     raise NotFoundException(message="Forecasts not found")
+
+  rows = [
+    {
+      'ds': row.ds,
+      'yhat': row.yhat
+    } for row in forecasts
+  ]
   
-  return forecasts
+  return rows
   

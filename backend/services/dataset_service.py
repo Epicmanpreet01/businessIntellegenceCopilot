@@ -59,7 +59,7 @@ def remove_dataset(dataset_id : uuid.UUID, db : Session, user_id : uuid.UUID) ->
 
 def fetch_processed_data(dataset_id : uuid.UUID, db : Session, user_id : uuid.UUID):
   stmt = (
-    select(ProcessedData)
+    select(ProcessedData.ds, ProcessedData.y)
       .join(Datasets,ProcessedData.dataset_id == Datasets.id)
       .where(
         and_(
@@ -71,8 +71,17 @@ def fetch_processed_data(dataset_id : uuid.UUID, db : Session, user_id : uuid.UU
   )
   processed_data = db.execute(stmt).all()
 
+
   if not processed_data:
     raise NotFoundException(message="Data not found")
   
-  return processed_data
+
+  rows = [
+    {
+      'ds': row.ds,
+      'y': row.y
+    } for row in processed_data
+  ]
+
+  return rows
   
