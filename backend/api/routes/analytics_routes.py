@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 import uuid
 
-from dependencies.auth_dep import get_curr_user_id
+from api.dependencies.auth_dep import get_curr_user_id
 from db.session import get_db
 
 from services.analytics_service import fetch_analytics_report
