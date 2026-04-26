@@ -59,7 +59,7 @@ class AnalyticsEngine:
     elif abs(slope) > 2:
       strength = 'moderate'
 
-    return { 'direction': direction, 'strength': strength }
+    return { 'direction': direction, 'strength': strength } 
 
   def _change(self):
     def calc(days):

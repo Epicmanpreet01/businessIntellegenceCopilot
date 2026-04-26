@@ -29,9 +29,11 @@ class Analytics(Base):
   anomaly_summary: Mapped[dict] = mapped_column(JSONB, nullable=False)
 
   # {
-  #   "pattern": "weekend dips",
-  #   "weekend_drop_pct": 35,
-  #   "weekday_distribution": {...}
+  #   "pattern": "",
+  #   "strength": "",
+  #   "seasonal_strength_score": ,
+  #   "dominant_period": ,
+  #   "distribution": {}
   # }
   seasonality: Mapped[dict] = mapped_column(JSONB, nullable=False)
 

@@ -6,10 +6,12 @@ from models.processed_data_model import ProcessedData
 from models.dataset_model import Datasets
 from models.forecast_model import Forecasts
 from models.analytics_model import Analytics
+from models.insights_model import Insights
 
 from engines.data_engine import DataEngine
 from engines.forecast_engine import ForecastEngine
 from engines.analytics_engine import AnalyticsEngine
+from engines.insights_engine import InsightsEngine
 
 from utils.pipeline_utils import get_default_period
 
@@ -33,5 +35,8 @@ def run_dataset_pipeline(dataset_id : uuid.UUID,df : pd.DataFrame, db : Session)
 
   analytics_result = AnalyticsEngine(processed, forecast, dataset_id,freq).run()
   db.add(Analytics(**analytics_result.model_dump()))
+
+  insights_result = InsightsEngine(dataset_id,analytics_result).generate()
+  db.add(Insights(**insights_result.model_dump()))
 
   db.commit()
