@@ -34,5 +34,4 @@ def run_dataset_pipeline(dataset_id : uuid.UUID,df : pd.DataFrame, db : Session)
   analytics_result = AnalyticsEngine(processed, forecast, dataset_id,freq).run()
   db.add(Analytics(**analytics_result.model_dump()))
 
-
   db.commit()

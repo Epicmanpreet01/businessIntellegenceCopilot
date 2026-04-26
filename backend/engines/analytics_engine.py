@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
-from datetime import timedelta
+from datetime import timedelta, datetime
+from statsmodels.tsa.seasonal import STL
 import uuid
 
 from schemas.analytics_schema import AnalyticsEngineOut
@@ -29,6 +30,16 @@ class AnalyticsEngine:
     
     else:
       return days
+
+  def _get_period_size(self):
+    if self.freq == 'D':
+      return 7 # Weekly
+    elif self.freq == 'W':
+      return 52 # Yearly
+    elif self.freq == 'M':
+      return 12 # Yearly
+    else:
+      return 7
 
   def _trend(self):
     y = self.df['y']
@@ -102,7 +113,7 @@ class AnalyticsEngine:
       return { 'count': 0, 'recent_count': 0 }
     
     cutoff = self.df['ds'].max() - timedelta(days=7)
-    recent = [a for a in annomalies if a['ds'] >= cutoff]
+    recent = [a for a in annomalies if datetime.fromisoformat(a['ds']) >= cutoff]
 
     return {
       'count': len(annomalies),
@@ -110,31 +121,127 @@ class AnalyticsEngine:
     }
 
   def _seasonality(self):
-    df = self.df.copy()
-    df['weekday'] = df['ds'].dt.day_name()
+    df : pd.DataFrame = self.df.copy()
+    df = df.sort_values('ds').dropna(subset=['ds','y'])
 
-    weekday_avg = df.groupby('weekday')['y'].mean().to_dict()
+    period = self._get_period_size()
 
-    weekday_mean = np.mean(list(weekday_avg.values()))
+    if len(df) < max(period * 2, 8):
+      return {
+        "pattern": "insufficient_data",
+        "strength": "none",
+        "seasonal_strength_score": 0.0,
+        "dominant_period": None,
+        "distribution": {}
+      }
 
-    weekend_mean = (
-      weekday_avg.get("Saturday", 0) +
-      weekday_avg.get("Sunday", 0)
-    ) / 2
+    try:
+      series = df['y'].astype(float).reset_index(drop=True)
 
-    drop_pct = 0
-    if weekday_mean != 0:
-      drop_pct = ((weekday_mean - weekend_mean) / weekday_mean) * 100
+      results = STL(
+        series,
+        period=period,
+        robust=True
+      ).fit()
 
-    pattern = "none"
-    if drop_pct > 10:
-      pattern = "weekend dips"
+      seasonal = results.seasonal
+      resid = results.resid
 
-    return {
-      "pattern": pattern,
-      "weekend_drop_pct": float(drop_pct),
-      "weekday_distribution": weekday_avg
-    }
+      demon = np.var(seasonal + resid)
+      num = np.var(resid  )
+      score = 0.0 if demon == 0 else (1-num/demon)
+
+      strength = 'none'
+      if score > 0.65:
+        strength = 'strong'
+      elif score > 0.35:
+        strength = 'medium'
+      elif score > 0.15:
+        strength = 'weak'
+      
+      pattern = 'none'
+      distribution = {}
+      df['seasonal'] = seasonal
+
+      if self.freq == 'D':
+        df['label'] = df['ds'].dt.day_name()
+
+        order = [
+          "Monday", "Tuesday", "Wednesday",
+          "Thursday", "Friday",
+          "Saturday", "Sunday"
+        ]
+
+        grouped = (
+          df.groupby('label')['seasonal']
+          .mean()
+          .reindex(order)
+          .fillna(0)
+        )
+
+        weekday_mean = grouped.iloc[:5].mean()
+        weekend_mean = grouped.iloc[5:].mean()
+
+        if abs(weekday_mean) > 1e-9:
+          change_pct = ((weekend_mean - weekday_mean) / abs(weekday_mean)) * 100
+        else:
+          change_pct = 0
+
+        if strength == "none":
+          pattern = "none"
+        elif change_pct > 10:
+          pattern = "weekend spikes"
+        elif change_pct < -10:
+          pattern = "weekend dips"
+        else:
+          pattern = "stable weekly pattern"
+
+        dominant_period = 'weekly'
+      else:
+        df['label'] = df['ds'].dt.month_name()
+
+        order = [
+          "January", "February", "March", "April",
+          "May", "June", "July", "August",
+          "September", "October", "November", "December"
+        ]
+
+        grouped = (
+          df.groupby('label')['seasonal']
+          .mean()
+          .reindex(order)
+          .fillna(0)
+        )
+
+        if strength == 'none':
+          pattern = 'none'
+        else:
+          pattern = f"peaks in {grouped.idxmax()}, dips in {grouped.idxmin()}"
+
+        dominant_period = 'yearly'
+  
+      distribution = {
+        k: float(round(v, 2))
+        for k, v in grouped.to_dict().items()
+      }
+
+      return {
+        "pattern": pattern,
+        "strength": strength,
+        "seasonal_strength_score": float(round(score, 4)),
+        "dominant_period": dominant_period,
+        "distribution": distribution
+      }
+  
+
+    except:
+      return {
+        "pattern": "error",
+        "strength": "none",
+        "seasonal_strength_score": 0.0,
+        "dominant_period": None,
+        "distribution": {}
+      }
 
   def _forecast_analysis(self):
     future = self.forecast_df.tail(7)
