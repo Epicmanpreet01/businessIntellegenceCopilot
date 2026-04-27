@@ -1,4 +1,3 @@
-import React from "react";
 import {
   TrendingDown,
   AlertCircle,
@@ -8,6 +7,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 import { MOCK_INSIGHTS } from "../../utils/mockData";
 
 // Dashboard Components
@@ -19,11 +19,13 @@ import AnomaliesLog from "../../components/dashboard/AnomaliesLog";
 
 const DashboardPage = () => {
   const { t } = useTheme();
+  const navigate = useNavigate();
 
   // User will integrate data fetching here
   const data = []; // Placeholder for actual data
   const handleClearSession = () => {
-    // User will add their clear session logic here
+    localStorage.removeItem("active_session");
+    navigate("/");
   };
 
   return (
@@ -50,15 +52,21 @@ const DashboardPage = () => {
       </div>
 
       {/* Auto Summary */}
-      <div className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex items-start gap-5 transition-all hover:shadow-md`}>
+      <div
+        className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex items-start gap-5 transition-all hover:shadow-md`}
+      >
         <div className={`p-3 rounded-xl mt-1 shrink-0 ${t.redSoft}`}>
           <Activity className="w-6 h-6" />
         </div>
         <div>
-          <h2 className={`text-sm font-semibold ${t.textMuted} uppercase tracking-wider mb-2`}>
+          <h2
+            className={`text-sm font-semibold ${t.textMuted} uppercase tracking-wider mb-2`}
+          >
             Auto-Generated Insight
           </h2>
-          <p className={`text-xl lg:text-2xl font-medium ${t.text} leading-snug`}>
+          <p
+            className={`text-xl lg:text-2xl font-medium ${t.text} leading-snug`}
+          >
             {MOCK_INSIGHTS.summary}
           </p>
         </div>

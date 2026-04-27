@@ -14,7 +14,7 @@ const useUserQuery = () => {
         ) {
           return null;
         }
-        return res?.data;
+        return res?.data.data;
       } catch {
         return null;
       }

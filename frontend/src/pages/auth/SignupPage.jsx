@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useTheme } from "../../context/ThemeContext";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -17,6 +16,7 @@ import {
 
 import { useSignUpMutation } from "../../hooks/mutations/useAuthMutation.js";
 import LoadingSpinner from "../../components/layout/LoadingSpinner.jsx";
+import { themeConfig } from "../../constants/theme";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ const SignupPage = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { t } = useTheme();
+  const t = themeConfig.light;
 
   const { mutate: signup, isPending: isSignupPending } = useSignUpMutation();
 

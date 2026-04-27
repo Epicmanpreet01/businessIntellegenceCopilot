@@ -7,7 +7,13 @@ import LoadingSpinner from "./LoadingSpinner";
 
 const Header = () => {
   const { isDark, toggleTheme, t } = useTheme();
-  const { sidebarCollapsed, setSidebarCollapsed, showNav, chatMode, setChatMode } = useGlobal();
+  const {
+    sidebarCollapsed,
+    setSidebarCollapsed,
+    showNav,
+    chatMode,
+    setChatMode,
+  } = useGlobal();
   const { mutate: logout, isPending: isLogoutPending } = useLogoutMutation();
   const location = useLocation();
 

@@ -1,35 +1,21 @@
-import {
-  TrendingDown,
-  LineChart as LineChartIcon,
-  AlertCircle,
-  Clock3,
-  ChevronRight,
-} from "lucide-react";
+import { Clock3, ChevronRight, Database } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
+
+import { useDatasetsQuery } from "../../hooks/queries/useDatasetsQuery";
+import LoadingSpinner from "../layout/LoadingSpinner";
+
+import { timeAgo } from "../../utils/common";
 
 const RecentAnalyses = () => {
   const { t, isDark } = useTheme();
+  const navigate = useNavigate();
 
-  const analyses = [
-    {
-      title: "Q1_Marketing_Spend_vs_ROI.csv",
-      date: "2 hours ago",
-      records: "1,240 rows",
-      icon: <TrendingDown className="w-5 h-5 text-red-500" />,
-    },
-    {
-      title: "Weekly_Sales_Data_Mar2024.csv",
-      date: "Yesterday",
-      records: "365 rows",
-      icon: <LineChartIcon className="w-5 h-5 text-emerald-500" />,
-    },
-    {
-      title: "SaaS_User_Churn_Metrics.csv",
-      date: "Last week",
-      records: "8,400 rows",
-      icon: <AlertCircle className="w-5 h-5 text-amber-500" />,
-    },
-  ];
+  const { data: datasets, isLoading: isDatasetLoading } = useDatasetsQuery();
+
+  if (isDatasetLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div>
@@ -37,42 +23,60 @@ const RecentAnalyses = () => {
         <h3 className={`text-xl font-bold ${t.text}`}>Recent Analyses</h3>
         <button
           className={`text-sm font-semibold ${t.primaryText} hover:underline`}
+          onClick={() => navigate("/reports")}
         >
           View all
         </button>
       </div>
       <div className="space-y-4">
-        {analyses.map((file, idx) => (
-          <div
-            key={idx}
-            className={`flex items-center justify-between p-5 ${t.panelBg} border ${t.border} rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-orange-500/30 cursor-pointer group`}
-          >
-            <div className="flex items-center gap-4">
-              <div
-                className={`p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 ${isDark ? "bg-neutral-800" : "bg-neutral-100"}`}
-              >
-                {file.icon}
-              </div>
-              <div>
-                <h4
-                  className={`text-base font-bold ${t.text} group-hover:${t.primaryText} transition-colors`}
-                >
-                  {file.title}
-                </h4>
+        {datasets?.length > 0 ? (
+          datasets.map((file) => (
+            <div
+              key={file.dataset_id}
+              className={`flex items-center justify-between p-5 ${t.panelBg} border ${t.border} rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-orange-500/30 cursor-pointer group`}
+            >
+              <div className="flex items-center gap-4">
                 <div
-                  className={`flex items-center gap-2 text-sm mt-1 ${t.textMuted}`}
+                  className={`p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 ${isDark ? "bg-neutral-800" : "bg-neutral-100"}`}
                 >
-                  <Clock3 className="w-4 h-4" /> {file.date}
-                  <span className="opacity-50">•</span>
-                  <span>{file.records}</span>
+                  <Database className={`w-5 h-5 ${t.primaryText}`} />
+                </div>
+                <div className="min-w-0">
+                  <h4
+                    className={`text-base font-bold ${t.text} group-hover:${t.primaryText} transition-colors truncate`}
+                  >
+                    {file.name}
+                  </h4>
+                  <div
+                    className={`flex items-center gap-x-3 text-[11px] mt-1.5 ${t.textMuted} whitespace-nowrap overflow-hidden text-ellipsis`}
+                  >
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <Clock3 className="w-3 h-3" />
+                      <span>{timeAgo(file.created_at)}</span>
+                    </div>
+                    <span className="opacity-30 shrink-0">•</span>
+                    <span className="shrink-0">{file.length}</span>
+                    <span className="opacity-30 shrink-0">•</span>
+                    <span className="shrink-0">{file.file_size}</span>
+                    <span className="opacity-30 shrink-0">•</span>
+                    <span className="bg-orange-500/10 text-orange-600 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider shrink-0">
+                      {file.freq}
+                    </span>
+                  </div>
                 </div>
               </div>
+              <ChevronRight
+                className={`w-5 h-5 ${t.textMuted} group-hover:${t.primaryText} transition-colors`}
+              />
             </div>
-            <ChevronRight
-              className={`w-5 h-5 ${t.textMuted} group-hover:${t.primaryText} transition-colors`}
-            />
+          ))
+        ) : (
+          <div
+            className={`p-10 text-center ${t.panelBg} border ${t.border} rounded-2xl ${t.textMuted}`}
+          >
+            <p>No recent analyses found.</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );

@@ -35,9 +35,10 @@ async def upload(file : UploadFile, db : Session = Depends(get_db), user_id : uu
     raise BadRequestException(message="Invalid CSV file")
   
   filename = file.filename
+  file_size = file.size
 
   # Adds dataset entry to the database without commiting to initialize metadata about dataset and getting unique id for the session before starting analytical pipeline
-  dataset = create_dataset_entry(db, filename, user_id)
+  dataset = create_dataset_entry(db, filename,file_size, user_id)
 
   # Running pipeline
   run_dataset_pipeline(dataset.id,data, db)

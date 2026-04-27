@@ -8,22 +8,30 @@ const UploadHero = ({ isAnalyzing, handleFileUpload, dataLength }) => {
   if (isAnalyzing) {
     return (
       <div
-        className={`${t.panelBg} border ${t.border} rounded-3xl p-14 text-center shadow-sm`}
+        className={`${t.panelBg} border ${t.border} rounded-3xl p-14 text-center shadow-sm animate-in zoom-in-95 duration-500`}
       >
-        <div
-          className={`flex items-center justify-center mx-auto mb-6`}
-        >
-          <LoadingSpinner fullScreen={false} size="large" />
+        <div className="flex items-center justify-center mx-auto mb-8">
+          <div className="relative">
+            <LoadingSpinner
+              fullScreen={false}
+              size="large"
+              color="var(--color-orange-600)"
+            />
+            <div className="absolute inset-0 blur-2xl bg-orange-500/20 rounded-full animate-pulse"></div>
+          </div>
         </div>
-        <h3 className={`text-2xl font-bold ${t.text} mb-3`}>
-          Running Data Engine...
+        <h3 className={`text-2xl font-bold ${t.text} mb-3 tracking-tight`}>
+          Analyzing Dataset...
         </h3>
-        <p className={`${t.textMuted} mb-8 text-lg`}>
-          Extracting signals, forecasting trends, and generating explanations.
+        <p className={`${t.textMuted} mb-10 text-lg max-w-md mx-auto`}>
+          Our AI engine is currently extracting signals, forecasting trends, and
+          generating insights.
         </p>
 
         <div
-          className={`max-w-md mx-auto space-y-4 text-left p-6 rounded-2xl border ${t.border} ${isDark ? "bg-neutral-900/50" : "bg-neutral-50"}`}
+          className={`max-w-md mx-auto space-y-4 text-left p-6 rounded-2xl border ${t.border} ${
+            isDark ? "bg-neutral-900/50" : "bg-neutral-50"
+          }`}
         >
           <div className="flex items-center text-sm font-medium text-emerald-500">
             <CheckCircle2 className="w-5 h-5 mr-3" /> Data cleaned & structured
@@ -35,7 +43,7 @@ const UploadHero = ({ isAnalyzing, handleFileUpload, dataLength }) => {
           <div
             className={`flex items-center text-sm font-medium animate-pulse ${t.primaryText}`}
           >
-            <RefreshCw className="w-5 h-5 mr-3 animate-spin" /> Generating LLM
+            <RefreshCw className="w-5 h-5 mr-3 animate-spin" /> Generating AI
             explanations...
           </div>
         </div>

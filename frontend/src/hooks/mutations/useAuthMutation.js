@@ -14,7 +14,7 @@ export const useLoginMutation = () => {
         password,
       });
 
-      return res.data;
+      return res?.data.data;
     },
 
     onSuccess: () => {
@@ -43,7 +43,7 @@ export const useSignUpMutation = () => {
         confirm_password: confirmPassword,
       });
 
-      return res.data;
+      return res?.data.data;
     },
 
     onSuccess: () => {
@@ -66,7 +66,7 @@ export const useLogoutMutation = () => {
   return useMutation({
     mutationFn: async () => {
       const res = await axios.post("/api/auth/logout");
-      return res.data;
+      return res?.data.data;
     },
 
     onSuccess: () => {

@@ -9,11 +9,12 @@ from models.processed_data_model import ProcessedData
 from models.dataset_model import Datasets
 from schemas.dataset_schemas import DatasetOut
   
-def create_dataset_entry(db : Session, name : str, user_id : uuid.UUID):
+def create_dataset_entry(db : Session, name : str,file_size : int, user_id : uuid.UUID):
   dataset = Datasets(
     name = name,
     user_id = user_id,
-    length=0
+    length=0,
+    file_size=file_size
   )  
 
   db.add(dataset)

@@ -16,13 +16,14 @@ import {
 
 import { useLoginMutation } from "../../hooks/mutations/useAuthMutation.js";
 import LoadingSpinner from "../../components/layout/LoadingSpinner.jsx";
+import { themeConfig } from "../../constants/theme";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { t } = useTheme();
+  const t = themeConfig.light;
 
   const { mutate: login, isPending: isLoginPending } = useLoginMutation();
 
