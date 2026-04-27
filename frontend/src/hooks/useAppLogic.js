@@ -81,7 +81,55 @@ export const useAppLogic = () => {
     }, 1000);
   };
 
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // Check if user is logged in (mock)
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
+  }, []);
+
+  const login = (email, password) => {
+    // Mock login logic
+    const mockUser = {
+      name: email.split("@")[0],
+      email,
+      role: "Administrator",
+      avatar: null,
+    };
+    setUser(mockUser);
+    localStorage.setItem("user", JSON.stringify(mockUser));
+    return true;
+  };
+
+  const signup = (userData) => {
+    // Mock signup logic
+    const mockUser = {
+      ...userData,
+      name: userData.email.split("@")[0],
+      role: "Administrator",
+      avatar: null,
+    };
+    setUser(mockUser);
+    localStorage.setItem("user", JSON.stringify(mockUser));
+    return true;
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+  };
+
   return {
+    user,
+    loading,
+    login,
+    signup,
+    logout,
     sidebarCollapsed,
     setSidebarCollapsed,
     chatMode,

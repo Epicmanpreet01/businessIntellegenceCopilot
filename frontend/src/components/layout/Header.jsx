@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { PanelLeftOpen, Sun, Moon, MessageSquare } from "lucide-react";
+import { PanelLeftOpen, Sun, Moon, MessageSquare, LogOut } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 
 const Header = ({
@@ -8,6 +8,7 @@ const Header = ({
   setSidebarCollapsed,
   chatMode,
   setChatMode,
+  logout,
 }) => {
   const { isDark, toggleTheme, t } = useTheme();
   const location = useLocation();
@@ -58,6 +59,14 @@ const Header = ({
             <MessageSquare className="w-5 h-5" />
           </button>
         )}
+
+        <button
+          onClick={logout}
+          className={`p-2 rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500 text-gray-500`}
+          title="Logout"
+        >
+          <LogOut className="w-5 h-5" />
+        </button>
       </div>
     </div>
   );

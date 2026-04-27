@@ -12,11 +12,17 @@ import ChatInterface from "./components/chat/ChatInterface";
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
 import ReportsPage from "./pages/ReportsPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 
 export default function App() {
   const { t } = useTheme();
-
   const {
+    user,
+    loading,
+    login,
+    signup,
+    logout,
     sidebarCollapsed,
     setSidebarCollapsed,
     chatMode,
@@ -35,11 +41,39 @@ export default function App() {
     location,
   } = useAppLogic();
 
-  const user = {
-    name: "Alex",
-    role: "Administrator",
-    avatar: null,
-  };
+  if (loading) {
+    return (
+      <div className={`h-screen w-full flex items-center justify-center ${t.appBg}`}>
+        <div className="w-10 h-10 border-4 border-orange-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated and not on login/signup pages
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/signup";
+
+  if (!user && !isAuthPage) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user && isAuthPage) {
+    return <Navigate to="/" replace />;
+  }
+
+  // If on auth page, render without layout
+  if (isAuthPage) {
+    return (
+      <div
+        className={`min-h-screen font-sans ${t.appBg} transition-colors duration-300 flex flex-col justify-center`}
+      >
+        <Routes>
+          <Route path="/login" element={<LoginPage login={login} />} />
+          <Route path="/signup" element={<SignupPage signup={signup} />} />
+        </Routes>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -58,6 +92,7 @@ export default function App() {
           setSidebarCollapsed={setSidebarCollapsed}
           chatMode={chatMode}
           setChatMode={setChatMode}
+          logout={logout}
         />
 
         <div
