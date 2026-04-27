@@ -8,6 +8,9 @@ export const GlobalProvider = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [chatMode, setChatMode] = useState("hidden"); // 'sidebar', 'fullscreen', 'hidden'
   const [showNav, setShowNav] = useState(true);
+  const [activeSession, setActiveSession] = useState(
+    () => localStorage.getItem("active_session") === "true"
+  );
   const lastScrollY = useRef(0);
 
   // Auto-collapse sidebar/chat on route change
@@ -46,6 +49,8 @@ export const GlobalProvider = ({ children }) => {
         showNav,
         setShowNav,
         handleScroll,
+        activeSession,
+        setActiveSession,
       }}
     >
       {children}

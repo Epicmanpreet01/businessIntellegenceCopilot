@@ -23,7 +23,7 @@ def create_dataset_entry(db : Session, name : str,file_size : int, user_id : uui
   return dataset
 
 def fetch_datasets(db : Session, user_id : uuid.UUID) -> List[DatasetOut]:
-  stmt = select(Datasets).where(Datasets.user_id == user_id)
+  stmt = select(Datasets).where(Datasets.user_id == user_id).order_by(Datasets.created_at.desc())
   datasets = db.execute(stmt).scalars().all()
   return [DatasetOut.model_validate(dataset) for dataset in datasets]
 

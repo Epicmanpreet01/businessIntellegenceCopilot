@@ -5,13 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { useDatasetsQuery } from "../../hooks/queries/useDatasetsQuery";
 import LoadingSpinner from "../layout/LoadingSpinner";
 
-import { timeAgo } from "../../utils/common";
+import { timeAgo, parse_frequency, formatFileSize } from "../../utils/common";
 
 const RecentAnalyses = () => {
   const { t, isDark } = useTheme();
   const navigate = useNavigate();
 
   const { data: datasets, isLoading: isDatasetLoading } = useDatasetsQuery();
+
+  const top_four_datasets = datasets.slice(0, 4);
 
   if (isDatasetLoading) {
     return <LoadingSpinner />;
@@ -29,15 +31,15 @@ const RecentAnalyses = () => {
         </button>
       </div>
       <div className="space-y-4">
-        {datasets?.length > 0 ? (
-          datasets.map((file) => (
+        {top_four_datasets?.length > 0 ? (
+          top_four_datasets.map((file) => (
             <div
               key={file.dataset_id}
-              className={`flex items-center justify-between p-5 ${t.panelBg} border ${t.border} rounded-2xl transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-orange-500/30 cursor-pointer group`}
+              className={`flex items-center justify-between p-5 ${t.panelBg} border ${t.border} rounded-2xl transition-all duration-300 hover:shadow-md hover:border-orange-500/30 cursor-pointer group`}
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`p-3 rounded-xl transition-transform duration-300 group-hover:scale-110 ${isDark ? "bg-neutral-800" : "bg-neutral-100"}`}
+                  className={`p-3 rounded-xl transition-transform duration-300 ${isDark ? "bg-neutral-800" : "bg-neutral-100"}`}
                 >
                   <Database className={`w-5 h-5 ${t.primaryText}`} />
                 </div>
@@ -55,12 +57,14 @@ const RecentAnalyses = () => {
                       <span>{timeAgo(file.created_at)}</span>
                     </div>
                     <span className="opacity-30 shrink-0">•</span>
-                    <span className="shrink-0">{file.length}</span>
+                    <span className="shrink-0">{`${file.length} rows`}</span>
                     <span className="opacity-30 shrink-0">•</span>
-                    <span className="shrink-0">{file.file_size}</span>
+                    <span className="shrink-0">
+                      {formatFileSize(file.file_size)}
+                    </span>
                     <span className="opacity-30 shrink-0">•</span>
                     <span className="bg-orange-500/10 text-orange-600 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider shrink-0">
-                      {file.freq}
+                      {parse_frequency(file.freq)}
                     </span>
                   </div>
                 </div>

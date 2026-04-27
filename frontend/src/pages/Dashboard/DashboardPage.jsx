@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import { useGlobal } from "../../context/GlobalContext";
 import { MOCK_INSIGHTS } from "../../utils/mockData";
 
 // Dashboard Components
@@ -21,10 +22,13 @@ const DashboardPage = () => {
   const { t } = useTheme();
   const navigate = useNavigate();
 
+  const { setActiveSession } = useGlobal();
+
   // User will integrate data fetching here
   const data = []; // Placeholder for actual data
   const handleClearSession = () => {
     localStorage.removeItem("active_session");
+    setActiveSession(false);
     navigate("/");
   };
 

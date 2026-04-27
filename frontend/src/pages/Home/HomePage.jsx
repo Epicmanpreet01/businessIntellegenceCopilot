@@ -4,6 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import useUserQuery from "../../hooks/queries/useUserQuery";
 import useUploadDatasetMutation from "../../hooks/mutations/useDatasetMutation";
+import { useGlobal } from "../../context/GlobalContext";
 
 // Upload Components
 import UploadHero from "../../components/home/UploadHero";
@@ -15,6 +16,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { data: user } = useUserQuery();
   const { mutate: uploadDataset, isPending } = useUploadDatasetMutation();
+  const { setActiveSession } = useGlobal();
 
   const fileInputRef = useRef(null);
 
@@ -26,6 +28,7 @@ const HomePage = () => {
       { file },
       {
         onSuccess: () => {
+          setActiveSession(true);
           navigate("/dashboard");
         },
       },

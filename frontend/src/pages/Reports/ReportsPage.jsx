@@ -18,6 +18,8 @@ const ReportsPage = () => {
   const { t, isDark } = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFrequency, setSelectedFrequency] = useState("All");
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
 
   const reports = [
     {
@@ -25,7 +27,7 @@ const ReportsPage = () => {
       title: "Q1_Marketing_Spend_vs_ROI.csv",
       date: "2 hours ago",
       records: "1,240 rows",
-      status: "Analyzed",
+      frequency: "Daily",
       type: "Revenue Analysis",
       size: "245 KB",
     },
@@ -34,7 +36,7 @@ const ReportsPage = () => {
       title: "Weekly_Sales_Data_Mar2024.csv",
       date: "Yesterday",
       records: "365 rows",
-      status: "Analyzed",
+      frequency: "Weekly",
       type: "Sales Trend",
       size: "128 KB",
     },
@@ -43,7 +45,7 @@ const ReportsPage = () => {
       title: "SaaS_User_Churn_Metrics.csv",
       date: "Last week",
       records: "8,400 rows",
-      status: "Archived",
+      frequency: "Monthly",
       type: "Churn Analysis",
       size: "1.2 MB",
     },
@@ -52,17 +54,22 @@ const ReportsPage = () => {
       title: "Inventory_Turnover_FY23.csv",
       date: "2 weeks ago",
       records: "12,400 rows",
-      status: "Analyzed",
+      frequency: "Quarterly",
       type: "Inventory",
       size: "3.5 MB",
     },
   ];
 
-  const filteredReports = reports.filter(
-    (report) =>
+  const frequencies = ["All", "Daily", "Weekly", "Monthly", "Quarterly"];
+
+  const filteredReports = reports.filter((report) => {
+    const matchesSearch =
       report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.type.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+      report.type.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFrequency =
+      selectedFrequency === "All" || report.frequency === selectedFrequency;
+    return matchesSearch && matchesFrequency;
+  });
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
@@ -90,11 +97,45 @@ const ReportsPage = () => {
               className={`pl-10 pr-4 py-2.5 rounded-xl border ${t.border} ${t.panelBg} ${t.text} text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all w-64`}
             />
           </div>
-          <button
-            className={`p-2.5 rounded-xl border ${t.border} ${t.panelBg} ${t.textMuted} hover:${t.text} transition-colors`}
-          >
-            <Filter className="w-5 h-5" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowFilterMenu(!showFilterMenu)}
+              className={`p-2.5 rounded-xl border ${t.border} ${t.panelBg} ${showFilterMenu ? t.primaryText + " border-orange-500" : t.textMuted} hover:${t.text} transition-colors flex items-center gap-2`}
+            >
+              <Filter className="w-5 h-5" />
+              {selectedFrequency !== "All" && (
+                <span className="text-xs font-bold bg-orange-500 text-white px-1.5 py-0.5 rounded-full">
+                  1
+                </span>
+              )}
+            </button>
+
+            {showFilterMenu && (
+              <div
+                className={`absolute right-0 mt-2 w-48 rounded-2xl shadow-xl border ${t.border} ${t.panelBg} z-50 p-2 animate-in slide-in-from-top-2 duration-200`}
+              >
+                <div className="px-3 py-2 text-xs font-bold text-neutral-400 uppercase tracking-wider">
+                  Filter by Frequency
+                </div>
+                {frequencies.map((freq) => (
+                  <button
+                    key={freq}
+                    onClick={() => {
+                      setSelectedFrequency(freq);
+                      setShowFilterMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
+                      selectedFrequency === freq
+                        ? t.primarySoft + " " + t.primaryText + " font-bold"
+                        : t.text + " hover:bg-orange-500/10 hover:text-orange-600"
+                    }`}
+                  >
+                    {freq}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -121,7 +162,7 @@ const ReportsPage = () => {
                 <th
                   className={`px-6 py-4 text-xs font-bold ${t.textMuted} uppercase tracking-wider`}
                 >
-                  Status
+                  Frequency
                 </th>
                 <th
                   className={`px-6 py-4 text-xs font-bold ${t.textMuted} uppercase tracking-wider`}
@@ -145,7 +186,7 @@ const ReportsPage = () => {
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
                       <div
-                        className={`p-3 rounded-2xl ${t.primarySoft} group-hover:scale-110 transition-transform duration-300`}
+                        className={`p-3 rounded-2xl ${t.primarySoft} transition-transform duration-300`}
                       >
                         <FileText className="w-6 h-6" />
                       </div>
@@ -177,13 +218,11 @@ const ReportsPage = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-5">
+                   <td className="px-6 py-5">
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        report.status === "Analyzed" ? t.emeraldSoft : t.redSoft
-                      }`}
+                      className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${t.primarySoft}`}
                     >
-                      {report.status}
+                      {report.frequency}
                     </span>
                   </td>
                   <td className={`px-6 py-5 text-sm ${t.textMuted}`}>
@@ -198,7 +237,7 @@ const ReportsPage = () => {
                         <Download className="w-4 h-4" />
                       </button>
                       <button
-                        className="p-2 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors"
+                        className={`p-2 rounded-lg ${t.textMuted} hover:bg-red-500/10 hover:text-red-500 transition-colors`}
                         title="Delete"
                       >
                         <Trash2 className="w-4 h-4" />

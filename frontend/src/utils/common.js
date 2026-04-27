@@ -13,3 +13,24 @@ export function timeAgo(iso) {
 
   return `${Math.floor(days / 365)} year(s) ago`;
 }
+
+export function parse_frequency(freq) {
+  if (freq == "D") return "Daily";
+  else if (freq == "W") return "Weekly";
+  else if (freq == "M") return "Monthly";
+  else return "Yearly";
+}
+
+export function formatFileSize(bytes) {
+  if (bytes === null || bytes === undefined || isNaN(bytes)) {
+    return "0 B";
+  }
+
+  if (bytes === 0) return "0 B";
+
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const index = Math.floor(Math.log(bytes) / Math.log(1024));
+  const size = bytes / Math.pow(1024, index);
+
+  return `${size.toFixed(size >= 10 || index === 0 ? 0 : 2)} ${units[index]}`;
+}

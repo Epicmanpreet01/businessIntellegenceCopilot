@@ -73,10 +73,7 @@ export const SidebarItem = ({
 
 const Sidebar = () => {
   const { t } = useTheme();
-  const { sidebarCollapsed, setSidebarCollapsed } = useGlobal();
-
-  // Placeholder for data check - User will integrate with their data hook
-  const hasActiveSession = true; 
+  const { sidebarCollapsed, setSidebarCollapsed, activeSession } = useGlobal();
 
   return (
     <div
@@ -107,7 +104,7 @@ const Sidebar = () => {
           icon={LayoutDashboard}
           label="Active Analysis"
           to="/dashboard"
-          disabled={!hasActiveSession}
+          disabled={!activeSession}
           collapsed={sidebarCollapsed}
         />
         <SidebarItem
