@@ -1,5 +1,6 @@
 import { UploadCloud, CheckCircle2, RefreshCw } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import LoadingSpinner from "../layout/LoadingSpinner";
 
 const UploadHero = ({ isAnalyzing, handleFileUpload, dataLength }) => {
   const { t, isDark } = useTheme();
@@ -10,9 +11,9 @@ const UploadHero = ({ isAnalyzing, handleFileUpload, dataLength }) => {
         className={`${t.panelBg} border ${t.border} rounded-3xl p-14 text-center shadow-sm`}
       >
         <div
-          className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${t.primarySoft}`}
+          className={`flex items-center justify-center mx-auto mb-6`}
         >
-          <RefreshCw className="w-12 h-12 animate-spin" />
+          <LoadingSpinner fullScreen={false} size="large" />
         </div>
         <h3 className={`text-2xl font-bold ${t.text} mb-3`}>
           Running Data Engine...

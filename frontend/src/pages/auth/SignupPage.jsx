@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { useSignUpMutation } from "../../hooks/mutations/useAuthMutation.js";
+import LoadingSpinner from "../../components/layout/LoadingSpinner.jsx";
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -197,10 +198,17 @@ const SignupPage = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               type="submit"
-              className="w-full py-4 rounded-2xl bg-orange-600 text-white font-bold text-lg hover:bg-orange-700 shadow-[0_20px_40px_-15px_rgba(234,88,12,0.3)] hover:shadow-[0_20px_40px_-10px_rgba(234,88,12,0.4)] focus:outline-none focus:ring-4 focus:ring-orange-500/20 transition-all flex items-center justify-center gap-3 mt-4"
+              disabled={isSignupPending}
+              className="w-full py-4 rounded-2xl bg-orange-600 text-white font-bold text-lg hover:bg-orange-700 shadow-[0_20px_40px_-15px_rgba(234,88,12,0.3)] hover:shadow-[0_20px_40px_-10px_rgba(234,88,12,0.4)] focus:outline-none focus:ring-4 focus:ring-orange-500/20 transition-all flex items-center justify-center gap-3 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Get Started
-              <ArrowRight className="w-5 h-5" />
+              {isSignupPending ? (
+                <LoadingSpinner fullScreen={false} size="small" />
+              ) : (
+                <>
+                  Get Started
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </motion.button>
           </motion.form>
 

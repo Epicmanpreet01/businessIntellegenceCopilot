@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { motion } from 'framer-motion';
 
-const LoadingSpinner = ({ fullScreen = true, size = 'large' }) => {
+const LoadingSpinner = ({ fullScreen = true, size = 'large', color = 'orange-600', className = '' }) => {
   const { t } = useTheme();
 
   const sizeClasses = {
@@ -13,19 +13,19 @@ const LoadingSpinner = ({ fullScreen = true, size = 'large' }) => {
 
   const containerClasses = fullScreen 
     ? `h-screen w-full flex flex-col items-center justify-center ${t.appBg}`
-    : 'w-full py-12 flex flex-col items-center justify-center';
+    : 'flex flex-col items-center justify-center';
 
   return (
-    <div className={containerClasses}>
+    <div className={`${containerClasses} ${className}`}>
       <div className="relative">
         {/* Glow Effect */}
-        <div className={`absolute inset-0 blur-2xl opacity-20 rounded-full bg-orange-600`}></div>
+        <div className={`absolute inset-0 blur-2xl opacity-20 rounded-full bg-${color}`}></div>
         
         {/* Animated Spinner */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className={`${sizeClasses[size]} border-orange-600 border-t-transparent rounded-full relative z-10`}
+          className={`${sizeClasses[size]} border-${color} border-t-transparent rounded-full relative z-10`}
         />
       </div>
       

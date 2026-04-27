@@ -3,11 +3,12 @@ import { PanelLeftOpen, Sun, Moon, MessageSquare, LogOut } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useGlobal } from "../../context/GlobalContext";
 import { useLogoutMutation } from "../../hooks/mutations/useAuthMutation";
+import LoadingSpinner from "./LoadingSpinner";
 
 const Header = () => {
   const { isDark, toggleTheme, t } = useTheme();
   const { sidebarCollapsed, setSidebarCollapsed, showNav, chatMode, setChatMode } = useGlobal();
-  const { mutate: logout } = useLogoutMutation();
+  const { mutate: logout, isPending: isLogoutPending } = useLogoutMutation();
   const location = useLocation();
 
   const getTitle = () => {
@@ -59,10 +60,15 @@ const Header = () => {
 
         <button
           onClick={() => logout()}
-          className={`p-2 rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500 text-gray-500`}
+          disabled={isLogoutPending}
+          className={`p-2 rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500 text-gray-500 disabled:opacity-50 flex items-center justify-center`}
           title="Logout"
         >
-          <LogOut className="w-5 h-5" />
+          {isLogoutPending ? (
+            <LoadingSpinner fullScreen={false} size="small" color="red-500" />
+          ) : (
+            <LogOut className="w-5 h-5" />
+          )}
         </button>
       </div>
     </div>

@@ -1,9 +1,12 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer, Slide } from "react-toastify";
 
-// Layout & Auth
+// Layout
 import MainLayout from "./components/layout/MainLayout.jsx";
-import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
+import LoadingSpinner from "./components/layout/LoadingSpinner.jsx";
+
+// Hooks
+import useUserQuery from "./hooks/queries/useUserQuery.js";
 
 // Pages
 import HomePage from "./pages/Home/HomePage.jsx";
@@ -13,45 +16,51 @@ import LoginPage from "./pages/auth/LoginPage.jsx";
 import SignupPage from "./pages/auth/SignupPage.jsx";
 
 export default function App() {
+  const { data: user, isLoading } = useUserQuery();
+
+  const toastConfig = {
+    position: "top-center",
+    autoClose: 1500,
+    hideProgressBar: true,
+    newestOnTop: false,
+    closeOnClick: false,
+    rtl: false,
+    pauseOnFocusLoss: true,
+    draggable: true,
+    pauseOnHover: true,
+    theme: "dark",
+    transition: Slide,
+  };
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <LoadingSpinner />
+        <ToastContainer {...toastConfig} />
+      </div>
+    );
+  }
+
   return (
     <>
-      <Routes>
-        {/* Auth Routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-
-        {/* Protected Routes */}
-        <Route
-          path="/*"
-          element={
-            <ProtectedRoute>
-              <MainLayout>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/reports" element={<ReportsPage />} />
-                  <Route path="/chat" element={<div>Chat Page placeholder</div>} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-
-      <ToastContainer
-        position="top-center"
-        autoClose={1500}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        transition={Slide}
-      />
+      {user ? (
+        <MainLayout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/chat" element={<div>Chat Page placeholder</div>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </MainLayout>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      )}
+      <ToastContainer {...toastConfig} />
     </>
   );
 }

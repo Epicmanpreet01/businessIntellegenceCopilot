@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 
 export const useLoginMutation = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -18,6 +20,7 @@ export const useLoginMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
       toast.success("Login Successful");
+      navigate("/");
     },
 
     onError: (error) => {
@@ -28,6 +31,7 @@ export const useLoginMutation = () => {
 };
 
 export const useSignUpMutation = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -36,7 +40,7 @@ export const useSignUpMutation = () => {
         name,
         email,
         password,
-        confirmPassword,
+        confirm_password: confirmPassword,
       });
 
       return res.data;
@@ -44,6 +48,7 @@ export const useSignUpMutation = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      navigate("/");
       toast.success("Registration successful");
     },
 
@@ -53,7 +58,9 @@ export const useSignUpMutation = () => {
     },
   });
 };
+
 export const useLogoutMutation = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -64,6 +71,7 @@ export const useLogoutMutation = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      navigate("/login");
       toast.success("Logged out successfully");
     },
 
