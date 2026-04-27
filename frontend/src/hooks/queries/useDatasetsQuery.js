@@ -5,8 +5,12 @@ export const useDatasetsQuery = () => {
   return useQuery({
     queryKey: ["datasets"],
     queryFn: async () => {
-      const res = await axios.get("/api/datasets/");
-      return res?.data.data;
+      try {
+        const res = await axios.get("/api/datasets/");
+        return res?.data.data;
+      } catch {
+        return null;
+      }
     },
   });
 };

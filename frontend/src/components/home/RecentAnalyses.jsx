@@ -13,7 +13,7 @@ const RecentAnalyses = () => {
 
   const { data: datasets, isLoading: isDatasetLoading } = useDatasetsQuery();
 
-  const top_four_datasets = datasets.slice(0, 4);
+  const top_four_datasets = datasets?.slice(0, 4);
 
   if (isDatasetLoading) {
     return <LoadingSpinner />;

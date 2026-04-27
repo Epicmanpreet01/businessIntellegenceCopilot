@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FileText,
@@ -14,62 +14,47 @@ import {
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 
+import { useDatasetsQuery } from "../../hooks/queries/useDatasetsQuery";
+import { timeAgo, parse_frequency, formatFileSize } from "../../utils/common";
+import LoadingSpinner from "../../components/layout/LoadingSpinner";
+
 const ReportsPage = () => {
   const { t, isDark } = useTheme();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFrequency, setSelectedFrequency] = useState("All");
   const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const filterRef = useRef(null);
 
-  const reports = [
-    {
-      id: 1,
-      title: "Q1_Marketing_Spend_vs_ROI.csv",
-      date: "2 hours ago",
-      records: "1,240 rows",
-      frequency: "Daily",
-      type: "Revenue Analysis",
-      size: "245 KB",
-    },
-    {
-      id: 2,
-      title: "Weekly_Sales_Data_Mar2024.csv",
-      date: "Yesterday",
-      records: "365 rows",
-      frequency: "Weekly",
-      type: "Sales Trend",
-      size: "128 KB",
-    },
-    {
-      id: 3,
-      title: "SaaS_User_Churn_Metrics.csv",
-      date: "Last week",
-      records: "8,400 rows",
-      frequency: "Monthly",
-      type: "Churn Analysis",
-      size: "1.2 MB",
-    },
-    {
-      id: 4,
-      title: "Inventory_Turnover_FY23.csv",
-      date: "2 weeks ago",
-      records: "12,400 rows",
-      frequency: "Quarterly",
-      type: "Inventory",
-      size: "3.5 MB",
-    },
-  ];
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (filterRef.current && !filterRef.current.contains(event.target)) {
+        setShowFilterMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const { data: datasets, isPending: isDatasetsPending } = useDatasetsQuery();
 
   const frequencies = ["All", "Daily", "Weekly", "Monthly", "Quarterly"];
 
-  const filteredReports = reports.filter((report) => {
-    const matchesSearch =
-      report.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      report.type.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredReports = (datasets || []).filter((dataset) => {
+    const matchesSearch = dataset.name
+      ?.toLowerCase()
+      .includes(searchQuery.toLowerCase());
+
+    const displayFreq = parse_frequency(dataset.freq);
     const matchesFrequency =
-      selectedFrequency === "All" || report.frequency === selectedFrequency;
+      selectedFrequency === "All" || displayFreq === selectedFrequency;
+
     return matchesSearch && matchesFrequency;
   });
+
+  if (isDatasetsPending) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500 pb-12">
@@ -97,7 +82,8 @@ const ReportsPage = () => {
               className={`pl-10 pr-4 py-2.5 rounded-xl border ${t.border} ${t.panelBg} ${t.text} text-sm focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all w-64`}
             />
           </div>
-          <div className="relative">
+
+          <div className="relative" ref={filterRef}>
             <button
               onClick={() => setShowFilterMenu(!showFilterMenu)}
               className={`p-2.5 rounded-xl border ${t.border} ${t.panelBg} ${showFilterMenu ? t.primaryText + " border-orange-500" : t.textMuted} hover:${t.text} transition-colors flex items-center gap-2`}
@@ -127,7 +113,8 @@ const ReportsPage = () => {
                     className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-colors ${
                       selectedFrequency === freq
                         ? t.primarySoft + " " + t.primaryText + " font-bold"
-                        : t.text + " hover:bg-orange-500/10 hover:text-orange-600"
+                        : t.text +
+                          " hover:bg-orange-500/10 hover:text-orange-600"
                     }`}
                   >
                     {freq}
@@ -179,25 +166,26 @@ const ReportsPage = () => {
             <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
               {filteredReports.map((report) => (
                 <tr
-                  key={report.id}
+                  key={report.dataset_id}
                   className={`group hover:${isDark ? "bg-neutral-800/30" : "bg-orange-50/30"} transition-colors cursor-pointer`}
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() => navigate("/dashboard")}
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
                       <div
-                        className={`p-3 rounded-2xl ${t.primarySoft} transition-transform duration-300`}
+                        className={`p-3 rounded-2xl ${t.primarySoft} transition-colors duration-300`}
                       >
                         <FileText className="w-6 h-6" />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <p
-                          className={`font-bold ${t.text} group-hover:${t.primaryText} transition-colors`}
+                          className={`font-bold ${t.text} group-hover:${t.primaryText} transition-colors truncate max-w-[200px]`}
+                          title={report.name}
                         >
-                          {report.title}
+                          {report.name}
                         </p>
                         <p className={`text-xs ${t.textMuted} mt-0.5`}>
-                          {report.type}
+                          {report.type || "CSV Dataset"}
                         </p>
                       </div>
                     </div>
@@ -208,25 +196,25 @@ const ReportsPage = () => {
                         className={`flex items-center gap-2 text-sm ${t.text}`}
                       >
                         <Calendar className="w-3.5 h-3.5 opacity-60" />{" "}
-                        {report.date}
+                        {timeAgo(report.created_at)}
                       </div>
                       <div
                         className={`flex items-center gap-2 text-xs ${t.textMuted}`}
                       >
                         <Database className="w-3.5 h-3.5 opacity-60" />{" "}
-                        {report.records}
+                        {`${report.length} rows`}
                       </div>
                     </div>
                   </td>
-                   <td className="px-6 py-5">
+                  <td className="px-6 py-5">
                     <span
                       className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${t.primarySoft}`}
                     >
-                      {report.frequency}
+                      {parse_frequency(report.freq)}
                     </span>
                   </td>
                   <td className={`px-6 py-5 text-sm ${t.textMuted}`}>
-                    {report.size}
+                    {formatFileSize(report.file_size)}
                   </td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
