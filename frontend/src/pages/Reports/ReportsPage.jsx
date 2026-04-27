@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Clock,
@@ -11,10 +12,11 @@ import {
   Database,
   ArrowUpRight,
 } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../context/ThemeContext";
 
-const ReportsPage = ({ onNavigateToDashboard }) => {
+const ReportsPage = () => {
   const { t, isDark } = useTheme();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
 
   const reports = [
@@ -138,7 +140,7 @@ const ReportsPage = ({ onNavigateToDashboard }) => {
                 <tr
                   key={report.id}
                   className={`group hover:${isDark ? "bg-neutral-800/30" : "bg-orange-50/30"} transition-colors cursor-pointer`}
-                  onClick={() => onNavigateToDashboard(report)}
+                  onClick={() => navigate('/dashboard')}
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">

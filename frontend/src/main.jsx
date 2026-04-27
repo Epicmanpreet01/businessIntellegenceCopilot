@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 import { ThemeProvider } from "./context/ThemeContext";
-
+import { GlobalProvider } from "./context/GlobalContext";
 
 import { BrowserRouter } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -15,7 +15,9 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ThemeProvider>
-          <App />
+          <GlobalProvider>
+            <App />
+          </GlobalProvider>
         </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>

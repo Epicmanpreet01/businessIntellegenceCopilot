@@ -10,6 +10,7 @@ import {
   BrainCircuit,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { useGlobal } from "../../context/GlobalContext";
 
 export const SidebarItem = ({
   icon: Icon,
@@ -70,8 +71,12 @@ export const SidebarItem = ({
   );
 };
 
-const Sidebar = ({ sidebarCollapsed, setSidebarCollapsed, dataLength }) => {
+const Sidebar = () => {
   const { t } = useTheme();
+  const { sidebarCollapsed, setSidebarCollapsed } = useGlobal();
+
+  // Placeholder for data check - User will integrate with their data hook
+  const hasActiveSession = true; 
 
   return (
     <div
@@ -102,7 +107,7 @@ const Sidebar = ({ sidebarCollapsed, setSidebarCollapsed, dataLength }) => {
           icon={LayoutDashboard}
           label="Active Analysis"
           to="/dashboard"
-          disabled={dataLength === 0}
+          disabled={!hasActiveSession}
           collapsed={sidebarCollapsed}
         />
         <SidebarItem

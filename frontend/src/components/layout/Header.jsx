@@ -1,16 +1,13 @@
 import { useLocation } from "react-router-dom";
 import { PanelLeftOpen, Sun, Moon, MessageSquare, LogOut } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { useGlobal } from "../../context/GlobalContext";
+import { useLogoutMutation } from "../../hooks/mutations/useAuthMutation";
 
-const Header = ({
-  showNav,
-  sidebarCollapsed,
-  setSidebarCollapsed,
-  chatMode,
-  setChatMode,
-  logout,
-}) => {
+const Header = () => {
   const { isDark, toggleTheme, t } = useTheme();
+  const { sidebarCollapsed, setSidebarCollapsed, showNav, chatMode, setChatMode } = useGlobal();
+  const { mutate: logout } = useLogoutMutation();
   const location = useLocation();
 
   const getTitle = () => {
@@ -61,7 +58,7 @@ const Header = ({
         )}
 
         <button
-          onClick={logout}
+          onClick={() => logout()}
           className={`p-2 rounded-full transition-colors hover:bg-red-500/10 hover:text-red-500 text-gray-500`}
           title="Logout"
         >
