@@ -22,6 +22,7 @@ const useUploadDatasetMutation = () => {
         localStorage.setItem("active_dataset_id", data.id);
       }
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", data.id] });
     },
   });
 };

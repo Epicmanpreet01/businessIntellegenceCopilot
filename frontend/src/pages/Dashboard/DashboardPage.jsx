@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import {
   TrendingDown,
   TrendingUp,
@@ -7,7 +7,6 @@ import {
   Activity,
   Download,
   Trash2,
-  Filter,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,7 +22,7 @@ import WeeklyAverages from "../../components/dashboard/WeeklyAverages";
 import AnomaliesLog from "../../components/dashboard/AnomaliesLog";
 
 const DashboardPage = () => {
-  const { t, isDark } = useTheme();
+  const { t } = useTheme();
   const navigate = useNavigate();
   const { datasetId } = useParams();
   const { setActiveSession } = useGlobal();
@@ -132,12 +131,12 @@ const DashboardPage = () => {
   const { analytics, insights } = dashboardData;
 
   // Prepare Seasonality Data
-  const seasonalityData = Object.entries(analytics.seasonality.distribution).map(
-    ([day, val]) => ({
-      day: day.substring(0, 3),
-      avg: val,
-    })
-  );
+  const seasonalityData = Object.entries(
+    analytics.seasonality.distribution,
+  ).map(([day, val]) => ({
+    day: day.substring(0, 3),
+    avg: val,
+  }));
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
@@ -191,29 +190,44 @@ const DashboardPage = () => {
           title="Overall Trend"
           value={`${analytics.trend.direction.charAt(0).toUpperCase() + analytics.trend.direction.slice(1)} (${analytics.trend.strength})`}
           desc={`Change of ${analytics.change.last_30d.toFixed(1)}% in last 30d`}
-          icon={analytics.trend.direction === "upwards" ? TrendingUp : TrendingDown}
-          colorClass={analytics.trend.direction === "upwards" ? t.emeraldSoft : t.redSoft}
+          icon={
+            analytics.trend.direction === "upwards" ? TrendingUp : TrendingDown
+          }
+          colorClass={
+            analytics.trend.direction === "upwards" ? t.emeraldSoft : t.redSoft
+          }
         />
         <StatCard
           title="Anomalies"
           value={`${analytics.anomaly_summary.count} Detected`}
           desc={`${analytics.anomaly_summary.recent_count} in the last 7 days`}
           icon={AlertCircle}
-          colorClass={analytics.anomaly_summary.count > 0 ? t.redSoft : t.emeraldSoft}
+          colorClass={
+            analytics.anomaly_summary.count > 0 ? t.redSoft : t.emeraldSoft
+          }
         />
         <StatCard
           title="Seasonality"
-          value={analytics.seasonality.dominant_period || "None"}
-          desc={analytics.seasonality.pattern}
+          value={analytics.seasonality.dominant_period || "none"}
+          desc={
+            analytics.seasonality.pattern === "none"
+              ? "No seasonal pattern found"
+              : analytics.seasonality.pattern
+          }
           icon={Calendar}
           colorClass={t.blueSoft}
         />
         <StatCard
           title="Forecast"
-          value={analytics.forecast.trend.charAt(0).toUpperCase() + analytics.forecast.trend.slice(1)}
+          value={
+            analytics.forecast.trend.charAt(0).toUpperCase() +
+            analytics.forecast.trend.slice(1)
+          }
           desc={`${analytics.forecast.change_pct.toFixed(1)}% expected change`}
           icon={Activity}
-          colorClass={analytics.forecast.trend === "upward" ? t.emeraldSoft : t.amberSoft}
+          colorClass={
+            analytics.forecast.trend === "upward" ? t.emeraldSoft : t.amberSoft
+          }
         />
       </div>
 
@@ -233,6 +247,5 @@ const DashboardPage = () => {
     </div>
   );
 };
-
 
 export default DashboardPage;

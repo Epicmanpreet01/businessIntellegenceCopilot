@@ -103,7 +103,7 @@ const Sidebar = () => {
         <SidebarItem
           icon={LayoutDashboard}
           label="Active Analysis"
-          to="/dashboard"
+          to={`/dashboard/${localStorage.getItem("active_dataset_id")}`}
           disabled={!activeSession}
           collapsed={sidebarCollapsed}
         />

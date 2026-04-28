@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
+import { useGlobal } from "../../context/GlobalContext";
 
 import { useDatasetsQuery } from "../../hooks/queries/useDatasetsQuery";
 import { timeAgo, parse_frequency, formatFileSize } from "../../utils/common";
@@ -20,6 +21,7 @@ import LoadingSpinner from "../../components/layout/LoadingSpinner";
 
 const ReportsPage = () => {
   const { t, isDark } = useTheme();
+  const { setActiveSession } = useGlobal();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFrequency, setSelectedFrequency] = useState("All");
@@ -168,7 +170,11 @@ const ReportsPage = () => {
                 <tr
                   key={report.id}
                   className={`group hover:${isDark ? "bg-neutral-800/30" : "bg-orange-50/30"} transition-colors cursor-pointer`}
-                  onClick={() => navigate(`/dashboard/${report.id}`)}
+                  onClick={() => {
+                    localStorage.setItem("active_dataset_id", report.id);
+                    setActiveSession(true);
+                    navigate(`/dashboard/${report.id}`);
+                  }}
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">

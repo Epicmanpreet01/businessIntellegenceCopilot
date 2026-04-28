@@ -3,6 +3,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
 import { useDatasetsQuery } from "../../hooks/queries/useDatasetsQuery";
+import { useGlobal } from "../../context/GlobalContext";
 import LoadingSpinner from "../layout/LoadingSpinner";
 
 import { timeAgo, parse_frequency, formatFileSize } from "../../utils/common";
@@ -10,8 +11,15 @@ import { timeAgo, parse_frequency, formatFileSize } from "../../utils/common";
 const RecentAnalyses = () => {
   const { t, isDark } = useTheme();
   const navigate = useNavigate();
+  const { setActiveSession } = useGlobal();
 
   const { data: datasets, isLoading: isDatasetLoading } = useDatasetsQuery();
+
+  const handleSelectAnalysis = (id) => {
+    localStorage.setItem("active_dataset_id", id);
+    setActiveSession(true);
+    navigate(`/dashboard/${id}`);
+  };
 
   const top_four_datasets = datasets?.slice(0, 4);
 
@@ -35,7 +43,7 @@ const RecentAnalyses = () => {
           top_four_datasets.map((file) => (
             <div
               key={file.id}
-              onClick={() => navigate(`/dashboard/${file.id}`)}
+              onClick={() => handleSelectAnalysis(file.id)}
               className={`flex items-center justify-between p-5 ${t.panelBg} border ${t.border} rounded-2xl transition-all duration-300 hover:shadow-md hover:border-orange-500/30 cursor-pointer group`}
             >
               <div className="flex items-center gap-4">

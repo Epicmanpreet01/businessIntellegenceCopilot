@@ -39,6 +39,11 @@ export const GlobalProvider = ({ children }) => {
     lastScrollY.current = currentScrollY;
   };
 
+  const handleSetActiveSession = (val) => {
+    localStorage.setItem("active_session", val ? "true" : "false");
+    setActiveSession(val);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -50,7 +55,7 @@ export const GlobalProvider = ({ children }) => {
         setShowNav,
         handleScroll,
         activeSession,
-        setActiveSession,
+        setActiveSession: handleSetActiveSession,
       }}
     >
       {children}

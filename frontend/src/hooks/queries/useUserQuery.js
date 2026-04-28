@@ -7,7 +7,6 @@ const useUserQuery = () => {
     queryFn: async () => {
       try {
         const res = await axios.get("/api/auth/me");
-        // If the response is a string (like HTML), it's not a valid user object
         if (
           typeof res.data === "string" &&
           res.data.includes("<!doctype html>")

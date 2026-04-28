@@ -14,3 +14,17 @@ export const useDatasetsQuery = () => {
     },
   });
 };
+
+export const useDatasetQuery = (datasetId) => {
+  return useQuery({
+    queryKey: ["dataset", datasetId],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/datasets/${datasetId}`);
+        return res?.data.data;
+      } catch {
+        return null;
+      }
+    },
+  });
+};
