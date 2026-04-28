@@ -26,6 +26,7 @@ import MetricGauges from "../../components/dashboard/MetricGauges";
 import InfoTooltip from "../../components/dashboard/InfoTooltip";
 
 import { useDeleteDatasetMutation } from "../../hooks/mutations/useDatasetMutation";
+import { useDatasetQuery } from "../../hooks/queries/useDatasetsQuery";
 
 const ConfidenceBadge = ({ level }) => {
   const colors = {
@@ -56,6 +57,9 @@ const DashboardPage = () => {
     isLoading,
     error,
   } = useDashboardQuery(datasetId);
+
+  const { data: dataset, isLoading: isDatasetLoading } =
+    useDatasetQuery(datasetId);
 
   const { mutate: deleteDataset, isPending: isDeletePending } =
     useDeleteDatasetMutation();
@@ -136,7 +140,7 @@ const DashboardPage = () => {
     return combined;
   }, [dashboardData]);
 
-  if (isLoading) {
+  if (isLoading || isDatasetLoading) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
         <LoadingSpinner fullScreen={true} size="large" />
@@ -183,7 +187,7 @@ const DashboardPage = () => {
         <div>
           <h2 className={`text-2xl font-bold ${t.text}`}>Active Analysis</h2>
           <p className={`${t.textMuted}`}>
-            Reviewing insights for dataset: {datasetId.substring(0, 8)}...
+            Reviewing insights for dataset: {dataset?.name}
           </p>
         </div>
         <div className="flex items-center gap-3">
