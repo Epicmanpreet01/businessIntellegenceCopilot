@@ -15,7 +15,7 @@ const UploadHero = ({ isAnalyzing, handleFileUpload, dataLength }) => {
             <LoadingSpinner
               fullScreen={false}
               size="large"
-              color="var(--color-orange-600)"
+              color="orange-600"
             />
             <div className="absolute inset-0 blur-2xl bg-orange-500/20 rounded-full animate-pulse"></div>
           </div>

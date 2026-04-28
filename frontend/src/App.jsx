@@ -34,10 +34,10 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full flex items-center justify-center">
-        <LoadingSpinner />
+      <>
+        <LoadingSpinner fullScreen={true} size="large" />
         <ToastContainer {...toastConfig} />
-      </div>
+      </>
     );
   }
 

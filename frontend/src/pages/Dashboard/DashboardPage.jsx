@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   TrendingDown,
   TrendingUp,
@@ -13,6 +13,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useGlobal } from "../../context/GlobalContext";
 import useDashboardQuery from "../../hooks/queries/useDashboardQuery";
 import LoadingSpinner from "../../components/layout/LoadingSpinner";
+import { generateProfessionalPDF } from "../../utils/reportGenerator";
 
 import StatCard from "../../components/dashboard/StatCard";
 import RevenueChart from "../../components/dashboard/RevenueChart";
@@ -23,6 +24,8 @@ import AnalysisReasons from "../../components/dashboard/AnalysisReasons";
 import MetricGauges from "../../components/dashboard/MetricGauges";
 
 import InfoTooltip from "../../components/dashboard/InfoTooltip";
+
+import { useDeleteDatasetMutation } from "../../hooks/mutations/useDatasetMutation";
 
 const ConfidenceBadge = ({ level }) => {
   const colors = {
@@ -45,6 +48,8 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const { datasetId } = useParams();
   const { setActiveSession } = useGlobal();
+  const chartRef = useRef(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const {
     data: dashboardData,
@@ -52,10 +57,24 @@ const DashboardPage = () => {
     error,
   } = useDashboardQuery(datasetId);
 
+  const { mutate: deleteDataset, isPending: isDeletePending } =
+    useDeleteDatasetMutation();
+
   const handleClearSession = () => {
-    localStorage.removeItem("active_session");
+    deleteDataset(datasetId);
     setActiveSession(false);
     navigate("/");
+  };
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      await generateProfessionalPDF(dashboardData, datasetId, chartRef);
+    } catch (err) {
+      console.error("Export failed:", err);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const chartData = useMemo(() => {
@@ -120,7 +139,7 @@ const DashboardPage = () => {
   if (isLoading) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
-        <LoadingSpinner />
+        <LoadingSpinner fullScreen={true} size="large" />
       </div>
     );
   }
@@ -169,16 +188,28 @@ const DashboardPage = () => {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => window.print()}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${t.panelBg} border ${t.border} ${t.text} hover:border-orange-500 hover:text-orange-600`}
+            onClick={handleExport}
+            disabled={isExporting}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${t.panelBg} border ${t.border} ${t.text} hover:border-orange-500 hover:text-orange-600 disabled:opacity-50`}
           >
-            <Download className="w-4 h-4" /> Export Report
+            {isExporting ? (
+              <LoadingSpinner size="xsmall" />
+            ) : (
+              <Download className="w-4 h-4" />
+            )}
+            {isExporting ? "Generating..." : "Export Report"}
           </button>
           <button
             onClick={handleClearSession}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors bg-red-50 text-red-600 hover:bg-red-100 border border-red-100"
           >
-            <Trash2 className="w-4 h-4" /> Clear Session
+            {isDeletePending ? (
+              <LoadingSpinner size="xsmall" color="red-500" />
+            ) : (
+              <>
+                <Trash2 className="w-4 h-4" /> Clear Session
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -187,21 +218,26 @@ const DashboardPage = () => {
       <div
         className={`${t.panelBg} rounded-[2.5rem] p-8 lg:p-10 shadow-sm border ${t.border} flex flex-col lg:flex-row items-start lg:items-center gap-8 transition-all hover:shadow-md`}
       >
-        <div className={`p-5 rounded-3xl shrink-0 ${t.primarySoft} hidden lg:block`}>
+        <div
+          className={`p-5 rounded-3xl shrink-0 ${t.primarySoft} hidden lg:block`}
+        >
           <Activity className="w-10 h-10" />
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className={`w-3 h-3 rounded-full animate-pulse ${t.primaryText.replace('text', 'bg')}`} />
-              <h2 className={`text-xs font-black ${t.textMuted} uppercase tracking-[0.4em]`}>
+              <h2
+                className={`text-xs font-black ${t.textMuted} uppercase tracking-[0.4em]`}
+              >
                 Intelligence Executive Summary
               </h2>
               <InfoTooltip text="High-level business intelligence summary generated by our AI after analyzing your complete dataset. It highlights the most critical trend and its impact." />
             </div>
             <ConfidenceBadge level={insights.confidence} />
           </div>
-          <p className={`text-2xl lg:text-4xl font-semibold ${t.text} leading-tight tracking-tight max-w-6xl`}>
+          <p
+            className={`text-2xl lg:text-4xl font-semibold ${t.text} leading-tight tracking-tight max-w-6xl`}
+          >
             {insights.summary}
           </p>
         </div>
@@ -210,14 +246,25 @@ const DashboardPage = () => {
       {/* 2. Analysis Reliability & Positioning */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
         <div className="lg:col-span-2">
-          <MetricGauges analytics={analytics} totalPoints={processed_data.length} />
+          <MetricGauges
+            analytics={analytics}
+            totalPoints={processed_data.length}
+          />
         </div>
         <StatCard
           title="Growth Positioning"
-          value={analytics.change.last_7d >= analytics.change.last_30d ? "Accelerating" : "Softening"}
+          value={
+            analytics.change.last_7d >= analytics.change.last_30d
+              ? "Accelerating"
+              : "Softening"
+          }
           desc={`Current momentum is ${Math.abs(analytics.change.last_7d - analytics.change.last_30d).toFixed(1)}% ${analytics.change.last_7d > analytics.change.last_30d ? "stronger" : "weaker"} than the 30-day baseline.`}
           icon={Activity}
-          colorClass={analytics.change.last_7d > analytics.change.last_30d ? t.emeraldSoft : t.amberSoft}
+          colorClass={
+            analytics.change.last_7d > analytics.change.last_30d
+              ? t.emeraldSoft
+              : t.amberSoft
+          }
           tooltip="Compares your current week's performance against your monthly average to see if your business is picking up speed or slowing down."
         />
       </div>
@@ -229,15 +276,24 @@ const DashboardPage = () => {
           value={`${analytics.change.last_30d >= 0 ? "+" : ""}${analytics.change.last_30d.toFixed(1)}%`}
           desc="30-day performance delta"
           icon={TrendingUp}
-          colorClass={analytics.change.last_30d >= 0 ? t.emeraldSoft : t.redSoft}
+          colorClass={
+            analytics.change.last_30d >= 0 ? t.emeraldSoft : t.redSoft
+          }
           tooltip="Shows how much your business has grown or shrunk over the last 30 days compared to the previous period."
         />
         <StatCard
           title="Overall Trend"
-          value={analytics.trend.direction.charAt(0).toUpperCase() + analytics.trend.direction.slice(1)}
+          value={
+            analytics.trend.direction.charAt(0).toUpperCase() +
+            analytics.trend.direction.slice(1)
+          }
           desc={`${analytics.trend.strength} intensity trajectory`}
-          icon={analytics.trend.direction === "upwards" ? TrendingUp : TrendingDown}
-          colorClass={analytics.trend.direction === "upwards" ? t.emeraldSoft : t.redSoft}
+          icon={
+            analytics.trend.direction === "upwards" ? TrendingUp : TrendingDown
+          }
+          colorClass={
+            analytics.trend.direction === "upwards" ? t.emeraldSoft : t.redSoft
+          }
           tooltip="The overall direction your business is moving in. It filters out daily fluctuations to show you the long-term path."
         />
         <StatCard
@@ -251,17 +307,26 @@ const DashboardPage = () => {
         <StatCard
           title="Seasonality Pattern"
           value={analytics.seasonality.dominant_period || "None Detected"}
-          desc={analytics.seasonality.pattern === "none" ? "No recurring cycles" : `${analytics.seasonality.strength} ${analytics.seasonality.pattern}`}
+          desc={
+            analytics.seasonality.pattern === "none"
+              ? "No recurring cycles"
+              : `${analytics.seasonality.strength} ${analytics.seasonality.pattern}`
+          }
           icon={Calendar}
           colorClass={t.blueSoft}
           tooltip="Identifies recurring patterns in your data, like 'busy weekends' or 'slow Mondays,' so you can plan staffing or inventory."
         />
         <StatCard
           title="Revenue Forecast"
-          value={analytics.forecast.trend.charAt(0).toUpperCase() + analytics.forecast.trend.slice(1)}
+          value={
+            analytics.forecast.trend.charAt(0).toUpperCase() +
+            analytics.forecast.trend.slice(1)
+          }
           desc={`${analytics.forecast.change_pct.toFixed(1)}% expected change`}
           icon={Activity}
-          colorClass={analytics.forecast.trend === "upward" ? t.emeraldSoft : t.amberSoft}
+          colorClass={
+            analytics.forecast.trend === "upward" ? t.emeraldSoft : t.amberSoft
+          }
           tooltip="AI-predicted performance for the coming weeks based on your historical patterns."
         />
         <StatCard
@@ -269,13 +334,15 @@ const DashboardPage = () => {
           value={`${analytics.anomaly_summary.count} Anomalies`}
           desc={`${analytics.anomaly_summary.recent_count} recent disruptions`}
           icon={AlertCircle}
-          colorClass={analytics.anomaly_summary.count > 0 ? t.redSoft : t.emeraldSoft}
+          colorClass={
+            analytics.anomaly_summary.count > 0 ? t.redSoft : t.emeraldSoft
+          }
           tooltip="Tracks unusual spikes or drops in your data. High health means your business performance is consistent and predictable."
         />
       </div>
 
       {/* 4. Main Visualization Section (Full Width) */}
-      <div className="w-full">
+      <div className="w-full" ref={chartRef} ref-id="revenue-chart-container">
         <RevenueChart data={chartData} />
       </div>
 

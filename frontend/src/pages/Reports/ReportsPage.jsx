@@ -6,7 +6,6 @@ import {
   ChevronRight,
   Search,
   Filter,
-  Download,
   Trash2,
   Calendar,
   Database,
@@ -18,6 +17,8 @@ import { useGlobal } from "../../context/GlobalContext";
 import { useDatasetsQuery } from "../../hooks/queries/useDatasetsQuery";
 import { timeAgo, parse_frequency, formatFileSize } from "../../utils/common";
 import LoadingSpinner from "../../components/layout/LoadingSpinner";
+
+import { useDeleteDatasetMutation } from "../../hooks/mutations/useDatasetMutation";
 
 const ReportsPage = () => {
   const { t, isDark } = useTheme();
@@ -39,6 +40,8 @@ const ReportsPage = () => {
   }, []);
 
   const { data: datasets, isPending: isDatasetsPending } = useDatasetsQuery();
+  const { mutate: deleteDataset, isPending: isDeletePending } =
+    useDeleteDatasetMutation();
 
   const frequencies = ["All", "Daily", "Weekly", "Monthly", "Quarterly"];
 
@@ -54,8 +57,12 @@ const ReportsPage = () => {
     return matchesSearch && matchesFrequency;
   });
 
+  const handleDelete = (datasetId) => {
+    deleteDataset(datasetId);
+  };
+
   if (isDatasetsPending) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner fullScreen={true} size="large" />;
   }
 
   return (
@@ -225,16 +232,18 @@ const ReportsPage = () => {
                   <td className="px-6 py-5 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
-                        className={`p-2 rounded-lg hover:${t.primarySoft} transition-colors`}
-                        title="Download"
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                      <button
                         className={`p-2 rounded-lg ${t.textMuted} hover:bg-red-500/10 hover:text-red-500 transition-colors`}
                         title="Delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(report.id);
+                        }}
                       >
-                        <Trash2 className="w-4 h-4" />
+                        {isDeletePending ? (
+                          <LoadingSpinner size="xsmall" />
+                        ) : (
+                          <Trash2 className="w-4 h-4" />
+                        )}
                       </button>
                       <div
                         className={`ml-2 p-2 rounded-lg ${t.primary} shadow-sm`}

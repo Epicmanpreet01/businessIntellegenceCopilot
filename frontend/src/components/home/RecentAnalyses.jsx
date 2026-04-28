@@ -24,7 +24,11 @@ const RecentAnalyses = () => {
   const top_four_datasets = datasets?.slice(0, 4);
 
   if (isDatasetLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="py-20 flex items-center justify-center">
+        <LoadingSpinner size="large" />
+      </div>
+    );
   }
 
   return (

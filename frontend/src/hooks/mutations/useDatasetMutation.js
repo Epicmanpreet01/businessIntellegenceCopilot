@@ -27,4 +27,24 @@ const useUploadDatasetMutation = () => {
   });
 };
 
+export const useDeleteDatasetMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (datasetId) => {
+      const res = await axios.delete(`/api/datasets/${datasetId}`);
+      return res?.data.data;
+    },
+    onSuccess: (data) => {
+      const datasetId = data.id;
+      queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard", datasetId] });
+      queryClient.invalidateQueries({ queryKey: ["dataset", datasetId] });
+      localStorage.removeItem("active_session");
+    },
+    onError: (error) => {
+      console.error(error.response.error);
+    },
+  });
+};
+
 export default useUploadDatasetMutation;
