@@ -15,8 +15,7 @@ export const GlobalProvider = ({ children }) => {
 
   // Auto-collapse sidebar/chat on route change
   useEffect(() => {
-    if (location.pathname === "/dashboard") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (location.pathname.startsWith("/dashboard")) {
       setSidebarCollapsed(true);
       if (chatMode === "hidden") setChatMode("sidebar");
     } else if (location.pathname === "/chat") {

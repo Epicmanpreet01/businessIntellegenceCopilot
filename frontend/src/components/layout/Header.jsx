@@ -54,7 +54,7 @@ const Header = () => {
           {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
 
-        {location.pathname === "/dashboard" && chatMode === "hidden" && (
+        {location.pathname.startsWith("/dashboard") && chatMode === "hidden" && (
           <button
             onClick={() => setChatMode("sidebar")}
             className={`p-2 rounded-full transition-colors ${t.navHover} flex items-center gap-2`}

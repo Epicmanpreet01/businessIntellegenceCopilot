@@ -13,7 +13,7 @@ const ChatSidebar = ({
 
   return (
     <div
-      className={`w-80 lg:w-96 ${t.panelBg} border-l ${t.border} flex flex-col shadow-[-8px_0_20px_-5px_rgba(0,0,0,0.05)] z-20 shrink-0 animate-in slide-in-from-right-8 duration-300`}
+      className={`w-full h-full ${t.panelBg} flex flex-col shadow-[-8px_0_20px_-5px_rgba(0,0,0,0.05)] z-20 shrink-0`}
     >
       <div
         className={`p-4 border-b ${t.border} flex items-center justify-between`}
