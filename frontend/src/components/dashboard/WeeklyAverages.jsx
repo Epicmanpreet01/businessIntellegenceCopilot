@@ -12,6 +12,8 @@ import {
 import { useTheme } from "../../context/ThemeContext";
 import { weeklyMockData } from "../../utils/mockData";
 
+import InfoTooltip from "./InfoTooltip";
+
 const CustomTooltip = ({ active, payload, label, t }) => {
   if (active && payload && payload.length) {
     const value = payload[0].value;
@@ -39,11 +41,14 @@ const WeeklyAverages = ({ data }) => {
 
   return (
     <div
-      className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} transition-all hover:shadow-md`}
+      className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} transition-all hover:shadow-md h-full`}
     >
-      <h3 className={`text-lg font-bold ${t.text} mb-6`}>
-        Performance Distribution
-      </h3>
+      <div className="flex items-center gap-2 mb-6">
+        <h3 className={`text-lg font-bold ${t.text}`}>
+          Performance Distribution
+        </h3>
+        <InfoTooltip text="Visualizes your typical performance for each day of the week. Bars above the zero line indicate stronger-than-average days, while bars below show slower days." />
+      </div>
       <div className="h-[260px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

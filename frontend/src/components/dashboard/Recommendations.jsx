@@ -1,4 +1,5 @@
 import { Lightbulb, ArrowRight } from "lucide-react";
+import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
 
 const Recommendations = ({ recommendations }) => {
@@ -8,11 +9,14 @@ const Recommendations = ({ recommendations }) => {
     <div
       className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex flex-col transition-all hover:shadow-md`}
     >
-      <div className="flex items-center gap-3 mb-6">
-        <div className={`p-2 rounded-lg ${t.amberSoft}`}>
-          <Lightbulb className="w-5 h-5" />
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className={`p-2 rounded-lg ${t.amberSoft}`}>
+            <Lightbulb className="w-5 h-5" />
+          </div>
+          <h3 className={`text-lg font-bold ${t.text}`}>Actionable Steps</h3>
+          <InfoTooltip text="AI-suggested improvements and strategies based on your data patterns to help you capitalize on growth or mitigate risks." />
         </div>
-        <h3 className={`text-lg font-bold ${t.text}`}>Actionable Steps</h3>
       </div>
       <div className="space-y-4 overflow-y-auto pr-2 max-h-[480px] custom-scrollbar scroll-smooth">
         {recommendations.map((rec, idx) => (

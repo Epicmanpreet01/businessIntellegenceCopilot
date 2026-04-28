@@ -84,30 +84,59 @@ class AnalyticsEngine:
     }
   
   def _detect_annomalies(self):
-    def rolling_zscore(window : int):
-      r = self.df['y'].rolling(window=window)
-      m = r.mean().shift(1)
-      s = r.std().shift(1)
+    df = self.df.copy()
+    df = df.sort_values('ds').dropna(subset=['y'])
 
-      z = (self.df['y'] - m) / s
-      z = z.replace([np.inf, -np.inf], np.nan).fillna(0)
-      return z
-    
-    self.df['z'] = rolling_zscore(2)
-    annomalies = []
-    
-    for _,row in self.df.iterrows():
-      if (abs(row['z']) >= 3):
-        annomalies.append({
-          'ds': row['ds'].isoformat(),
-          'y': float(row['y']),
-          'type': 'drop' if row['z'] < 0 else 'spike',
-          'severity': 'medium' if row['z'] < 4 else 'high',
-          'z_score': row['z']
-        })
+    period = self._get_period_size()
 
-    return annomalies
+    if len(df) < max(period * 2, 8):
+      return []
 
+    try:
+      series = df['y'].astype(float).reset_index(drop=True)
+
+      result = STL(
+        series,
+        period=period,
+        robust=True
+      ).fit()
+
+      resid = pd.Series(result.resid)
+      resid_std = resid.std()
+
+      if resid_std == 0 or pd.isna(resid_std):
+        return []
+
+      z_scores = resid / resid_std
+      df['resid'] = resid
+      df['z_score'] = z_scores
+
+      annomalies = []
+
+      for _, row in df.iterrows():
+        score = float(row['z_score'])
+
+        if abs(score) >= 2.5:
+          if abs(score) >= 4:
+            severity = 'high'
+          elif abs(score) >= 3:
+            severity = 'medium'
+          else:
+            severity = 'low'
+
+          annomalies.append({
+            'ds': row['ds'].isoformat(),
+            'y': float(row['y']),
+            'type': 'drop' if score < 0 else 'spike',
+            'severity': severity,
+            'z_score': score
+          })
+
+      return annomalies
+
+    except:
+      return []
+      
   def _anomaly_summary(self, annomalies):
     if len(annomalies) == 0:
       return { 'count': 0, 'recent_count': 0 }

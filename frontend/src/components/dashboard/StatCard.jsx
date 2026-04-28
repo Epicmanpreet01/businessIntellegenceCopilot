@@ -1,6 +1,7 @@
+import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
 
-const StatCard = ({ title, value, icon: Icon, colorClass, desc }) => {
+const StatCard = ({ title, value, icon: Icon, colorClass, desc, tooltip }) => {
   const { t } = useTheme();
   return (
     <div
@@ -19,7 +20,10 @@ const StatCard = ({ title, value, icon: Icon, colorClass, desc }) => {
         </span>
       </div>
       <div>
-        <h4 className={`text-sm font-bold ${t.textMuted} mb-1`}>{title}</h4>
+        <div className="flex items-center gap-1 mb-1">
+          <h4 className={`text-sm font-bold ${t.textMuted}`}>{title}</h4>
+          {tooltip && <InfoTooltip text={tooltip} />}
+        </div>
         <p className={`text-lg font-bold ${t.text} leading-snug`}>{value}</p>
         <p className={`text-xs mt-2 ${t.textMuted}`}>{desc}</p>
       </div>

@@ -12,6 +12,8 @@ import {
 } from "recharts";
 import { useTheme } from "../../context/ThemeContext";
 
+import InfoTooltip from "./InfoTooltip";
+
 const CustomTooltip = ({ active, payload, label, t }) => {
   if (active && payload && payload.length) {
     return (
@@ -103,9 +105,12 @@ const RevenueChart = ({ data }) => {
     >
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div className="flex flex-col gap-1">
-          <h3 className={`text-lg font-bold ${t.text}`}>
-            Revenue Performance & Forecast
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className={`text-lg font-bold ${t.text}`}>
+              Revenue Performance & Forecast
+            </h3>
+            <InfoTooltip text="Interactive map of your historical performance (solid line) and AI predictions (dotted line). Hover over points to see exact values and detected anomalies." />
+          </div>
           <div className="flex items-center gap-1.5 mt-1">
             {["1M", "3M", "6M", "All"].map((f) => (
               <button

@@ -1,4 +1,5 @@
 import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
 
 const AnomaliesLog = ({ anomalies = [] }) => {
@@ -9,11 +10,14 @@ const AnomaliesLog = ({ anomalies = [] }) => {
 
   return (
     <div
-      className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex flex-col transition-all hover:shadow-md`}
+      className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex flex-col transition-all hover:shadow-md h-full`}
     >
-      <h3 className={`text-lg font-bold ${t.text} mb-6`}>
-        Recent Anomalies Log
-      </h3>
+      <div className="flex items-center gap-2 mb-6">
+        <h3 className={`text-lg font-bold ${t.text}`}>
+          Recent Anomalies Log
+        </h3>
+        <InfoTooltip text="A detailed history of every time your revenue was significantly higher (spike) or lower (drop) than the AI's expected range." />
+      </div>
       <div
         className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2"
         style={{ maxHeight: "260px" }}
