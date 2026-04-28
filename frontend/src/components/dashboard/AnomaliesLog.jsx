@@ -1,9 +1,11 @@
-import { TrendingUp, TrendingDown } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
 
-const AnomaliesLog = ({ data }) => {
+const AnomaliesLog = ({ anomalies = [] }) => {
   const { t, isDark } = useTheme();
-  const anomalies = data.filter((d) => d.anomaly !== null).reverse();
+
+  // Reverse to show most recent first
+  const sortedAnomalies = [...anomalies].reverse();
 
   return (
     <div
@@ -16,39 +18,48 @@ const AnomaliesLog = ({ data }) => {
         className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2"
         style={{ maxHeight: "260px" }}
       >
-        {anomalies.map((d, i) => (
-          <div
-            key={i}
-            className={`flex items-center justify-between p-4 rounded-xl border ${t.border} ${isDark ? "hover:bg-neutral-800" : "hover:bg-slate-50"} transition-colors cursor-default`}
-          >
-            <div className="flex items-center gap-4">
-              <div
-                className={`p-2.5 rounded-lg ${d.anomaly > d.historical ? t.emeraldSoft : t.redSoft}`}
-              >
-                {d.anomaly > d.historical ? (
-                  <TrendingUp className="w-5 h-5" />
-                ) : (
-                  <TrendingDown className="w-5 h-5" />
-                )}
+        {sortedAnomalies.map((d, i) => {
+          const date = new Date(d.ds).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+
+          return (
+            <div
+              key={i}
+              className={`flex items-center justify-between p-4 rounded-xl border ${t.border} ${isDark ? "hover:bg-neutral-800" : "hover:bg-slate-50"} transition-colors cursor-default`}
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  className={`p-2.5 rounded-lg ${d.type === "spike" ? t.emeraldSoft : t.redSoft}`}
+                >
+                  {d.type === "spike" ? (
+                    <TrendingUp className="w-5 h-5" />
+                  ) : (
+                    <TrendingDown className="w-5 h-5" />
+                  )}
+                </div>
+                <div>
+                  <p className={`text-sm font-bold ${t.text}`}>{date}</p>
+                  <p className={`text-xs ${t.textMuted} mt-0.5 capitalize`}>
+                    {d.severity} {d.type} detected
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className={`text-sm font-bold ${t.text}`}>{d.date}</p>
-                <p className={`text-xs ${t.textMuted} mt-0.5`}>
-                  {d.anomaly > d.historical
-                    ? "Unexpected Spike Detected"
-                    : "Severe Drop Detected"}
-                </p>
+              <div className={`text-base font-bold ${t.text}`}>
+                ${Math.round(d.y)}
               </div>
             </div>
-            <div className={`text-base font-bold ${t.text}`}>
-              ${Math.round(d.anomaly)}
-            </div>
+          );
+        })}
+        {sortedAnomalies.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-10 opacity-50">
+            <AlertCircle className={`w-8 h-8 ${t.textMuted} mb-2`} />
+            <p className={`text-sm ${t.textMuted} text-center`}>
+              No anomalies detected in this dataset.
+            </p>
           </div>
-        ))}
-        {anomalies.length === 0 && (
-          <p className={`text-sm ${t.textMuted} text-center py-10`}>
-            No anomalies detected in the selected period.
-          </p>
         )}
       </div>
     </div>

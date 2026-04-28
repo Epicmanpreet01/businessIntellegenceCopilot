@@ -13,8 +13,6 @@ from engines.forecast_engine import ForecastEngine
 from engines.analytics_engine import AnalyticsEngine
 from engines.insights_engine import InsightsEngine
 
-from utils.pipeline_utils import get_default_period
-
 def run_dataset_pipeline(dataset_id : uuid.UUID,df : pd.DataFrame, db : Session):
 
   data_engine = DataEngine()
@@ -29,7 +27,10 @@ def run_dataset_pipeline(dataset_id : uuid.UUID,df : pd.DataFrame, db : Session)
     "freq": freq
   })
 
-  forecast = ForecastEngine(processed).forecast(periods=get_default_period(freq),freq=freq, include_history=True)
+  length = len(df)
+  periods = max(100, length // 20)
+
+  forecast = ForecastEngine(processed).forecast(periods=periods,freq=freq, include_history=True)
   forecast_records = forecast.assign(dataset_id=dataset_id)[['dataset_id', 'ds','yhat']].to_dict('records')
   db.bulk_insert_mappings(Forecasts, forecast_records)
 

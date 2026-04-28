@@ -14,11 +14,11 @@ const Recommendations = ({ recommendations }) => {
         </div>
         <h3 className={`text-lg font-bold ${t.text}`}>Actionable Steps</h3>
       </div>
-      <div className="space-y-4 flex-1">
+      <div className="space-y-4 overflow-y-auto pr-2 max-h-[480px] custom-scrollbar scroll-smooth">
         {recommendations.map((rec, idx) => (
           <div
             key={idx}
-            className={`flex items-start gap-4 p-4 rounded-xl border ${t.border} ${isDark ? "bg-neutral-900/40" : "bg-slate-50"} transition-all duration-300 hover:-translate-y-1 hover:border-orange-500/30 hover:shadow-sm cursor-default`}
+            className={`flex items-start gap-4 p-4 rounded-xl border ${t.border} ${isDark ? "bg-neutral-900/40" : "bg-slate-50"} transition-all duration-300 hover:translate-x-1 hover:border-orange-500/30 hover:shadow-sm cursor-default`}
           >
             <ArrowRight
               className={`w-5 h-5 ${t.primaryText} shrink-0 mt-0.5`}

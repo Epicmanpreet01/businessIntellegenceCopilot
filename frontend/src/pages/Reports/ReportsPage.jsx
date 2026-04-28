@@ -166,9 +166,9 @@ const ReportsPage = () => {
             <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
               {filteredReports.map((report) => (
                 <tr
-                  key={report.dataset_id}
+                  key={report.id}
                   className={`group hover:${isDark ? "bg-neutral-800/30" : "bg-orange-50/30"} transition-colors cursor-pointer`}
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => navigate(`/dashboard/${report.id}`)}
                 >
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">

@@ -16,8 +16,11 @@ const useUploadDatasetMutation = () => {
 
       return res?.data.data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       localStorage.setItem("active_session", "true");
+      if (data?.id) {
+        localStorage.setItem("active_dataset_id", data.id);
+      }
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
     },
   });

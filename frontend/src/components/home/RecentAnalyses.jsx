@@ -34,7 +34,8 @@ const RecentAnalyses = () => {
         {top_four_datasets?.length > 0 ? (
           top_four_datasets.map((file) => (
             <div
-              key={file.dataset_id}
+              key={file.id}
+              onClick={() => navigate(`/dashboard/${file.id}`)}
               className={`flex items-center justify-between p-5 ${t.panelBg} border ${t.border} rounded-2xl transition-all duration-300 hover:shadow-md hover:border-orange-500/30 cursor-pointer group`}
             >
               <div className="flex items-center gap-4">

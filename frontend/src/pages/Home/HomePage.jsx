@@ -27,9 +27,12 @@ const HomePage = () => {
     uploadDataset(
       { file },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          const datasetId = data.id;
+
+          localStorage.setItem("active_dataset_id", datasetId);
           setActiveSession(true);
-          navigate("/dashboard");
+          navigate(`/dashboard/${datasetId}`);
         },
       },
     );
@@ -66,12 +69,16 @@ const HomePage = () => {
                 Active Session Cached
               </h3>
               <p className={`${t.textMuted} text-sm mt-1`}>
-                Your latest Q1 Revenue Analysis is still active in memory.
+                Your latest analysis is still active in memory.
               </p>
             </div>
           </div>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() =>
+              navigate(
+                `/dashboard/${localStorage.getItem("active_dataset_id")}`
+              )
+            }
             className={`px-5 py-2.5 rounded-xl font-medium transition-colors whitespace-nowrap shadow-sm ${t.primary}`}
           >
             Resume Analysis

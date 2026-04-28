@@ -1,15 +1,19 @@
+import { useState, useMemo } from "react";
 import {
   TrendingDown,
+  TrendingUp,
   AlertCircle,
   Calendar,
   Activity,
   Download,
   Trash2,
+  Filter,
 } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useGlobal } from "../../context/GlobalContext";
-import { MOCK_INSIGHTS } from "../../utils/mockData";
+import useDashboardQuery from "../../hooks/queries/useDashboardQuery";
+import LoadingSpinner from "../../components/layout/LoadingSpinner";
 
 // Dashboard Components
 import StatCard from "../../components/dashboard/StatCard";
@@ -19,25 +23,130 @@ import WeeklyAverages from "../../components/dashboard/WeeklyAverages";
 import AnomaliesLog from "../../components/dashboard/AnomaliesLog";
 
 const DashboardPage = () => {
-  const { t } = useTheme();
+  const { t, isDark } = useTheme();
   const navigate = useNavigate();
-
+  const { datasetId } = useParams();
   const { setActiveSession } = useGlobal();
 
-  // User will integrate data fetching here
-  const data = []; // Placeholder for actual data
+  const {
+    data: dashboardData,
+    isLoading,
+    error,
+  } = useDashboardQuery(datasetId);
+
   const handleClearSession = () => {
     localStorage.removeItem("active_session");
     setActiveSession(false);
     navigate("/");
   };
 
+  const chartData = useMemo(() => {
+    if (!dashboardData) return [];
+    const { analytics, forecast, processed_data } = dashboardData;
+    const combined = [];
+
+    // Add historical data
+    processed_data.forEach((item) => {
+      const date = new Date(item.ds);
+      const dateStr = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+
+      const anomaly = analytics.anomalies.find((a) => {
+        const aDate = new Date(a.ds);
+        return aDate.toDateString() === date.toDateString();
+      });
+
+      combined.push({
+        date: dateStr,
+        historical: item.y,
+        forecast: null,
+        anomaly: anomaly ? item.y : null,
+        anomalyType: anomaly ? anomaly.type : null,
+        anomalyStrength: anomaly ? anomaly.strength : null,
+        fullDate: date,
+      });
+    });
+
+    // Add forecast data
+    const lastHistoricalItem = processed_data[processed_data.length - 1];
+    const lastHistoricalDate = new Date(lastHistoricalItem.ds);
+
+    forecast.forEach((item) => {
+      const date = new Date(item.ds);
+
+      if (date.toDateString() === lastHistoricalDate.toDateString()) {
+        const lastCombinedItem = combined[combined.length - 1];
+        if (lastCombinedItem) {
+          lastCombinedItem.forecast = lastCombinedItem.historical;
+        }
+      } else if (date > lastHistoricalDate) {
+        const dateStr = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+        combined.push({
+          date: dateStr,
+          historical: null,
+          forecast: item.yhat,
+          anomaly: null,
+          fullDate: date,
+        });
+      }
+    });
+
+    return combined;
+  }, [dashboardData]);
+
+  if (isLoading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error || !dashboardData) {
+    return (
+      <div className="h-[60vh] flex flex-col items-center justify-center text-center space-y-4">
+        <AlertCircle className="w-12 h-12 text-red-500" />
+        <div>
+          <h3 className={`text-xl font-bold ${t.text}`}>
+            Failed to load dashboard
+          </h3>
+          <p className={t.textMuted}>
+            Please check your connection or try again later.
+          </p>
+        </div>
+        <button
+          onClick={() => window.location.reload()}
+          className={`px-6 py-2 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors`}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const { analytics, insights } = dashboardData;
+
+  // Prepare Seasonality Data
+  const seasonalityData = Object.entries(analytics.seasonality.distribution).map(
+    ([day, val]) => ({
+      day: day.substring(0, 3),
+      avg: val,
+    })
+  );
+
   return (
     <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
         <div>
           <h2 className={`text-2xl font-bold ${t.text}`}>Active Analysis</h2>
-          <p className={`${t.textMuted}`}>Reviewing Q1 Revenue Insights</p>
+          <p className={`${t.textMuted}`}>
+            Reviewing insights for dataset: {datasetId.substring(0, 8)}...
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -59,7 +168,7 @@ const DashboardPage = () => {
       <div
         className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex items-start gap-5 transition-all hover:shadow-md`}
       >
-        <div className={`p-3 rounded-xl mt-1 shrink-0 ${t.redSoft}`}>
+        <div className={`p-3 rounded-xl mt-1 shrink-0 ${t.primarySoft}`}>
           <Activity className="w-6 h-6" />
         </div>
         <div>
@@ -71,7 +180,7 @@ const DashboardPage = () => {
           <p
             className={`text-xl lg:text-2xl font-medium ${t.text} leading-snug`}
           >
-            {MOCK_INSIGHTS.summary}
+            {insights.summary}
           </p>
         </div>
       </div>
@@ -80,49 +189,50 @@ const DashboardPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard
           title="Overall Trend"
-          value="Decreasing (-18%)"
-          desc={MOCK_INSIGHTS.trend.text}
-          icon={TrendingDown}
-          colorClass={t.redSoft}
+          value={`${analytics.trend.direction.charAt(0).toUpperCase() + analytics.trend.direction.slice(1)} (${analytics.trend.strength})`}
+          desc={`Change of ${analytics.change.last_30d.toFixed(1)}% in last 30d`}
+          icon={analytics.trend.direction === "upwards" ? TrendingUp : TrendingDown}
+          colorClass={analytics.trend.direction === "upwards" ? t.emeraldSoft : t.redSoft}
         />
         <StatCard
           title="Anomalies"
-          value={`${MOCK_INSIGHTS.anomalies.count} Detected`}
-          desc={MOCK_INSIGHTS.anomalies.text}
+          value={`${analytics.anomaly_summary.count} Detected`}
+          desc={`${analytics.anomaly_summary.recent_count} in the last 7 days`}
           icon={AlertCircle}
-          colorClass={t.redSoft}
+          colorClass={analytics.anomaly_summary.count > 0 ? t.redSoft : t.emeraldSoft}
         />
         <StatCard
           title="Seasonality"
-          value="Weekly Pattern"
-          desc={MOCK_INSIGHTS.seasonality.text}
+          value={analytics.seasonality.dominant_period || "None"}
+          desc={analytics.seasonality.pattern}
           icon={Calendar}
           colorClass={t.blueSoft}
         />
         <StatCard
-          title="7-Day Forecast"
-          value="Continued Drop"
-          desc={MOCK_INSIGHTS.forecast.text}
+          title="Forecast"
+          value={analytics.forecast.trend.charAt(0).toUpperCase() + analytics.forecast.trend.slice(1)}
+          desc={`${analytics.forecast.change_pct.toFixed(1)}% expected change`}
           icon={Activity}
-          colorClass={t.amberSoft}
+          colorClass={analytics.forecast.trend === "upward" ? t.emeraldSoft : t.amberSoft}
         />
       </div>
 
       {/* Chart & Recommendations Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2">
-          <RevenueChart data={data} />
+          <RevenueChart data={chartData} />
         </div>
-        <Recommendations recommendations={MOCK_INSIGHTS.recommendations} />
+        <Recommendations recommendations={insights.recommendations} />
       </div>
 
       {/* Bottom Analytics Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <WeeklyAverages />
-        <AnomaliesLog data={data} />
+        <WeeklyAverages data={seasonalityData} />
+        <AnomaliesLog anomalies={analytics.anomalies} />
       </div>
     </div>
   );
 };
+
 
 export default DashboardPage;
