@@ -19,7 +19,7 @@
 
 ## Table of Contents
 
-1. [What Is Business AI Copilot?](#1-what-is-explainmydata)
+1. [What Is Business AI Copilot?](#1-what-is-Business-AI-Copilot)
 2. [The Problem We Solve](#2-the-problem-we-solve)
 3. [Why Existing Solutions Fall Short](#3-why-existing-solutions-fall-short)
 4. [Our Solution](#4-our-solution)
@@ -33,7 +33,7 @@
 12. [API Reference](#12-api-reference)
 13. [Database Design](#13-database-design)
 14. [Security & Ownership Model](#14-security--ownership-model)
-15. [Why Business AI Copilot Is Unique](#15-why-explainmydata-is-unique)
+15. [Why Business AI Copilot Is Unique](#15-why-Business-AI-Copilot-is-unique)
 16. [Competitive Comparison](#16-competitive-comparison)
 17. [Example Use Cases](#17-example-use-cases)
 18. [Scalability & Engineering Decisions](#18-scalability--engineering-decisions)
@@ -46,11 +46,11 @@
 
 Most businesses generate data every single day — sales transactions, orders, revenue, customer visits, inventory movement, web traffic, leads, bookings. The list goes on. But generating data and _understanding_ data are two fundamentally different things.
 
-**ExplainMyData** is an AI-powered analytics platform built to close that gap. It takes raw time-series business data — the kind that sits untouched in spreadsheets or CSV exports — and automatically runs it through a multi-stage intelligence pipeline: cleaning, forecasting, anomaly detection, seasonality analysis, root-cause reasoning, and finally a conversational AI copilot that answers questions about the data in plain language.
+**Business AI Copilot** is an AI-powered analytics platform built to close that gap. It takes raw time-series business data — the kind that sits untouched in spreadsheets or CSV exports — and automatically runs it through a multi-stage intelligence pipeline: cleaning, forecasting, anomaly detection, seasonality analysis, root-cause reasoning, and finally a conversational AI copilot that answers questions about the data in plain language.
 
-At its core, ExplainMyData is designed to answer the five questions every business leader actually cares about:
+At its core, Business AI Copilot is designed to answer the five questions every business leader actually cares about:
 
-| #   | Question                       | How ExplainMyData Answers It                              |
+| #   | Question                       | How Business AI Copilot Answers It                        |
 | --- | ------------------------------ | --------------------------------------------------------- |
 | 1   | **What is happening?**         | Automated trend detection, KPI dashboards, anomaly alerts |
 | 2   | **Why is it happening?**       | Rule-based + signal-driven reasoning engine               |
@@ -58,7 +58,7 @@ At its core, ExplainMyData is designed to answer the five questions every busine
 | 4   | **What should I do now?**      | Prioritized, context-aware recommendations                |
 | 5   | **Can you explain it simply?** | Groq-powered LLaMA 3.3 copilot grounded in your data      |
 
-Traditional analytics tools answer question one — they show you a chart. ExplainMyData answers all five.
+Traditional analytics tools answer question one — they show you a chart. Business AI Copilot answers all five.
 
 ---
 
@@ -95,7 +95,7 @@ Decision makers don't need more data. They need answers:
 > _Are our weekends consistently weak, or is this a one-time thing?_
 > _Should we increase inventory heading into next month?_
 
-ExplainMyData is engineered to answer these questions automatically, every time data is uploaded.
+Business AI Copilot is engineered to answer these questions automatically, every time data is uploaded.
 
 ---
 
@@ -130,13 +130,13 @@ Statistical forecasting tools do one thing well — they predict future values. 
 - No recommendations are attached — just a trendline
 - There's no conversational interface for follow-up questions
 
-**The gap is real.** Most businesses sit between these categories — too complex for a spreadsheet, not resourced enough for enterprise BI, and without the data science expertise to operationalize forecasting tools. ExplainMyData was built to fill exactly that gap.
+**The gap is real.** Most businesses sit between these categories — too complex for a spreadsheet, not resourced enough for enterprise BI, and without the data science expertise to operationalize forecasting tools. Business AI Copilot was built to fill exactly that gap.
 
 ---
 
 ## 4. Our Solution
 
-ExplainMyData unifies five analytical capabilities into a single automated pipeline that runs the moment data is uploaded:
+Business AI Copilot unifies five analytical capabilities into a single automated pipeline that runs the moment data is uploaded:
 
 ```
 Raw CSV Data
@@ -226,7 +226,7 @@ Anyone with time-series data and a desire to understand it — consultants, free
 
 ### 7.1 CSV Upload
 
-The entry point is intentionally simple: upload a CSV file. ExplainMyData accepts any time-series data, including:
+The entry point is intentionally simple: upload a CSV file. Business AI Copilot accepts any time-series data, including:
 
 - Daily or monthly sales data
 - Revenue exports from any POS or billing system
@@ -619,7 +619,7 @@ The chat system is implemented in `services/chat_service.py` and follows a delib
 
 A generic AI chatbot connected to raw data would be asked to analyze CSV rows, compute trends, identify anomalies, and generate recommendations — tasks that require statistical computation, not language modeling. The results would be inconsistent, slow, and prone to hallucination.
 
-ExplainMyData separates these concerns entirely. Statistical computation happens once, at upload time, in purpose-built Python engines. The LLM's only job is to explain, elaborate, and answer questions about pre-validated facts. The system prompt explicitly instructs the model:
+Business AI Copilot separates these concerns entirely. Statistical computation happens once, at upload time, in purpose-built Python engines. The LLM's only job is to explain, elaborate, and answer questions about pre-validated facts. The system prompt explicitly instructs the model:
 
 - Use ONLY the dashboard data provided
 - Never invent numbers, causes, trends, or events
@@ -773,11 +773,11 @@ A global `AppException` handler and a fallback `Exception` handler are registere
 
 ---
 
-## 15. Why ExplainMyData Is Unique
+## 15. Why Business AI Copilot Is Unique
 
-The business intelligence market is split between tools that are powerful but inaccessible, and tools that are accessible but shallow. ExplainMyData sits in a distinct category by combining capabilities that have historically existed in separate products:
+The business intelligence market is split between tools that are powerful but inaccessible, and tools that are accessible but shallow. Business AI Copilot sits in a distinct category by combining capabilities that have historically existed in separate products:
 
-| Capability                        | Standalone Tools       | ExplainMyData             |
+| Capability                        | Standalone Tools       | Business AI Copilot       |
 | --------------------------------- | ---------------------- | ------------------------- |
 | Data visualization and dashboards | BI platforms           | Built-in                  |
 | Time-series forecasting           | Prophet, statsmodels   | Built-in                  |
@@ -924,7 +924,7 @@ In production, the FastAPI app serves the React frontend's static build from the
 ```bash
 # Clone the repository
 git clone <repo-url>
-cd explainmydata
+cd Business AI Copilot
 
 # Install Python dependencies
 pip install -r requirements.txt
@@ -941,7 +941,7 @@ HOST=localhost
 PORT=8000
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/explainmydata
+DATABASE_URL=postgresql://user:password@localhost:5432/Business AI Copilot
 
 # Authentication
 JWT_SECRET_KEY=your-secure-random-secret-key
