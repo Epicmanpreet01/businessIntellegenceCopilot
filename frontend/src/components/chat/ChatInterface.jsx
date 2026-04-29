@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { useLocation, matchPath } from "react-router-dom";
 import { Send, Bot, User, Minimize2, X } from "lucide-react";
 import { toast } from "react-toastify";
@@ -20,6 +20,7 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
   const { t } = useTheme();
   const location = useLocation();
   const chatEndRef = useRef(null);
+  const textareaRef = useRef(null);
 
   const match = matchPath({ path: "/dashboard/:datasetId" }, location.pathname);
   const datasetId = match?.params?.datasetId;
@@ -49,11 +50,25 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
     }
   }, [chatMessages]);
 
-  const handleChatSubmit = (e) => {
-    e.preventDefault();
-    if (!chatInput.trim() || isMessagePending) return;
+  const adjustHeight = useCallback(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      const scrollHeight = textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 200)}px`;
+      textareaRef.current.style.overflowY = scrollHeight > 200 ? "auto" : "hidden";
+    }
+  }, []);
 
-    const userMsgContent = chatInput;
+  useEffect(() => {
+    adjustHeight();
+  }, [chatInput, adjustHeight]);
+
+  const handleChatSubmit = useCallback((e, directMessage = null) => {
+    if (e) e.preventDefault();
+    const messageToSend = directMessage || chatInput;
+    if (!messageToSend.trim() || isMessagePending) return;
+
+    const userMsgContent = messageToSend;
     const tempId = Date.now().toString();
     const userMsg = {
       id: tempId,
@@ -71,6 +86,10 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
       return [...prev, userMsg];
     });
     setChatInput("");
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.overflowY = "hidden";
+    }
 
     sendMessage(userMsgContent, {
       onError: (error) => {
@@ -80,7 +99,7 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
         );
       },
     });
-  };
+  }, [chatInput, isMessagePending, sendMessage]);
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 bg-transparent`}>
@@ -242,25 +261,42 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
       >
         <div className="flex flex-wrap gap-2 mb-3">
           <button
-            onClick={() => setChatInput("What was last week's trend?")}
+            onClick={() => handleChatSubmit(null, "What was last week's trend?")}
             className={`text-xs px-3 py-1.5 rounded-full transition-all duration-300 ${t.border} border ${t.textMuted} hover:${t.primaryText} hover:border-orange-300 hover:-translate-y-0.5`}
           >
             "What was last week's trend?"
           </button>
           <button
-            onClick={() => setChatInput("What will happen next week?")}
+            onClick={() => handleChatSubmit(null, "What will happen next week?")}
             className={`text-xs px-3 py-1.5 rounded-full transition-all duration-300 ${t.border} border ${t.textMuted} hover:${t.primaryText} hover:border-orange-300 hover:-translate-y-0.5`}
           >
             "Forecast for next week?"
           </button>
         </div>
-        <form onSubmit={handleChatSubmit} className="relative group">
-          <input
-            type="text"
+        <form onSubmit={handleChatSubmit} className="relative group w-full">
+          <textarea
+            ref={textareaRef}
+            rows={1}
             value={chatInput}
             onChange={(e) => setChatInput(e.target.value)}
+            onInput={adjustHeight}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleChatSubmit(e);
+              }
+            }}
             placeholder="Ask a question..."
-            className={`w-full pl-4 pr-12 py-3.5 rounded-xl focus:outline-none focus:ring-2 transition-all shadow-sm ${t.inputBg}`}
+            className={`block w-full pl-4 pr-12 py-3.5 rounded-xl focus:outline-none focus:ring-2 transition-all shadow-sm ${t.inputBg} resize-none custom-scrollbar`}
+            style={{
+              minHeight: "54px",
+              maxHeight: "200px",
+              overflowY: "hidden",
+              overflowX: "hidden",
+              wordBreak: "break-word",
+              overflowWrap: "anywhere",
+              whiteSpace: "pre-wrap",
+            }}
           />
           <button
             type="submit"

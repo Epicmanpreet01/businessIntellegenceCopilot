@@ -1,3 +1,4 @@
+import { useState, useCallback, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { useTheme } from "../../context/ThemeContext";
@@ -18,6 +19,44 @@ const MainLayout = ({ children }) => {
   } = useGlobal();
 
   const { mutate: logout } = useLogoutMutation();
+  const [chatSidebarWidth, setChatSidebarWidth] = useState(400);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const startResizing = useCallback(() => {
+    setIsDragging(true);
+  }, []);
+
+  const stopResizing = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const resize = useCallback((e) => {
+    if (!isDragging) return;
+    const newWidth = window.innerWidth - e.clientX;
+    if (newWidth > 300 && newWidth < 800) {
+      setChatSidebarWidth(newWidth);
+    }
+  }, [isDragging]);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener("mousemove", resize);
+      window.addEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    } else {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "default";
+      document.body.style.userSelect = "auto";
+    }
+    return () => {
+      window.removeEventListener("mousemove", resize);
+      window.removeEventListener("mouseup", stopResizing);
+      document.body.style.cursor = "default";
+      document.body.style.userSelect = "auto";
+    };
+  }, [isDragging, resize, stopResizing]);
 
   return (
     <div
@@ -51,8 +90,15 @@ const MainLayout = ({ children }) => {
       </div>
 
       <div
-        className={`transition-all duration-300 ease-in-out border-l ${t.border} ${chatMode === "sidebar" ? "w-80 lg:w-96" : "w-0 border-l-0 opacity-0 overflow-hidden"}`}
+        className={`relative border-l ${t.border} ${chatMode === "sidebar" ? "" : "w-0 border-l-0 opacity-0 overflow-hidden"} ${!isDragging ? "transition-all duration-300" : ""}`}
+        style={{ width: chatMode === "sidebar" ? `${chatSidebarWidth}px` : "0px" }}
       >
+        {chatMode === "sidebar" && (
+          <div
+            onMouseDown={startResizing}
+            className="absolute top-0 left-0 w-1.5 h-full cursor-col-resize hover:bg-orange-500/40 transition-colors z-30"
+          />
+        )}
         <ChatSidebar setChatMode={setChatMode} />
       </div>
     </div>
