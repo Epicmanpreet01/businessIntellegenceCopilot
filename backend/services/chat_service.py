@@ -109,7 +109,7 @@ def fetch_response(
       detail="AI response failed"
     )
 
-  save_message(
+  row = save_message(
     dataset_id,
     "assistant",
     response,
@@ -138,9 +138,7 @@ def fetch_response(
     history
   )
 
-  return {
-    "response": response
-  }
+  return MessageOut.model_validate(row)
 
 
 # Fetches analytics + insights from DB
@@ -262,6 +260,7 @@ def save_message(
   if commit:
     db.commit()
 
+  return row
 
 # Saves active dataset context + recent chat history
 # into Redis cache for faster future requests.

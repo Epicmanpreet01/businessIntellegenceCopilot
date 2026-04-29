@@ -49,7 +49,6 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/dashboard/:datasetId" element={<DashboardPage />} />
             <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/chat" element={<div>Chat Page placeholder</div>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </MainLayout>

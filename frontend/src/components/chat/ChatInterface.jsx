@@ -1,23 +1,84 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { useLocation, matchPath } from "react-router-dom";
 import { Send, Bot, User, Minimize2, X } from "lucide-react";
+import { toast } from "react-toastify";
 import { useTheme } from "../../context/ThemeContext";
+import LoadingSpinner from "../layout/LoadingSpinner";
+import useMessagesQuery from "../../hooks/queries/useMessagesQuery";
 
-const ChatInterface = ({
-  isFullscreen,
-  chatMessages,
-  chatInput,
-  setChatInput,
-  handleChatSubmit,
-  setChatMode,
-}) => {
+import useMessageMutation from "../../hooks/mutations/useMessageMutation";
+
+const INTRO_MESSAGE = {
+  role: "assistant",
+  content:
+    "Hi! I am your AI Business Copilot. Ask me anything about your current dataset or revenue trends.",
+};
+
+const ChatInterface = ({ isFullscreen, setChatMode }) => {
   const { t } = useTheme();
+  const location = useLocation();
   const chatEndRef = useRef(null);
+
+  const match = matchPath({ path: "/dashboard/:datasetId" }, location.pathname);
+  const datasetId = match?.params?.datasetId;
+
+  const { data: messagesData, isLoading } = useMessagesQuery(datasetId);
+
+  const { mutate: sendMessage, isPending: isMessagePending } =
+    useMessageMutation(datasetId);
+
+  const [chatMessages, setChatMessages] = useState([INTRO_MESSAGE]);
+  const [chatInput, setChatInput] = useState("");
+
+  useEffect(() => {
+    if (messagesData?.messages && messagesData.messages.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setChatMessages(messagesData.messages);
+    } else if (messagesData?.messages && messagesData.messages.length === 0) {
+      setChatMessages([INTRO_MESSAGE]);
+    } else if (!datasetId) {
+      setChatMessages([INTRO_MESSAGE]);
+    }
+  }, [messagesData, datasetId]);
 
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
+
+  const handleChatSubmit = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim() || isMessagePending) return;
+
+    const userMsgContent = chatInput;
+    const tempId = Date.now().toString();
+    const userMsg = {
+      id: tempId,
+      role: "user",
+      content: userMsgContent,
+      created_at: new Date().toISOString(),
+    };
+
+    // 1. Optimistic Update (Local State)
+    setChatMessages((prev) => {
+      // If only intro message exists, replace it
+      if (prev.length === 1 && prev[0].content === INTRO_MESSAGE.content) {
+        return [userMsg];
+      }
+      return [...prev, userMsg];
+    });
+    setChatInput("");
+
+    sendMessage(userMsgContent, {
+      onError: (error) => {
+        setChatMessages((prev) => prev.filter((msg) => msg.id !== tempId));
+        toast.error(
+          error?.response?.data?.detail || "Failed to get AI response",
+        );
+      },
+    });
+  };
 
   return (
     <div className={`flex flex-col h-full bg-transparent`}>
@@ -116,6 +177,11 @@ const ChatInterface = ({
               </div>
             </div>
           ))}
+        {isLoading && (
+          <div className="flex justify-center py-4">
+            <LoadingSpinner size="small" />
+          </div>
+        )}
         {!isFullscreen && <div ref={chatEndRef} />}
       </div>
 
@@ -124,10 +190,10 @@ const ChatInterface = ({
       >
         <div className="flex flex-wrap gap-2 mb-3">
           <button
-            onClick={() => setChatInput("Why did sales drop?")}
+            onClick={() => setChatInput("What was last week's trend?")}
             className={`text-xs px-3 py-1.5 rounded-full transition-all duration-300 ${t.border} border ${t.textMuted} hover:${t.primaryText} hover:border-orange-300 hover:-translate-y-0.5`}
           >
-            "Why did sales drop?"
+            "What was last week's trend?"
           </button>
           <button
             onClick={() => setChatInput("What will happen next week?")}
@@ -146,10 +212,14 @@ const ChatInterface = ({
           />
           <button
             type="submit"
-            disabled={!chatInput.trim()}
+            disabled={!chatInput.trim() || isMessagePending}
             className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors disabled:opacity-50 ${t.primary}`}
           >
-            <Send className="w-4 h-4" />
+            {isMessagePending ? (
+              <LoadingSpinner size="xsmall" />
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
           </button>
         </form>
       </div>

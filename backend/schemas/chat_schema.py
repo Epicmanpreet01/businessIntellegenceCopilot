@@ -13,6 +13,3 @@ class MessageOut(BaseModel):
 class MessagesOut(BaseModel):
   dataset_id : uuid.UUID
   messages: list[MessageOut]
-
-class ResponseOut(BaseModel):
-  response : str

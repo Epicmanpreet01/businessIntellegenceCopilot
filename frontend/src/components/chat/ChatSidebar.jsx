@@ -3,10 +3,6 @@ import { useTheme } from "../../context/ThemeContext";
 import ChatInterface from "./ChatInterface";
 
 const ChatSidebar = ({
-  chatMessages,
-  chatInput,
-  setChatInput,
-  handleChatSubmit,
   setChatMode,
 }) => {
   const { t } = useTheme();
@@ -48,10 +44,6 @@ const ChatSidebar = ({
       </div>
       <ChatInterface
         isFullscreen={false}
-        chatMessages={chatMessages}
-        chatInput={chatInput}
-        setChatInput={setChatInput}
-        handleChatSubmit={handleChatSubmit}
         setChatMode={setChatMode}
       />
     </div>
