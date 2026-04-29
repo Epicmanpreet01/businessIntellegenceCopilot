@@ -12,6 +12,7 @@ class Settings(BaseSettings):
   MODE: str = "development"
   PORT: int = 8000
   HOST: str = "localhost"
+  REDIS_URL: str | None = None
   REDIS_PORT: int = 6379
   REDIS_HOST: str = "localhost"
   JWT_SECRET_KEY: str

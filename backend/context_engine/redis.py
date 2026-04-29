@@ -1,4 +1,14 @@
 from redis import Redis
 from core.config import settings
 
-context_engine = Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, decode_responses=True)
+if settings.REDIS_URL:
+  context_engine = Redis.from_url(
+    settings.REDIS_URL,
+    decode_responses=True
+  )
+else:
+  context_engine = Redis(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    decode_responses=True
+  )
