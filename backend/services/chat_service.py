@@ -28,7 +28,7 @@ def fetch_messages(
   stmt = (
     select(Message)
     .where(
-      Message.dataset_id == dataset_id
+      Message.dataset_id == dataset_id,
     )
     .order_by(
       Message.created_at.asc()
@@ -139,7 +139,6 @@ def fetch_response(
   )
 
   return MessageOut.model_validate(row)
-
 
 # Fetches analytics + insights from DB
 # and converts them into reusable LLM context text.

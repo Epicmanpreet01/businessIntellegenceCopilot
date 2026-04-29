@@ -3,6 +3,8 @@ import { useLocation, matchPath } from "react-router-dom";
 import { Send, Bot, User, Minimize2, X } from "lucide-react";
 import { toast } from "react-toastify";
 import { useTheme } from "../../context/ThemeContext";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import LoadingSpinner from "../layout/LoadingSpinner";
 import useMessagesQuery from "../../hooks/queries/useMessagesQuery";
 
@@ -81,7 +83,7 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
   };
 
   return (
-    <div className={`flex flex-col h-full bg-transparent`}>
+    <div className={`flex flex-col flex-1 min-h-0 bg-transparent`}>
       {isFullscreen && (
         <div
           className={`flex items-start justify-between mb-6 pb-6 border-b ${t.border}`}
@@ -141,7 +143,43 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
                       : `${t.botMsg} rounded-tl-none`
                   }`}
                 >
-                  {msg.content}
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({ ...props }) => (
+                        <h1 className="text-xl font-bold mb-3 mt-4 first:mt-0" {...props} />
+                      ),
+                      h2: ({ ...props }) => (
+                        <h2 className="text-lg font-bold mb-2 mt-3 first:mt-0" {...props} />
+                      ),
+                      h3: ({ ...props }) => (
+                        <h3 className="text-base font-bold mb-2 mt-2 first:mt-0" {...props} />
+                      ),
+                      p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                      ul: ({ ...props }) => (
+                        <ul className="list-disc ml-5 mb-3 space-y-1" {...props} />
+                      ),
+                      ol: ({ ...props }) => (
+                        <ol className="list-decimal ml-5 mb-3 space-y-1" {...props} />
+                      ),
+                      li: ({ ...props }) => <li className="mb-0.5" {...props} />,
+                      strong: ({ ...props }) => <strong className="font-bold" {...props} />,
+                      code: ({ inline, ...props }) =>
+                        inline ? (
+                          <code
+                            className="px-1.5 py-0.5 rounded bg-black/5 font-mono text-xs"
+                            {...props}
+                          />
+                        ) : (
+                          <code
+                            className="block p-3 rounded bg-black/5 font-mono text-xs overflow-x-auto my-2"
+                            {...props}
+                          />
+                        ),
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
                 </div>
               </div>
             ))}
@@ -173,7 +211,21 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
                     : `${t.botMsg} rounded-tl-none`
                 }`}
               >
-                {msg.content}
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    p: ({ ...props }) => <p className="mb-1.5 last:mb-0" {...props} />,
+                    ul: ({ ...props }) => (
+                      <ul className="list-disc ml-4 mb-2 space-y-0.5" {...props} />
+                    ),
+                    ol: ({ ...props }) => (
+                      <ol className="list-decimal ml-4 mb-2 space-y-0.5" {...props} />
+                    ),
+                    strong: ({ ...props }) => <strong className="font-bold" {...props} />,
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
               </div>
             </div>
           ))}

@@ -39,7 +39,7 @@ const MainLayout = ({ children }) => {
         />
 
         <div
-          className="flex-1 overflow-y-auto px-6 lg:px-8 pb-6 lg:pb-8 pt-24 custom-scrollbar"
+          className={`flex-1 ${chatMode === "fullscreen" ? "flex flex-col overflow-hidden" : "overflow-y-auto"} px-6 lg:px-8 pb-6 lg:pb-8 pt-24 custom-scrollbar`}
           onScroll={handleScroll}
         >
           {chatMode === "fullscreen" ? (
