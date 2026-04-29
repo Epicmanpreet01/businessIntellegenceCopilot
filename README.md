@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧠 ExplainMyData
+# Business AI Copilot
 
 ### AI-Powered Business Intelligence for Everyone
 
@@ -17,9 +17,9 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
-1. [What Is ExplainMyData?](#1-what-is-explainmydata)
+1. [What Is Business AI Copilot?](#1-what-is-explainmydata)
 2. [The Problem We Solve](#2-the-problem-we-solve)
 3. [Why Existing Solutions Fall Short](#3-why-existing-solutions-fall-short)
 4. [Our Solution](#4-our-solution)
@@ -33,7 +33,7 @@
 12. [API Reference](#12-api-reference)
 13. [Database Design](#13-database-design)
 14. [Security & Ownership Model](#14-security--ownership-model)
-15. [Why ExplainMyData Is Unique](#15-why-explainmydata-is-unique)
+15. [Why Business AI Copilot Is Unique](#15-why-explainmydata-is-unique)
 16. [Competitive Comparison](#16-competitive-comparison)
 17. [Example Use Cases](#17-example-use-cases)
 18. [Scalability & Engineering Decisions](#18-scalability--engineering-decisions)
@@ -42,21 +42,21 @@
 
 ---
 
-## 1. What Is ExplainMyData?
+## 1. What Is Business AI Copilot?
 
-Most businesses generate data every single day — sales transactions, orders, revenue, customer visits, inventory movement, web traffic, leads, bookings. The list goes on. But generating data and *understanding* data are two fundamentally different things.
+Most businesses generate data every single day — sales transactions, orders, revenue, customer visits, inventory movement, web traffic, leads, bookings. The list goes on. But generating data and _understanding_ data are two fundamentally different things.
 
 **ExplainMyData** is an AI-powered analytics platform built to close that gap. It takes raw time-series business data — the kind that sits untouched in spreadsheets or CSV exports — and automatically runs it through a multi-stage intelligence pipeline: cleaning, forecasting, anomaly detection, seasonality analysis, root-cause reasoning, and finally a conversational AI copilot that answers questions about the data in plain language.
 
 At its core, ExplainMyData is designed to answer the five questions every business leader actually cares about:
 
-| # | Question | How ExplainMyData Answers It |
-|---|----------|------------------------------|
-| 1 | **What is happening?** | Automated trend detection, KPI dashboards, anomaly alerts |
-| 2 | **Why is it happening?** | Rule-based + signal-driven reasoning engine |
-| 3 | **What will happen next?** | Prophet-based time-series forecasting |
-| 4 | **What should I do now?** | Prioritized, context-aware recommendations |
-| 5 | **Can you explain it simply?** | Groq-powered LLaMA 3.3 copilot grounded in your data |
+| #   | Question                       | How ExplainMyData Answers It                              |
+| --- | ------------------------------ | --------------------------------------------------------- |
+| 1   | **What is happening?**         | Automated trend detection, KPI dashboards, anomaly alerts |
+| 2   | **Why is it happening?**       | Rule-based + signal-driven reasoning engine               |
+| 3   | **What will happen next?**     | Prophet-based time-series forecasting                     |
+| 4   | **What should I do now?**      | Prioritized, context-aware recommendations                |
+| 5   | **Can you explain it simply?** | Groq-powered LLaMA 3.3 copilot grounded in your data      |
 
 Traditional analytics tools answer question one — they show you a chart. ExplainMyData answers all five.
 
@@ -67,29 +67,33 @@ Traditional analytics tools answer question one — they show you a chart. Expla
 Data is only valuable when it informs decisions. For most businesses, that chain breaks somewhere between "the data exists" and "we know what to do about it."
 
 ### Small Businesses
+
 - Sales data lives in CSV exports from a POS system but is never systematically analyzed
 - There's no dedicated analyst, no BI tool, and no forecasting system in place
 - Decisions are made on gut instinct or last month's memory
 - Problems are noticed weeks after they start — often too late to course-correct
 
 ### Growing Businesses
+
 - Reporting is a manually assembled weekly ritual consuming hours of time
 - Multiple teams maintain their own spreadsheets with conflicting numbers
 - Trends only become visible after they've already caused damage
 - There's no forward-looking signal — just a rearview mirror
 
 ### Analysts
+
 - The majority of analytical time is spent cleaning and wrangling data, not generating insights
 - Executives send repeat requests for the same summaries, charts, and slide decks
 - Communicating findings requires re-explaining statistical concepts to non-technical audiences
 
 ### Decision Makers
+
 Decision makers don't need more data. They need answers:
 
-> *Why did revenue drop last week?*
-> *Is this decline temporary or a structural problem?*
-> *Are our weekends consistently weak, or is this a one-time thing?*
-> *Should we increase inventory heading into next month?*
+> _Why did revenue drop last week?_
+> _Is this decline temporary or a structural problem?_
+> _Are our weekends consistently weak, or is this a one-time thing?_
+> _Should we increase inventory heading into next month?_
 
 ExplainMyData is engineered to answer these questions automatically, every time data is uploaded.
 
@@ -105,7 +109,7 @@ Spreadsheets are genuinely useful for storage and basic arithmetic — but they 
 - Charts are static snapshots with no interpretation attached
 - There is no native anomaly detection — outliers are invisible unless you're already looking
 - Forecasting requires statistical knowledge that most users don't have
-- There's no mechanism to ask a spreadsheet *why* something happened
+- There's no mechanism to ask a spreadsheet _why_ something happened
 
 ### Traditional BI Platforms
 
@@ -121,7 +125,7 @@ Enterprise BI tools are powerful in the hands of trained users, but carry signif
 
 Statistical forecasting tools do one thing well — they predict future values. But prediction alone isn't enough:
 
-- They output numbers without explaining *why* those numbers are what they are
+- They output numbers without explaining _why_ those numbers are what they are
 - They rarely connect forecasts to root causes or operational context
 - No recommendations are attached — just a trendline
 - There's no conversational interface for follow-up questions
@@ -168,7 +172,7 @@ Raw CSV Data
 └──────────────────────┘
 ```
 
-Instead of giving users *more charts*, we give them *clarity*.
+Instead of giving users _more charts_, we give them _clarity_.
 
 ---
 
@@ -176,15 +180,15 @@ Instead of giving users *more charts*, we give them *clarity*.
 
 ### Simplicity Without Sacrificing Intelligence
 
-The platform is built on the belief that analytical complexity should be *invisible* to the end user. Users don't need to understand STL decomposition, Prophet model fitting, z-score anomaly thresholds, or prompt engineering. All of that lives inside the intelligence engines. What users see is an upload button, a dashboard, and a chat window.
+The platform is built on the belief that analytical complexity should be _invisible_ to the end user. Users don't need to understand STL decomposition, Prophet model fitting, z-score anomaly thresholds, or prompt engineering. All of that lives inside the intelligence engines. What users see is an upload button, a dashboard, and a chat window.
 
 ### Decision-First Design
 
-Every output — every KPI card, insight summary, forecast chart, and chat response — is designed around one question: *does this help the user make a better decision?* Metrics that don't drive action aren't shown. Insights that can't be operationalized aren't surfaced.
+Every output — every KPI card, insight summary, forecast chart, and chat response — is designed around one question: _does this help the user make a better decision?_ Metrics that don't drive action aren't shown. Insights that can't be operationalized aren't surfaced.
 
 ### Explainability as a First-Class Feature
 
-Forecasts and recommendations are only useful if users trust them. The system never just says *"revenue is declining"* — it says *why*, with specific signals (weekend dips, anomaly count, 30-day change %) and a confidence score (high / medium / low) tied to how strongly those signals support the conclusion.
+Forecasts and recommendations are only useful if users trust them. The system never just says _"revenue is declining"_ — it says _why_, with specific signals (weekend dips, anomaly count, 30-day change %) and a confidence score (high / medium / low) tied to how strongly those signals support the conclusion.
 
 ### Grounded AI, Not Guessing
 
@@ -195,6 +199,7 @@ The AI copilot never invents trends or hallucinates numbers. Every response is g
 ## 6. Who This Is For
 
 ### Small & Medium Businesses
+
 - Retail shops and brick-and-mortar stores (POS sales data)
 - E-commerce brands (orders, revenue, conversion)
 - Restaurants and food service (covers, revenue, item performance)
@@ -204,6 +209,7 @@ The AI copilot never invents trends or hallucinates numbers. Every response is g
 - Subscription businesses (MRR, churn, growth rate)
 
 ### Teams Within Larger Organizations
+
 - **Operations managers** who need to spot problems before they escalate
 - **Founders and executives** who need a fast pulse on business health
 - **Finance teams** running monthly or quarterly reporting cycles
@@ -211,6 +217,7 @@ The AI copilot never invents trends or hallucinates numbers. Every response is g
 - **Analysts** who want to spend less time on rote cleanup and more time on insight
 
 ### Individuals
+
 Anyone with time-series data and a desire to understand it — consultants, freelancers, researchers, students.
 
 ---
@@ -245,6 +252,7 @@ Date column selection evaluates each non-numeric column by parsing a sample of i
 Metric column selection scores each numeric column by: completeness (proportion of non-null rows), variance (penalizes constant columns), non-zero ratio, and a weighted keyword match bonus.
 
 **After column selection, the engine:**
+
 - Normalizes column names (strips non-alpha characters, lowercases)
 - Drops null or unparseable rows
 - Detects the correct aggregation function per column (`sum` for revenue/sales/profit, `mean` for price/discount/rate)
@@ -253,6 +261,7 @@ Metric column selection scores each numeric column by: completeness (proportion 
 - Sorts chronologically and validates that at least 2 unique values remain
 
 **Frequency inference** examines the most common time gap between consecutive rows:
+
 - 1 day → `D` (daily)
 - 6–8 days → `W` (weekly)
 - 28–31 days → `M` (monthly)
@@ -278,11 +287,13 @@ The analytics engine is the factual core of the platform. It extracts structured
 **Trend Detection**
 
 Linear regression (`np.polyfit`) is applied across the full time series. The slope determines direction:
+
 - Slope > 0 → `upwards`
 - Slope < 0 → `downwards`
 - Slope ≈ 0 → `flat`
 
 Strength is classified by absolute slope magnitude:
+
 - `> 5` → strong
 - `> 2` → moderate
 - otherwise → weak
@@ -308,6 +319,7 @@ Uses Seasonal-Trend decomposition using LOESS (STL) with `robust=True` to extrac
 Each anomaly record includes: `{ ds, y, type (spike/drop), severity, z_score }`.
 
 The period parameter adapts to data frequency:
+
 - Daily → 7 (weekly seasonality)
 - Weekly → 52 (yearly)
 - Monthly → 12 (yearly)
@@ -362,6 +374,7 @@ The `InsightsEngine` takes the structured analytics output and translates it int
 **Summary generation** composes a natural-language sentence by combining trend direction + strength + seasonality pattern + 30-day change percentage.
 
 **Reasons list** is built by evaluating every signal combination:
+
 - Trend direction and strength → baseline narrative
 - `last_7d` and `last_30d` thresholds (±10%, ±25%) → severity-tiered change reasons
 - Momentum comparison (`last_7d` vs `last_30d`) → improving or weakening momentum
@@ -372,6 +385,7 @@ The `InsightsEngine` takes the structured analytics output and translates it int
 - Combined signal combinations (e.g., downward trend + negative recent change + downward forecast = compounding decline)
 
 **Recommendations list** follows the same multi-signal logic and maps every detected condition to an actionable business response:
+
 - Declining trend → acquisition/retention actions
 - Strong decline → urgent pricing/product audit
 - Weekend dips → weekend promotions, staffing review
@@ -408,6 +422,7 @@ All data is pre-computed. The dashboard endpoint performs zero analytical comput
 The chat system uses Groq's API with the `llama-3.3-70b-versatile` model. Every response is grounded in pre-computed analytics — the LLM never sees raw data or is asked to calculate anything. Instead, the system prompt is constructed from the stored analytics and insights and injected as the leading system message on every API call.
 
 The system prompt defines response format rules by question type:
+
 - **WHY questions** → `## Cause / ## Evidence / ## Action`
 - **WHAT happened** → `## Summary / ## Key Metrics / ## Meaning`
 - **WHAT should I do** → `## Top Actions / ## Priority / ## Expected Impact`
@@ -458,37 +473,37 @@ Step 15: POST /api/chats/{id} → chat messages grounded in cached context
 
 ### Backend Stack
 
-| Component | Technology | Details |
-|-----------|------------|---------|
-| Web Framework | FastAPI | Async Python API server with automatic OpenAPI docs |
-| Language | Python 3.x | Core application logic |
-| ORM | SQLAlchemy 2.x | Mapped classes with `Mapped` / `mapped_column` syntax |
-| Database | PostgreSQL | Primary store — all processed outputs persisted here |
-| Cache | Redis | Analytics context + chat history caching per user session |
-| Validation | Pydantic v2 | Request/response schema validation with `model_validate` |
-| Auth | python-jose | JWT token encoding/decoding |
-| Password Hashing | bcrypt | Secure password storage |
+| Component        | Technology     | Details                                                   |
+| ---------------- | -------------- | --------------------------------------------------------- |
+| Web Framework    | FastAPI        | Async Python API server with automatic OpenAPI docs       |
+| Language         | Python 3.x     | Core application logic                                    |
+| ORM              | SQLAlchemy 2.x | Mapped classes with `Mapped` / `mapped_column` syntax     |
+| Database         | PostgreSQL     | Primary store — all processed outputs persisted here      |
+| Cache            | Redis          | Analytics context + chat history caching per user session |
+| Validation       | Pydantic v2    | Request/response schema validation with `model_validate`  |
+| Auth             | python-jose    | JWT token encoding/decoding                               |
+| Password Hashing | bcrypt         | Secure password storage                                   |
 
 ### Analytics Stack
 
-| Component | Technology | Role |
-|-----------|------------|------|
-| Data Processing | Pandas | DataFrame manipulation, cleaning, aggregation |
-| Numerical Analysis | NumPy | Linear regression (polyfit), variance computation |
-| Forecasting | Prophet | Time-series modeling with trend + seasonality + holidays |
-| Decomposition | statsmodels STL | Seasonal-trend decomposition for anomaly and seasonality detection |
-| Date Parsing | python-dateutil | Fuzzy date parsing for flexible column detection |
+| Component          | Technology      | Role                                                               |
+| ------------------ | --------------- | ------------------------------------------------------------------ |
+| Data Processing    | Pandas          | DataFrame manipulation, cleaning, aggregation                      |
+| Numerical Analysis | NumPy           | Linear regression (polyfit), variance computation                  |
+| Forecasting        | Prophet         | Time-series modeling with trend + seasonality + holidays           |
+| Decomposition      | statsmodels STL | Seasonal-trend decomposition for anomaly and seasonality detection |
+| Date Parsing       | python-dateutil | Fuzzy date parsing for flexible column detection                   |
 
 ### AI Layer
 
-| Component | Details |
-|-----------|---------|
-| LLM Provider | Groq API |
-| Model | `llama-3.3-70b-versatile` |
+| Component        | Details                                                     |
+| ---------------- | ----------------------------------------------------------- |
+| LLM Provider     | Groq API                                                    |
+| Model            | `llama-3.3-70b-versatile`                                   |
 | Context Strategy | Pre-computed analytics + insights injected as system prompt |
-| History | Last 10 messages included in every API call |
-| Caching | Redis `hset` with 1-hour TTL per user session |
-| Temperature | 0.4 (factual, consistent, low hallucination risk) |
+| History          | Last 10 messages included in every API call                 |
+| Caching          | Redis `hset` with 1-hour TTL per user session               |
+| Temperature      | 0.4 (factual, consistent, low hallucination risk)           |
 
 ### Project Structure
 
@@ -536,6 +551,7 @@ Step 15: POST /api/chats/{id} → chat messages grounded in cached context
 **Responsibility:** Transform any raw CSV into a clean, model-ready `{ ds, y }` time series.
 
 Key design decisions:
+
 - **Fuzzy matching** over rigid column name requirements — works with messy real-world exports
 - **Weighted scoring** for metric column selection — prioritizes revenue over price over discount
 - **Aggregation inference** — detects whether to `sum` or `mean` based on the metric type before grouping duplicate dates
@@ -548,6 +564,7 @@ Key design decisions:
 **Responsibility:** Generate future predictions from clean historical data using Prophet.
 
 Key design decisions:
+
 - **Dynamic period sizing** — `max(100, len(data) // 20)` scales forecast horizon with dataset length
 - **Full history included** — enables seamless historical + future chart rendering on the frontend
 - **Frequency-aware** — passes the inferred `D`/`W`/`M` freq directly to `make_future_dataframe`
@@ -559,6 +576,7 @@ Key design decisions:
 **Responsibility:** Extract structured analytical signals from historical + forecast data.
 
 Key design decisions:
+
 - **STL with `robust=True`** — resistant to outliers in both anomaly detection and seasonality decomposition
 - **Frequency-normalized windows** — all window sizes (7d, 30d) are converted to the correct number of data points for the inferred frequency
 - **Minimum data guards** — every computation checks `len(df) >= max(period * 2, 8)` before running to avoid errors on small datasets
@@ -571,6 +589,7 @@ Key design decisions:
 **Responsibility:** Translate analytics signals into human-readable reasoning and recommendations.
 
 Key design decisions:
+
 - **Entirely rule-based** — no LLM involved in generating insights; every output sentence is deterministically derived from signal thresholds
 - **Multi-signal combination logic** — cross-checks trend + change + anomalies + forecast together to produce compounding narrative (e.g., "decline visible historically, recently, and in forecast")
 - **Deduplication** — a `seen` set prevents the same reason or recommendation from appearing twice even when triggered by multiple signal paths
@@ -594,7 +613,7 @@ The chat system is implemented in `services/chat_service.py` and follows a delib
 7. Both are committed atomically
 8. The Redis cache is updated with the new history (capped at 10 messages) and a 1-hour TTL
 
-**Cache warming:** When the dashboard endpoint is called, a FastAPI `BackgroundTask` (`warm_dashboard_chat_state`) pre-populates the Redis cache with the analytics context and existing message history *before* the user opens the chat. This means the first chat message is served from cache, not from a cold database fetch.
+**Cache warming:** When the dashboard endpoint is called, a FastAPI `BackgroundTask` (`warm_dashboard_chat_state`) pre-populates the Redis cache with the analytics context and existing message history _before_ the user opens the chat. This means the first chat message is served from cache, not from a cold database fetch.
 
 ### Why This Approach Is Better Than Generic AI Chat
 
@@ -679,15 +698,15 @@ The POST body is a raw string (`Annotated[str, Body()]`). The response returns o
 
 ### Schema Overview
 
-| Table | Primary Key | Key Columns |
-|-------|------------|-------------|
-| `users` | `id` (UUID) | `name`, `email` (unique), `password_hash`, `created_at` |
-| `datasets` | `id` (UUID) | `user_id` (FK), `name`, `length`, `freq`, `file_size`, `created_at` |
-| `processed_data` | `id` (UUID) | `dataset_id` (FK), `ds`, `y` |
-| `forecasts` | `id` (UUID) | `dataset_id` (FK), `ds`, `yhat` |
-| `analytics` | `dataset_id` (PK/FK) | `trend`, `change`, `anomalies`, `anomaly_summary`, `seasonality`, `forecast` (all JSONB) |
-| `insights` | `dataset_id` (PK/FK) | `summary`, `reasons`, `recommendations`, `confidence` |
-| `messages` | `id` (UUID) | `dataset_id` (FK), `role`, `content`, `created_at` |
+| Table            | Primary Key          | Key Columns                                                                              |
+| ---------------- | -------------------- | ---------------------------------------------------------------------------------------- |
+| `users`          | `id` (UUID)          | `name`, `email` (unique), `password_hash`, `created_at`                                  |
+| `datasets`       | `id` (UUID)          | `user_id` (FK), `name`, `length`, `freq`, `file_size`, `created_at`                      |
+| `processed_data` | `id` (UUID)          | `dataset_id` (FK), `ds`, `y`                                                             |
+| `forecasts`      | `id` (UUID)          | `dataset_id` (FK), `ds`, `yhat`                                                          |
+| `analytics`      | `dataset_id` (PK/FK) | `trend`, `change`, `anomalies`, `anomaly_summary`, `seasonality`, `forecast` (all JSONB) |
+| `insights`       | `dataset_id` (PK/FK) | `summary`, `reasons`, `recommendations`, `confidence`                                    |
+| `messages`       | `id` (UUID)          | `dataset_id` (FK), `role`, `content`, `created_at`                                       |
 
 All foreign keys use `ondelete="CASCADE"` — deleting a dataset removes all downstream records automatically.
 
@@ -743,12 +762,12 @@ stmt = select(Analytics).join(Datasets, Analytics.dataset_id == Datasets.id).whe
 
 Custom typed exceptions map to specific HTTP status codes:
 
-| Exception | Status |
-|-----------|--------|
-| `BadRequestException` | 400 |
-| `UnauthorizedException` | 401 |
-| `NotFoundException` | 404 |
-| `ConflictException` | 409 |
+| Exception               | Status |
+| ----------------------- | ------ |
+| `BadRequestException`   | 400    |
+| `UnauthorizedException` | 401    |
+| `NotFoundException`     | 404    |
+| `ConflictException`     | 409    |
 
 A global `AppException` handler and a fallback `Exception` handler are registered on the FastAPI app to ensure consistent error response formatting.
 
@@ -758,14 +777,14 @@ A global `AppException` handler and a fallback `Exception` handler are registere
 
 The business intelligence market is split between tools that are powerful but inaccessible, and tools that are accessible but shallow. ExplainMyData sits in a distinct category by combining capabilities that have historically existed in separate products:
 
-| Capability | Standalone Tools | ExplainMyData |
-|------------|-----------------|---------------|
-| Data visualization and dashboards | BI platforms | ✅ Built-in |
-| Time-series forecasting | Prophet, statsmodels | ✅ Built-in |
-| Anomaly detection | Data science libraries | ✅ Built-in (STL) |
-| Seasonality analysis | statsmodels | ✅ Built-in (STL) |
-| Business reasoning from signals | Custom logic | ✅ Built-in (InsightsEngine) |
-| Conversational AI | Generic chatbots | ✅ Built-in, grounded |
+| Capability                        | Standalone Tools       | ExplainMyData             |
+| --------------------------------- | ---------------------- | ------------------------- |
+| Data visualization and dashboards | BI platforms           | Built-in                  |
+| Time-series forecasting           | Prophet, statsmodels   | Built-in                  |
+| Anomaly detection                 | Data science libraries | Built-in (STL)            |
+| Seasonality analysis              | statsmodels            | Built-in (STL)            |
+| Business reasoning from signals   | Custom logic           | Built-in (InsightsEngine) |
+| Conversational AI                 | Generic chatbots       | Built-in, grounded        |
 
 **The integration is the product.** Any one of these capabilities in isolation is useful. All six working together, automatically, on data you uploaded five minutes ago — that's the differentiator.
 
@@ -777,48 +796,48 @@ The business intelligence market is split between tools that are powerful but in
 
 ## 16. Competitive Comparison
 
-| Capability | Spreadsheet | Traditional BI | Forecast Tool | **ExplainMyData** |
-|------------|:-----------:|:--------------:|:-------------:|:-----------------:|
-| Upload CSV | ✅ | ✅ | ✅ | ✅ |
-| Auto-detect and clean data | ⚠️ Manual | ⚠️ Partial | ⚠️ Limited | ✅ Full (fuzzy matching + scoring) |
-| Frequency inference | 🔴 No | 🔴 No | 🔧 Manual | ✅ Automatic |
-| Forecast future values | 🔧 Manual formulas | 🔴 Rare | ✅ | ✅ (Prophet) |
-| Trend detection | 🔧 Manual | ⚠️ Partial | 🔴 No | ✅ (linear regression) |
-| Anomaly detection | 🔧 Manual | ⚠️ Partial | ⚠️ Limited | ✅ (STL z-score) |
-| Seasonality analysis | 🔧 Manual | ⚠️ Partial | ⚠️ Limited | ✅ (STL decomposition) |
-| Root-cause reasoning | 🔴 No | 🔴 No | 🔴 No | ✅ (rule-based signals) |
-| Actionable recommendations | 🔴 No | 🔴 No | 🔴 No | ✅ |
-| AI chat explanations | 🔴 No | ⚠️ Limited | 🔴 No | ✅ Grounded (Groq / LLaMA 3.3) |
-| Non-technical friendly | ⚠️ Medium | 🔴 Low | ⚠️ Medium | ✅ High |
-| Time to first insight | 🔴 Hours | ⚠️ Days | ⚠️ Hours | ✅ Seconds |
+| Capability                 |   Spreadsheet   | Traditional BI | Forecast Tool |     **Business AI Copilot**     |
+| -------------------------- | :-------------: | :------------: | :-----------: | :-----------------------------: |
+| Upload CSV                 |       Yes       |      Yes       |      Yes      |               Yes               |
+| Auto-detect and clean data |     Manual      |    Partial     |    Limited    | Full (fuzzy matching + scoring) |
+| Frequency inference        |       No        |       No       |    Manual     |            Automatic            |
+| Forecast future values     | Manual formulas |      Rare      |      Yes      |          Yes (Prophet)          |
+| Trend detection            |     Manual      |    Partial     |      No       |     Yes (linear regression)     |
+| Anomaly detection          |     Manual      |    Partial     |    Limited    |        Yes (STL z-score)        |
+| Seasonality analysis       |     Manual      |    Partial     |    Limited    |     Yes (STL decomposition)     |
+| Root-cause reasoning       |       No        |       No       |      No       |    Yes (rule-based signals)     |
+| Actionable recommendations |       No        |       No       |      No       |               Yes               |
+| AI chat explanations       |       No        |    Limited     |      No       |   Grounded (Groq / LLaMA 3.3)   |
+| Non-technical friendly     |     Medium      |      Low       |    Medium     |              High               |
+| Time to first insight      |      Hours      |      Days      |     Hours     |             Seconds             |
 
 ---
 
 ## 17. Example Use Cases
 
-### 🛍️ Retail Shop — Diagnosing a Sales Slump
+### Retail Shop — Diagnosing a Sales Slump
 
-A retail store owner exports their weekly POS data as a CSV. Within seconds, ExplainMyData detects a consistent weekend dip in revenue (STL seasonality: `weekend dips`, strength: `medium`), two high-severity anomalous drops in the past month (z-scores of -4.1 and -3.8), and a Prophet forecast projecting continued softness over the next 8 weeks.
+A retail store owner exports their weekly POS data as a CSV. Within seconds, Business AI Copilot detects a consistent weekend dip in revenue (STL seasonality: `weekend dips`, strength: `medium`), two high-severity anomalous drops in the past month (z-scores of -4.1 and -3.8), and a Prophet forecast projecting continued softness over the next 8 weeks.
 
 The InsightsEngine surfaces: "Weekend revenue is consistently below weekday average. One or more severe drops were detected. Forecast suggests near-term softening."
 
 The recommendations: run targeted weekend promotions, investigate the two anomaly dates for operational issues, and prepare contingency plans for the forecast period.
 
-The owner opens the chat and asks: *"Should I be worried about the drop on November 14th?"* The copilot responds with a structured breakdown — the drop is classified as high-severity, is isolated (not part of a trend), and the recommendation is to investigate operational logs for that date before drawing conclusions.
+The owner opens the chat and asks: _"Should I be worried about the drop on November 14th?"_ The copilot responds with a structured breakdown — the drop is classified as high-severity, is isolated (not part of a trend), and the recommendation is to investigate operational logs for that date before drawing conclusions.
 
 ---
 
-### 📦 E-commerce Brand — Scaling Into Growth
+### E-commerce Brand — Scaling Into Growth
 
 An e-commerce brand uploads three months of daily order history. The analytics engine detects strong upward trend (slope strength: `strong`), `+18.4%` over the last 30 days, no anomalies, and a forecast projecting a further `+22%` over the next month.
 
 The InsightsEngine generates: "Growth is consistent across historical, recent, and forecast signals." Recommendations: increase ad spend, pre-build inventory, scale top-performing channels.
 
-The brand asks the copilot: *"Is this growth sustainable?"* It responds with the supporting evidence — strong trend, consistent momentum, positive forecast — while noting no anomalies that might suggest the growth is artificial or fragile.
+The brand asks the copilot: _"Is this growth sustainable?"_ It responds with the supporting evidence — strong trend, consistent momentum, positive forecast — while noting no anomalies that might suggest the growth is artificial or fragile.
 
 ---
 
-### 📊 Analyst — Compressing the Reporting Cycle
+### Analyst — Compressing the Reporting Cycle
 
 An analyst uploads a monthly KPI dataset ahead of a quarterly review. Instead of spending time on chart assembly and narrative writing, they receive an instant executive summary, a root-cause list with specific signal evidence, and a forecast narrative. The dashboard is ready to screenshot. The copilot answers any stakeholder question live during the meeting.
 
@@ -844,7 +863,7 @@ Analytics context for each dataset is a structured string of approximately 50–
 
 ### Background Cache Warming
 
-The dashboard endpoint fires `warm_dashboard_chat_state` as a FastAPI `BackgroundTask` — it runs *after* the HTTP response is returned to the client, so it doesn't add to dashboard load time. By the time the user opens the chat panel, Redis is already warm.
+The dashboard endpoint fires `warm_dashboard_chat_state` as a FastAPI `BackgroundTask` — it runs _after_ the HTTP response is returned to the client, so it doesn't add to dashboard load time. By the time the user opens the chat panel, Redis is already warm.
 
 ### Modular Engine Design
 
@@ -864,22 +883,26 @@ In production, the FastAPI app serves the React frontend's static build from the
 ## 19. Future Roadmap
 
 **Live Data Integrations**
+
 - Shopify, Stripe, Square POS, Google Analytics 4, Xero connectors
 - Automatic scheduled data refresh (daily/weekly)
 - Webhook support for real-time anomaly alerts via email or Slack
 
 **Deeper Analysis**
+
 - Multi-metric dashboards — analyze and correlate multiple KPIs from a single dataset
 - Segment-level analysis — break down performance by product, channel, region, or customer cohort
 - Industry benchmarking — compare your metrics against sector averages
 
 **Outputs & Collaboration**
+
 - Scheduled email digests with AI-generated performance summaries
 - One-click exportable PDF reports formatted for stakeholder presentations
 - Team workspaces with shared datasets, collaborative annotations, and role-based access
 - What-if scenario simulations ("what happens to revenue if weekend sales improve 15%?")
 
 **AI & Intelligence**
+
 - Goal-setting and progress tracking ("we want $50k/month — are we on track?")
 - Multi-step strategic planning assistant with sequential reasoning
 - Cross-metric anomaly correlation ("did the traffic drop cause the revenue drop?")
@@ -973,7 +996,7 @@ docker-compose up --build
 
 ## The Bottom Line
 
-ExplainMyData was built around a single conviction:
+Business AI Copilot was built around a single conviction:
 
 **Business intelligence should not be limited to those with technical expertise.**
 
@@ -983,6 +1006,6 @@ Upload a CSV. Get clarity.
 
 ---
 
-*FastAPI · PostgreSQL · Redis · Prophet · STL · Groq · LLaMA 3.3 · Python*
+_FastAPI · PostgreSQL · Redis · Prophet · STL · Groq · LLaMA 3.3 · Python_
 
 </div>
