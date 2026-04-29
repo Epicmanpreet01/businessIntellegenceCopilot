@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 import uuid
 
@@ -9,6 +9,7 @@ from services.analytics_service import fetch_analytics_report
 from services.insights_service import fetch_insights_report
 from services.forecast_service import fetch_forecast_data
 from services.dataset_service import fetch_processed_data
+from tasks.analytics_task import warm_dashboard_chat_state
 
 from schemas.common import APIResponse
 from schemas.analytics_schema import AnalyticsEngineOut
@@ -56,11 +57,19 @@ def get_processed_data(dataset_id: uuid.UUID, user_id: uuid.UUID = Depends(get_c
   )
 
 @router.get('/{dataset_id}/dashboard', response_model=APIResponse)
-def get_dashboard(dataset_id: uuid.UUID, user_id: uuid.UUID = Depends(get_curr_user_id), db: Session = Depends(get_db)):
+def get_dashboard(dataset_id: uuid.UUID, background_tasks : BackgroundTasks,user_id: uuid.UUID = Depends(get_curr_user_id), db: Session = Depends(get_db)):
   analytics_report = fetch_analytics_report(dataset_id, user_id, db)
   insights_report = fetch_insights_report(dataset_id, user_id, db)
   forecasted_rows = fetch_forecast_data(dataset_id, user_id, db)
   processed_data = fetch_processed_data(dataset_id, db, user_id)
+
+  background_tasks.add_task(
+    warm_dashboard_chat_state,
+    user_id,
+    dataset_id,
+    analytics_report,
+    insights_report
+  )
 
   return APIResponse(
     success=True,
