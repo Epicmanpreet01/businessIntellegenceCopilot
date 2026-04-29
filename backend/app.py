@@ -15,8 +15,15 @@ from api.routes.chat_routes import router as chats_router
 from core.exceptions import AppException
 
 app = FastAPI()
-Base.metadata.create_all(bind=engine)
 
+@app.on_event("startup")
+def startup():
+  try:
+    Base.metadata.create_all(bind=engine)
+    print("Database connected")
+  except Exception as e:
+    print("Database startup failed:", e)
+    raise e
 
 @app.get('/health')
 def health():
