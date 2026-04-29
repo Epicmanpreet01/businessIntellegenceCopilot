@@ -13,6 +13,7 @@ class Settings(BaseSettings):
   MAX_SIZE : int = 5 * 1024 * 1024
   GROQ_API : str
   GROQ_MODEL : str = "llama-3.3-70b-versatile"
+  STATIC_DIR : str = "../frontend/dist"
 
   model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
