@@ -2,13 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 import uuid
 
-from models.user_model import Users 
-from schemas.auth_schemas import LoginRequest, RegisterRequest
-from schemas.user_schemas import UserResponse
+from backend.models.user_model import Users 
+from backend.schemas.auth_schemas import LoginRequest, RegisterRequest
+from backend.schemas.user_schemas import UserResponse
 
-from core.exceptions import NotFoundException, UnauthorizedException, ConflictException
+from backend.core.exceptions import NotFoundException, UnauthorizedException, ConflictException
 
-from utils.auth_utils import check_passwords_match, hash_password
+from backend.utils.auth_utils import check_passwords_match, hash_password
 
 def login_user(credentials : LoginRequest, db : Session) -> uuid.UUID:
   stmt = select(Users).where(Users.email == credentials.email)

@@ -1,5 +1,5 @@
 from redis import Redis
-from core.config import settings
+from backend.core.config import settings
 
 if settings.REDIS_URL:
   context_engine = Redis.from_url(

@@ -4,10 +4,10 @@ import pandas as pd
 import uuid
 from typing import List
 
-from core.exceptions import NotFoundException
-from models.processed_data_model import ProcessedData
-from models.dataset_model import Datasets
-from schemas.dataset_schemas import DatasetOut
+from backend.core.exceptions import NotFoundException
+from backend.models.processed_data_model import ProcessedData
+from backend.models.dataset_model import Datasets
+from backend.schemas.dataset_schemas import DatasetOut
   
 def create_dataset_entry(db : Session, name : str,file_size : int, user_id : uuid.UUID):
   dataset = Datasets(

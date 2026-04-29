@@ -1,7 +1,7 @@
 import pandas as pd
 from dateutil.parser import parse
 
-from core.exceptions import BadRequestException, NotFoundException
+from backend.core.exceptions import BadRequestException, NotFoundException
 
 key_map={
   'ds': ['date', 'time', 'datetime'],

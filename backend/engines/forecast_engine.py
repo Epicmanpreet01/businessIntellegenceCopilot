@@ -1,7 +1,7 @@
 from prophet import Prophet
 import pandas as pd
 
-from core.exceptions import BadRequestException
+from backend.core.exceptions import BadRequestException
 
 class ForecastEngine:
   def __init__(self, dataframe : pd.DataFrame):

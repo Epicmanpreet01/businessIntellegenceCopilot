@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 import uuid
 
-from db.base import Base
+from backend.db.base import Base
 
 
 class ProcessedData(Base):

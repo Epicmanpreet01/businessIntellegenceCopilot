@@ -4,19 +4,19 @@ from io import BytesIO
 import pandas as pd
 import uuid
 
-from core.config import settings
-from core.exceptions import BadRequestException
-from db.session import get_db
-from api.dependencies.auth_dep import get_curr_user_id
-from services.dataset_service import (
+from backend.core.config import settings
+from backend.core.exceptions import BadRequestException
+from backend.db.session import get_db
+from backend.api.dependencies.auth_dep import get_curr_user_id
+from backend.services.dataset_service import (
   create_dataset_entry,
   fetch_dataset_by_id,
   fetch_datasets,
   remove_dataset
 )
-from schemas.common import APIResponse
-from orchestrators.pipeline import run_dataset_pipeline
-from schemas.dataset_schemas import DatasetOut
+from backend.schemas.common import APIResponse
+from backend.orchestrators.pipeline import run_dataset_pipeline
+from backend.schemas.dataset_schemas import DatasetOut
 
 router = APIRouter()
 

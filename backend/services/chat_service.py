@@ -6,17 +6,17 @@ from sqlalchemy import select
 from fastapi import HTTPException
 from groq import Groq
 
-from core.config import settings
+from backend.core.config import settings
 
-from context_engine.redis import context_engine
+from backend.context_engine.redis import context_engine
 
-from models.analytics_model import Analytics
-from models.insights_model import Insights
-from models.messages_model import Message
+from backend.models.analytics_model import Analytics
+from backend.models.insights_model import Insights
+from backend.models.messages_model import Message
 
-from schemas.chat_schema import MessageOut, MessagesOut
+from backend.schemas.chat_schema import MessageOut, MessagesOut
 
-from utils.chat_utils import create_chat_context
+from backend.utils.chat_utils import create_chat_context
 
 
 # Fetches all chat messages for a dataset

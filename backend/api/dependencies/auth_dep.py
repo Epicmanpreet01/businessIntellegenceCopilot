@@ -2,8 +2,8 @@ from fastapi import Request
 from jose import jwt, JWTError
 import uuid
 
-from core.exceptions import UnauthorizedException
-from core.config import settings
+from backend.core.exceptions import UnauthorizedException
+from backend.core.config import settings
 
 def get_curr_user_id(request : Request):
   token = request.cookies.get('token')

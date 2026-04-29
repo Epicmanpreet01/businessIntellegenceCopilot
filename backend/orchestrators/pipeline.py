@@ -2,16 +2,16 @@ import pandas as pd
 from sqlalchemy.orm import Session
 import uuid
 
-from models.processed_data_model import ProcessedData
-from models.dataset_model import Datasets
-from models.forecast_model import Forecasts
-from models.analytics_model import Analytics
-from models.insights_model import Insights
+from backend.models.processed_data_model import ProcessedData
+from backend.models.dataset_model import Datasets
+from backend.models.forecast_model import Forecasts
+from backend.models.analytics_model import Analytics
+from backend.models.insights_model import Insights
 
-from engines.data_engine import DataEngine
-from engines.forecast_engine import ForecastEngine
-from engines.analytics_engine import AnalyticsEngine
-from engines.insights_engine import InsightsEngine
+from backend.engines.data_engine import DataEngine
+from backend.engines.forecast_engine import ForecastEngine
+from backend.engines.analytics_engine import AnalyticsEngine
+from backend.engines.insights_engine import InsightsEngine
 
 def run_dataset_pipeline(dataset_id : uuid.UUID,df : pd.DataFrame, db : Session):
 

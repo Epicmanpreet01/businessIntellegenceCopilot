@@ -3,7 +3,7 @@ from jose import jwt
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from core.config import settings
+from backend.core.config import settings
 
 def check_passwords_match(password : str, hashed_password : str) -> bool:
   return bcrypt.checkpw(password.encode(), hashed_password.encode())

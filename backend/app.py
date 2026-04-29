@@ -4,15 +4,15 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 import os
 
-from core.config import settings
-from db.base import Base, engine
+from backend.core.config import settings
+from backend.db.base import Base, engine
 
-from api.routes.auth_routes import router as auth_router
-from api.routes.dataset_routes import router as datasets_router
-from api.routes.analytics_routes import router as analytics_router
-from api.routes.chat_routes import router as chats_router
+from backend.api.routes.auth_routes import router as auth_router
+from backend.api.routes.dataset_routes import router as datasets_router
+from backend.api.routes.analytics_routes import router as analytics_router
+from backend.api.routes.chat_routes import router as chats_router
 
-from core.exceptions import AppException
+from backend.core.exceptions import AppException
 
 app = FastAPI()
 

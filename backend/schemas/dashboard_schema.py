@@ -2,8 +2,8 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import List
 
-from schemas.analytics_schema import AnalyticsEngineOut
-from schemas.insights_schema import InsightEngineOut
+from backend.schemas.analytics_schema import AnalyticsEngineOut
+from backend.schemas.insights_schema import InsightEngineOut
 
 
 

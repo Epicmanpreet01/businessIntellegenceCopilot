@@ -1,5 +1,5 @@
-from schemas.analytics_schema import AnalyticsEngineOut
-from schemas.insights_schema import InsightEngineOut
+from backend.schemas.analytics_schema import AnalyticsEngineOut
+from backend.schemas.insights_schema import InsightEngineOut
 import uuid
 
 class InsightsEngine:

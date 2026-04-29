@@ -3,12 +3,12 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 import uuid
 
-from api.dependencies.auth_dep import get_curr_user_id
-from db.session import get_db
+from backend.api.dependencies.auth_dep import get_curr_user_id
+from backend.db.session import get_db
 
-from schemas.common import APIResponse
+from backend.schemas.common import APIResponse
 
-from services.chat_service import fetch_response, fetch_messages
+from backend.services.chat_service import fetch_response, fetch_messages
 
 router = APIRouter()
 

@@ -1,8 +1,8 @@
-from utils.chat_utils import create_chat_context
-from services.chat_service import load_message_history, save_chat_state
-from db.session import SessionLocal
-from schemas.analytics_schema import AnalyticsEngineOut
-from schemas.insights_schema import InsightEngineOut
+from backend.utils.chat_utils import create_chat_context
+from backend.services.chat_service import load_message_history, save_chat_state
+from backend.db.session import SessionLocal
+from backend.schemas.analytics_schema import AnalyticsEngineOut
+from backend.schemas.insights_schema import InsightEngineOut
 
 import uuid
 

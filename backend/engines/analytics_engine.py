@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from statsmodels.tsa.seasonal import STL
 import uuid
 
-from schemas.analytics_schema import AnalyticsEngineOut
+from backend.schemas.analytics_schema import AnalyticsEngineOut
 
 class AnalyticsEngine:
   def __init__(self, df : pd.DataFrame, forecast_df : pd.DataFrame,dataset_id : uuid.UUID, freq : str):

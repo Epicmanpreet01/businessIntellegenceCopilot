@@ -2,10 +2,10 @@ from sqlalchemy import select, and_
 from sqlalchemy.orm import Session
 import uuid
 
-from models.insights_model import Insights
-from models.dataset_model import Datasets
+from backend.models.insights_model import Insights
+from backend.models.dataset_model import Datasets
 
-from core.exceptions import NotFoundException
+from backend.core.exceptions import NotFoundException
 
 def fetch_insights_report(dataset_id: uuid.UUID, user_id: uuid.UUID,db: Session):
   stmt = select(Insights).join(Datasets,Insights.dataset_id == Datasets.id).where(

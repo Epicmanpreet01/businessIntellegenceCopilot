@@ -2,10 +2,10 @@ from sqlalchemy import select, and_
 from sqlalchemy.orm import Session
 import uuid
 
-from models.forecast_model import Forecasts
-from models.dataset_model import Datasets
+from backend.models.forecast_model import Forecasts
+from backend.models.dataset_model import Datasets
 
-from core.exceptions import NotFoundException
+from backend.core.exceptions import NotFoundException
 
 def fetch_forecast_data(dataset_id: uuid.UUID, user_id: uuid.UUID,db: Session):
   stmt = (

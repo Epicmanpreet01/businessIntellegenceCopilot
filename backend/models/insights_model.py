@@ -3,7 +3,7 @@ from sqlalchemy import String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 import uuid
 
-from db.base import Base
+from backend.db.base import Base
 
 
 class Insights(Base):

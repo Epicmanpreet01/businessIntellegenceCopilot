@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import datetime
 
-from db.base import Base
+from backend.db.base import Base
 
 class Users(Base):
   __tablename__ = "users"

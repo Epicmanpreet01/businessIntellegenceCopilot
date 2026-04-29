@@ -2,19 +2,19 @@ from fastapi import APIRouter, Depends, BackgroundTasks
 from sqlalchemy.orm import Session
 import uuid
 
-from api.dependencies.auth_dep import get_curr_user_id
-from db.session import get_db
+from backend.api.dependencies.auth_dep import get_curr_user_id
+from backend.db.session import get_db
 
-from services.analytics_service import fetch_analytics_report
-from services.insights_service import fetch_insights_report
-from services.forecast_service import fetch_forecast_data
-from services.dataset_service import fetch_processed_data
-from tasks.analytics_task import warm_dashboard_chat_state
+from backend.services.analytics_service import fetch_analytics_report
+from backend.services.insights_service import fetch_insights_report
+from backend.services.forecast_service import fetch_forecast_data
+from backend.services.dataset_service import fetch_processed_data
+from backend.tasks.analytics_task import warm_dashboard_chat_state
 
-from schemas.common import APIResponse
-from schemas.analytics_schema import AnalyticsEngineOut
-from schemas.insights_schema import InsightEngineOut
-from schemas.dashboard_schema import DashboardOut
+from backend.schemas.common import APIResponse
+from backend.schemas.analytics_schema import AnalyticsEngineOut
+from backend.schemas.insights_schema import InsightEngineOut
+from backend.schemas.dashboard_schema import DashboardOut
 
 router = APIRouter()
 
