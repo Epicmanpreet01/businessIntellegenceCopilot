@@ -4,6 +4,9 @@ import uuid
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from fastapi import HTTPException
+from groq import Groq
+
+from core.config import settings
 
 from context_engine.redis import context_engine
 
@@ -14,6 +17,7 @@ from models.messages_model import Message
 from schemas.chat_schema import MessageOut, MessagesOut
 
 from utils.chat_utils import create_chat_context
+
 
 # Fetches all chat messages for a dataset
 # ordered oldest to newest.
@@ -36,7 +40,9 @@ def fetch_messages(
   messages = []
 
   for row in rows:
-    messages.append(MessageOut.model_validate(row))
+    messages.append(
+      MessageOut.model_validate(row)
+    )
 
   return MessagesOut(
     dataset_id=dataset_id,
@@ -45,22 +51,30 @@ def fetch_messages(
 
 # Main chat entry point.
 # Loads Redis cache, refreshes context if dataset changed,
-# builds prompt, stores messages, updates cache, returns response.
+# stores user message, gets AI response, stores assistant reply,
+# updates cache, returns response.
 def fetch_response(
   message: str,
   user_id: uuid.UUID,
   dataset_id: uuid.UUID,
   db: Session
 ):
-
   redis_key = f"dashboard:{user_id}"
-  data = context_engine.hgetall(redis_key)
+
+  try:
+    data = context_engine.hgetall(redis_key)
+  except Exception:
+    data = {}
 
   context = data.get("context")
   saved_dataset_id = data.get("dataset_id")
-  history = json.loads(data.get("history", "[]"))
+  history = json.loads(
+    data.get("history", "[]")
+  )
 
-  dataset_changed = saved_dataset_id != str(dataset_id)
+  dataset_changed = (
+    saved_dataset_id != str(dataset_id)
+  )
 
   if dataset_changed or not context:
     context = load_dataset_context(
@@ -73,28 +87,37 @@ def fetch_response(
       db
     )
 
-  prompt = build_prompt(
-    context,
-    history,
-    message
-  )
-
-  # Replace with real LLM call
-  response = "LLM response goes here"
-
   save_message(
     dataset_id,
     "user",
     message,
-    db
+    db,
+    commit=False
   )
+
+  try:
+    response = generate_chat_response(
+      context,
+      history,
+      message
+    )
+  except Exception:
+    db.rollback()
+
+    raise HTTPException(
+      status_code=500,
+      detail="AI response failed"
+    )
 
   save_message(
     dataset_id,
     "assistant",
     response,
-    db
+    db,
+    commit=False
   )
+
+  db.commit()
 
   history.append({
     "role": "user",
@@ -119,6 +142,7 @@ def fetch_response(
     "response": response
   }
 
+
 # Fetches analytics + insights from DB
 # and converts them into reusable LLM context text.
 def load_dataset_context(
@@ -131,7 +155,9 @@ def load_dataset_context(
       Insights,
       Analytics.dataset_id == Insights.dataset_id
     )
-    .where(Analytics.dataset_id == dataset_id)
+    .where(
+      Analytics.dataset_id == dataset_id
+    )
   )
 
   row = db.execute(stmt).first()
@@ -149,6 +175,7 @@ def load_dataset_context(
     insights
   )
 
+
 # Loads previous chat messages from DB
 # and returns latest 10 messages as history.
 def load_message_history(
@@ -157,8 +184,12 @@ def load_message_history(
 ):
   stmt = (
     select(Message)
-    .where(Message.dataset_id == dataset_id)
-    .order_by(Message.created_at.asc())
+    .where(
+      Message.dataset_id == dataset_id
+    )
+    .order_by(
+      Message.created_at.asc()
+    )
   )
 
   rows = db.execute(stmt).scalars().all()
@@ -173,25 +204,43 @@ def load_message_history(
 
   return history
 
-# Combines dataset context + chat history + current message
-# into final prompt for LLM.
-def build_prompt(
+
+# Builds Groq chat messages using context + history + user input,
+# sends request to Groq API, and returns assistant response.
+def generate_chat_response(
   context: str,
   history: list,
   message: str
-):
-  lines = [context, "", "Conversation:"]
+) -> str:
+  messages = [
+    {
+      "role": "system",
+      "content": context
+    }
+  ]
 
-  for item in history:
-    role = item["role"].capitalize()
-    lines.append(f"{role}: {item['content']}")
+  messages.extend(history)
 
-  lines.extend([
-    f"User: {message}",
-    "Assistant:"
-  ])
+  messages.append({
+    "role": "user",
+    "content": message
+  })
 
-  return "\n".join(lines)
+  client = Groq(
+    api_key=settings.GROQ_API
+  )
+
+  completion = client.chat.completions.create(
+    model=settings.GROQ_MODEL,
+    messages=messages,
+    temperature=0.4,
+    max_tokens=700,
+    top_p=0.9,
+    stream=False
+  )
+
+  return completion.choices[0].message.content
+
 
 # Saves a single user or assistant message
 # into database message history.
@@ -199,7 +248,8 @@ def save_message(
   dataset_id: uuid.UUID,
   role: str,
   content: str,
-  db: Session
+  db: Session,
+  commit: bool = True
 ):
   row = Message(
     dataset_id=dataset_id,
@@ -208,7 +258,10 @@ def save_message(
   )
 
   db.add(row)
-  db.commit()
+
+  if commit:
+    db.commit()
+
 
 # Saves active dataset context + recent chat history
 # into Redis cache for faster future requests.
@@ -218,16 +271,20 @@ def save_chat_state(
   context: str,
   history: list
 ):
-  context_engine.hset(
-    redis_key,
-    mapping={
-      "dataset_id": str(dataset_id),
-      "context": context,
-      "history": json.dumps(history)
-    }
-  )
+  try:
+    context_engine.hset(
+      redis_key,
+      mapping={
+        "dataset_id": str(dataset_id),
+        "context": context,
+        "history": json.dumps(history)
+      }
+    )
 
-  context_engine.expire(
-    redis_key,
-    3600
-  )
+    context_engine.expire(
+      redis_key,
+      3600
+    )
+
+  except Exception:
+    pass

@@ -11,6 +11,8 @@ class Settings(BaseSettings):
   JWT_SECRET_KEY : str
   JWT_ALGORITHM : str = 'HS256'
   MAX_SIZE : int = 5 * 1024 * 1024
+  GROQ_API : str
+  GROQ_MODEL : str = "llama-3.3-70b-versatile"
 
   model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 
