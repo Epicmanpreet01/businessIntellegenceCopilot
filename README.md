@@ -17,6 +17,12 @@
 
 ---
 
+> [!IMPORTANT]
+> **Project Status: MVP Stage**
+> This system is currently in its Minimum Viable Product (MVP) stage. While core features—including CSV processing, forecasting, and AI chat—are fully functional, the platform is under active development. Expect updates, performance optimizations, and feature expansions.
+
+---
+
 ## Table of Contents
 
 1. [What Is Business AI Copilot?](#1-what-is-business-ai-copilot)
