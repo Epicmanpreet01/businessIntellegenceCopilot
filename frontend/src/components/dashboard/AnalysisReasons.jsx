@@ -3,7 +3,7 @@ import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
 
 const AnalysisReasons = ({ reasons }) => {
-  const { t, isDark } = useTheme();
+  const { t } = useTheme();
 
   return (
     <div
@@ -16,7 +16,9 @@ const AnalysisReasons = ({ reasons }) => {
       <div className="space-y-4">
         {reasons.map((reason, idx) => (
           <div key={idx} className="flex items-start gap-4 group">
-            <div className={`p-1 rounded-full mt-1 ${t.primarySoft} group-hover:scale-110 transition-transform`}>
+            <div
+              className={`p-1 rounded-full mt-1 ${t.primarySoft} group-hover:scale-110 transition-transform`}
+            >
               <CheckCircle2 className={`w-4 h-4 ${t.primaryText}`} />
             </div>
             <div className="flex-1">
@@ -24,7 +26,9 @@ const AnalysisReasons = ({ reasons }) => {
                 {reason}
               </p>
             </div>
-            <ChevronRight className={`w-4 h-4 ${t.textMuted} opacity-0 group-hover:opacity-100 transition-all`} />
+            <ChevronRight
+              className={`w-4 h-4 ${t.textMuted} opacity-0 group-hover:opacity-100 transition-all`}
+            />
           </div>
         ))}
       </div>

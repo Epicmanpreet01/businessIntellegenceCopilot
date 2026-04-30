@@ -9,8 +9,8 @@ import {
   Cell,
   ReferenceLine,
 } from "recharts";
+import { AlertCircle } from "lucide-react";
 import { useTheme } from "../../context/ThemeContext";
-import { weeklyMockData } from "../../utils/mockData";
 
 import InfoTooltip from "./InfoTooltip";
 
@@ -37,7 +37,7 @@ const CustomTooltip = ({ active, payload, label, t }) => {
 const WeeklyAverages = ({ data }) => {
   const { t, isDark } = useTheme();
 
-  const chartData = data || weeklyMockData;
+  const chartData = data;
 
   return (
     <div
@@ -50,44 +50,53 @@ const WeeklyAverages = ({ data }) => {
         <InfoTooltip text="Visualizes your typical performance for each day of the week. Bars above the zero line indicate stronger-than-average days, while bars below show slower days." />
       </div>
       <div className="h-[260px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke={t.chart.grid}
-            />
-            <XAxis
-              dataKey="day"
-              tick={{ fontSize: 12, fill: t.chart.text }}
-              axisLine={false}
-              tickLine={false}
-              dy={10}
-            />
-            <YAxis
-              tick={{ fontSize: 12, fill: t.chart.text }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(val) => `${val.toFixed(0)}`}
-            />
-            <RechartsTooltip
-              cursor={{ fill: isDark ? "#262626" : "#f1f5f9" }}
-              content={<CustomTooltip t={t} />}
-            />
-            <ReferenceLine y={0} stroke={isDark ? "#444" : "#ccc"} />
-            <Bar dataKey="avg" radius={[4, 4, 0, 0]} barSize={40}>
-              {chartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.avg >= 0 ? t.chart.line : "#ef4444"}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+        {chartData && chartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke={t.chart.grid}
+              />
+              <XAxis
+                dataKey="day"
+                tick={{ fontSize: 12, fill: t.chart.text }}
+                axisLine={false}
+                tickLine={false}
+                dy={10}
+              />
+              <YAxis
+                tick={{ fontSize: 12, fill: t.chart.text }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(val) => `${val.toFixed(0)}`}
+              />
+              <RechartsTooltip
+                cursor={{ fill: isDark ? "#262626" : "#f1f5f9" }}
+                content={<CustomTooltip t={t} />}
+              />
+              <ReferenceLine y={0} stroke={isDark ? "#444" : "#ccc"} />
+              <Bar dataKey="avg" radius={[4, 4, 0, 0]} barSize={40}>
+                {chartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.avg >= 0 ? t.chart.line : "#ef4444"}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center opacity-50">
+            <AlertCircle className={`w-8 h-8 ${t.textMuted} mb-2`} />
+            <p className={`text-sm ${t.textMuted} text-center`}>
+              Insufficient data to calculate <br /> performance distribution.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

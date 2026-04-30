@@ -176,7 +176,8 @@ const DashboardPage = () => {
   const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const monthOrder = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  const seasonalityData = Object.entries(analytics.seasonality.distribution)
+  const distribution = analytics?.seasonality?.distribution || {};
+  const seasonalityData = Object.entries(distribution)
     .map(([day, val]) => ({
       day: day.substring(0, 3),
       fullName: day,

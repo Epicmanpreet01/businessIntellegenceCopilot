@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { HelpCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from "react";
+import { HelpCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
 
 const InfoTooltip = ({ text }) => {
@@ -31,9 +31,9 @@ const InfoTooltip = ({ text }) => {
                 {text}
               </p>
               {/* Pointer Arrow */}
-              <div 
+              <div
                 className={`absolute top-full left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 border-r border-b ${t.border} ${t.panelBg}`}
-                style={{ marginBottom: '-22px' }}
+                style={{ marginBottom: "-22px" }}
               />
             </div>
           </motion.div>

@@ -39,19 +39,19 @@
 
 ## 1. What Is Business AI Copilot?
 
-Most businesses generate data every day — sales, orders, revenue, traffic, bookings. But generating data and *understanding* it are two different things.
+Most businesses generate data every day — sales, orders, revenue, traffic, bookings. But generating data and _understanding_ it are two different things.
 
 **Business AI Copilot** takes raw time-series CSV data and automatically runs it through a multi-stage intelligence pipeline: cleaning, forecasting, anomaly detection, seasonality analysis, root-cause reasoning, and a conversational AI copilot that answers questions in plain language.
 
 It's built to answer the five questions every business leader actually cares about:
 
-| # | Question | How We Answer It |
-|---|----------|-----------------|
-| 1 | **What is happening?** | Trend detection, KPI dashboards, anomaly alerts |
-| 2 | **Why is it happening?** | Rule-based signal-driven reasoning engine |
-| 3 | **What will happen next?** | Prophet-based time-series forecasting |
-| 4 | **What should I do?** | Prioritized, context-aware recommendations |
-| 5 | **Can you explain it simply?** | Groq-powered LLaMA 3.3 copilot grounded in your data |
+| #   | Question                       | How We Answer It                                     |
+| --- | ------------------------------ | ---------------------------------------------------- |
+| 1   | **What is happening?**         | Trend detection, KPI dashboards, anomaly alerts      |
+| 2   | **Why is it happening?**       | Rule-based signal-driven reasoning engine            |
+| 3   | **What will happen next?**     | Prophet-based time-series forecasting                |
+| 4   | **What should I do?**          | Prioritized, context-aware recommendations           |
+| 5   | **Can you explain it simply?** | Groq-powered LLaMA 3.3 copilot grounded in your data |
 
 Traditional analytics tools answer question one — they show you a chart. Business AI Copilot answers all five.
 
@@ -68,9 +68,10 @@ For most businesses, value breaks down somewhere between "the data exists" and "
 **Analysts** spend most of their time cleaning data, not generating insight. Communicating findings requires re-explaining statistical concepts to non-technical audiences every time.
 
 **Decision makers** don't need more data. They need answers:
-- *Why did revenue drop last week?*
-- *Is this decline temporary or structural?*
-- *Should we increase inventory heading into next month?*
+
+- _Why did revenue drop last week?_
+- _Is this decline temporary or structural?_
+- _Should we increase inventory heading into next month?_
 
 Business AI Copilot is engineered to answer these questions automatically, every time data is uploaded.
 
@@ -79,15 +80,19 @@ Business AI Copilot is engineered to answer these questions automatically, every
 ## 3. Core Features
 
 ### CSV Upload
+
 Upload any time-series CSV — daily sales, monthly revenue, web traffic, order history, inventory logs. The platform accepts flexible column names and formats, with a 5MB file size limit. No template required.
 
 ### Automatic Data Preparation
+
 Raw business data is messy. The data engine automatically detects date and metric columns using fuzzy matching and weighted scoring, handles inconsistent date formats, drops bad rows, aggregates duplicates, clips outliers, and infers data frequency (daily / weekly / monthly) — all without any user configuration.
 
 ### Forecasting
+
 Facebook Prophet generates forward-looking projections scaled to your dataset size, with forecast horizon dynamically set based on data length. The output spans both historical and future dates for seamless chart rendering.
 
 ### Analytics Signals
+
 Four analytical signals are extracted from every dataset:
 
 - **Trend** — linear regression across the full time series classifies direction (upward / downward / flat) and strength (strong / moderate / weak)
@@ -96,12 +101,15 @@ Four analytical signals are extracted from every dataset:
 - **Seasonality** — STL decomposition identifies weekly or yearly patterns, quantifies seasonal strength, and characterizes the pattern (e.g., "weekend dips", "weekend spikes")
 
 ### Business Insights
+
 A rule-based reasoning engine translates every analytical signal into natural-language summaries, root-cause explanations, and actionable recommendations. This step is entirely deterministic — no LLM is involved in generating insights, so outputs are always traceable to real signals.
 
 ### Interactive Dashboard
+
 A single API call aggregates analytics, insights, forecasts, and processed data into one ready-to-render payload. All data is pre-computed at upload time — the dashboard performs zero computation at query time.
 
 ### AI Chat Copilot
+
 A Groq-powered LLaMA 3.3 copilot answers questions about your data in plain language. Every response is grounded in pre-computed analytics injected into the model's context — the LLM explains and elaborates on validated facts rather than computing from raw data.
 
 ---
@@ -141,18 +149,23 @@ The entire pipeline — from raw CSV to chat-ready dashboard — runs automatica
 The platform is composed of four modular engines, each with a clean interface. They can be upgraded or replaced independently without affecting the others.
 
 ### DataEngine
+
 Transforms any raw CSV into a clean `{ date, value }` time series. Uses fuzzy column matching and weighted scoring to handle messy real-world exports — prioritizing revenue columns over price, price over discount, and so on. Infers whether to sum or average when aggregating duplicate dates based on the metric type.
 
 ### ForecastEngine
+
 Wraps Facebook Prophet to generate predictions. Forecast horizon scales dynamically with dataset length. Full history is included in the output, enabling a seamless historical-to-forecast chart with no visual break.
 
 ### AnalyticsEngine
+
 Extracts structured numerical signals using STL decomposition and linear regression. Uses `robust=True` in decomposition to resist outlier distortion. Window sizes for change calculations are normalized to the inferred data frequency (so "7 days" means the right number of data points whether data is daily, weekly, or monthly). All computations include minimum data guards to handle small datasets gracefully.
 
 ### InsightsEngine
+
 Translates analytics signals into human-readable reasoning. Entirely rule-based — every output sentence is deterministically derived from signal thresholds, not generated by an LLM. Cross-checks trend, change, anomalies, and forecast together to produce compound narratives (e.g., "decline visible historically, recently, and in forecast"). Assigns a confidence score (high / medium / low) based on how many strong signals align.
 
 **Example analytics output:**
+
 ```json
 {
   "trend": { "direction": "downwards", "strength": "moderate" },
@@ -173,19 +186,37 @@ Translates analytics signals into human-readable reasoning. Entirely rule-based 
 
 ### How It Works
 
-The copilot is powered by Groq's API with `llama-3.3-70b-versatile`. On every chat request, the service checks Redis for a cached analytics context. If warm, context and message history are served from memory. If cold, they're loaded from PostgreSQL.
+The copilot is powered by Groq's API with `llama-3.3-70b-versatile`. On every chat request, the service checks Redis for a cached analytics context. If warm, context and message history are served directly from memory. If cold, they are loaded from PostgreSQL and cached for subsequent requests.
 
-The analytics context is injected as a system prompt on every API call, grounding every response in pre-computed, validated data. The model is explicitly instructed to use only the provided dashboard data, never invent numbers or trends, and clearly say so when information isn't available.
+The analytics context is injected as a system prompt on every API call, grounding every response in pre-computed, validated data. The model is explicitly instructed to use only the provided dashboard data, never invent numbers or trends, and clearly state when information isn't available.
 
-**Why this is better than a generic AI chatbot:** A generic chatbot asked to analyze a CSV would attempt statistical computations in the language model — producing inconsistent, hallucination-prone results. Here, all computation happens once at upload time in purpose-built Python engines. The LLM's only job is to explain pre-validated facts in plain language.
+**Why this is better than a generic AI chatbot:**
+A generic chatbot asked to analyze a CSV would attempt statistical computations inside the language model, often producing inconsistent and hallucinated results. Here, all computation happens once at upload time in purpose-built Python engines. The LLM’s role is strictly to interpret and explain verified data in plain language.
+
+---
 
 ### Response Format
-The system prompt defines structured response formats by question type — why questions produce cause/evidence/action sections, "what should I do" questions produce prioritized action lists, and so on. Model temperature is set low (0.4) for factual, consistent responses.
+
+The system prompt enforces structured outputs based on question type:
+
+- “Why” questions → cause, evidence, action
+- “What should I do” → prioritized recommendations
+
+The model runs at a low temperature (0.4) to ensure consistent, factual responses.
+
+---
 
 ### Caching Strategy
-- Analytics context is stored in Redis with a 1-hour TTL, serialized once and served from memory on all subsequent chat requests
-- Message history is capped at 10 messages to keep token counts predictable
-- When the dashboard endpoint is called, a background task pre-warms the Redis cache *before* the user opens chat — so the first message is fast, not slow
+
+- Analytics context is stored in Redis with a 1-hour TTL and reused across requests
+- The system caches **fully constructed LLM-ready context and recent message history**, avoiding repeated context generation and history reconstruction
+- Message history is capped at 10 messages to keep token usage predictable
+- Cache is **dataset-aware**, automatically refreshing when the dataset changes
+- A background task pre-warms the cache when the dashboard loads, ensuring the first chat message is instant
+
+**Performance impact:**
+Without caching, each message required database queries, context building, and prompt reconstruction—resulting in **~10–20 seconds latency**.
+With caching, responses are generated directly from memory, reducing latency to **milliseconds** and creating a real-time chat experience.
 
 ---
 
@@ -251,17 +282,17 @@ POST   /api/chats/{dataset_id}    → Send message; returns assistant reply
 
 ### Stack
 
-| Layer | Technology | Role |
-|-------|-----------|------|
-| Web Framework | FastAPI | Async API server with OpenAPI docs |
-| ORM | SQLAlchemy 2.x | Database access with typed mapped classes |
-| Database | PostgreSQL | Primary store for all pipeline outputs |
-| Cache | Redis | Analytics context + chat history per session |
-| Auth | JWT + bcrypt | HttpOnly cookie-based authentication |
-| Data Processing | Pandas + NumPy | Cleaning, aggregation, linear regression |
-| Forecasting | Prophet | Time-series prediction |
-| Decomposition | statsmodels STL | Anomaly and seasonality detection |
-| LLM | Groq / LLaMA 3.3 | Conversational AI grounded in analytics |
+| Layer           | Technology       | Role                                         |
+| --------------- | ---------------- | -------------------------------------------- |
+| Web Framework   | FastAPI          | Async API server with OpenAPI docs           |
+| ORM             | SQLAlchemy 2.x   | Database access with typed mapped classes    |
+| Database        | PostgreSQL       | Primary store for all pipeline outputs       |
+| Cache           | Redis            | Analytics context + chat history per session |
+| Auth            | JWT + bcrypt     | HttpOnly cookie-based authentication         |
+| Data Processing | Pandas + NumPy   | Cleaning, aggregation, linear regression     |
+| Forecasting     | Prophet          | Time-series prediction                       |
+| Decomposition   | statsmodels STL  | Anomaly and seasonality detection            |
+| LLM             | Groq / LLaMA 3.3 | Conversational AI grounded in analytics      |
 
 ### Project Structure
 
@@ -284,21 +315,21 @@ POST   /api/chats/{dataset_id}    → Send message; returns assistant reply
 
 **Bulk inserts:** Processed data and forecast rows are written in single batched SQL statements, not row-by-row.
 
-**Background cache warming:** The background task runs *after* the HTTP response is returned to the client — it doesn't add to dashboard load time.
+**Background cache warming:** The background task runs _after_ the HTTP response is returned to the client — it doesn't add to dashboard load time.
 
 ---
 
 ## 9. Database Design
 
-| Table | Key Columns |
-|-------|------------|
-| `users` | id (UUID), name, email (unique), password_hash |
-| `datasets` | id, user_id (FK), name, length, freq, file_size |
-| `processed_data` | id, dataset_id (FK), ds, y |
-| `forecasts` | id, dataset_id (FK), ds, yhat |
-| `analytics` | dataset_id (PK/FK), trend, change, anomalies, seasonality, forecast (all JSONB) |
-| `insights` | dataset_id (PK/FK), summary, reasons, recommendations, confidence |
-| `messages` | id, dataset_id (FK), role, content, created_at |
+| Table            | Key Columns                                                                     |
+| ---------------- | ------------------------------------------------------------------------------- |
+| `users`          | id (UUID), name, email (unique), password_hash                                  |
+| `datasets`       | id, user_id (FK), name, length, freq, file_size                                 |
+| `processed_data` | id, dataset_id (FK), ds, y                                                      |
+| `forecasts`      | id, dataset_id (FK), ds, yhat                                                   |
+| `analytics`      | dataset_id (PK/FK), trend, change, anomalies, seasonality, forecast (all JSONB) |
+| `insights`       | dataset_id (PK/FK), summary, reasons, recommendations, confidence               |
+| `messages`       | id, dataset_id (FK), role, content, created_at                                  |
 
 All foreign keys use `CASCADE` delete — removing a dataset cleans up all associated data automatically.
 
@@ -321,26 +352,29 @@ The `analytics` and `insights` tables use `dataset_id` as their primary key, enf
 ## 11. Why Business AI Copilot?
 
 ### vs. Spreadsheets
+
 Spreadsheets require manual formulas, produce static charts with no interpretation, have no native anomaly detection, and can't forecast or explain trends. Every insight requires a human to look for it.
 
 ### vs. Traditional BI Platforms
+
 Powerful but inaccessible — require SQL expertise, dedicated setup time, and data modeling knowledge. They visualize data beautifully but still leave the interpretation to you. Licensing costs are often prohibitive for SMBs.
 
 ### vs. Standalone Forecasting Tools
-Predict future values but don't explain *why* those values are what they are, don't surface root causes, and have no recommendations or conversational interface attached.
+
+Predict future values but don't explain _why_ those values are what they are, don't surface root causes, and have no recommendations or conversational interface attached.
 
 ### The Integration Is the Product
 
-| Capability | Standalone Tools | Business AI Copilot |
-|-----------|-----------------|-------------------|
-| Dashboards & visualization | BI platforms | ✓ Built-in |
-| Time-series forecasting | Prophet, statsmodels | ✓ Built-in |
-| Anomaly detection | Data science libraries | ✓ Built-in (STL) |
-| Seasonality analysis | statsmodels | ✓ Built-in (STL) |
-| Root-cause reasoning | Custom logic | ✓ Built-in |
-| Conversational AI | Generic chatbots | ✓ Built-in, grounded |
-| Time to first insight | Hours to days | **Seconds** |
-| Technical skill required | Medium to high | **None** |
+| Capability                 | Standalone Tools       | Business AI Copilot  |
+| -------------------------- | ---------------------- | -------------------- |
+| Dashboards & visualization | BI platforms           | ✓ Built-in           |
+| Time-series forecasting    | Prophet, statsmodels   | ✓ Built-in           |
+| Anomaly detection          | Data science libraries | ✓ Built-in (STL)     |
+| Seasonality analysis       | statsmodels            | ✓ Built-in (STL)     |
+| Root-cause reasoning       | Custom logic           | ✓ Built-in           |
+| Conversational AI          | Generic chatbots       | ✓ Built-in, grounded |
+| Time to first insight      | Hours to days          | **Seconds**          |
+| Technical skill required   | Medium to high         | **None**             |
 
 Any one of these capabilities in isolation is useful. All six working together, automatically, on data you uploaded five minutes ago — that's the differentiator.
 
@@ -368,12 +402,15 @@ Any one of these capabilities in isolation is useful. All six working together, 
 ## 13. Example Use Cases
 
 ### Retail — Diagnosing a Sales Slump
-A shop owner exports weekly POS data. Business AI Copilot detects consistent weekend revenue dips, two high-severity anomalous drops in the past month, and a forecast projecting continued softness. Recommendations surface automatically: run weekend promotions, investigate the anomaly dates for operational issues, prepare contingency plans for the forecast period. The owner then asks the copilot *"Should I be worried about the drop on November 14th?"* and gets a structured response explaining severity, context, and next steps.
+
+A shop owner exports weekly POS data. Business AI Copilot detects consistent weekend revenue dips, two high-severity anomalous drops in the past month, and a forecast projecting continued softness. Recommendations surface automatically: run weekend promotions, investigate the anomaly dates for operational issues, prepare contingency plans for the forecast period. The owner then asks the copilot _"Should I be worried about the drop on November 14th?"_ and gets a structured response explaining severity, context, and next steps.
 
 ### E-commerce — Scaling Into Growth
+
 A brand uploads three months of daily orders. The platform detects a strong upward trend, +18% over 30 days, no anomalies, and a forecast projecting +22% further growth. Recommendations: increase ad spend, pre-build inventory, scale top-performing channels. The copilot confirms the growth signals are consistent across historical, recent, and forecast data when asked about sustainability.
 
 ### Analyst — Compressing the Reporting Cycle
+
 An analyst uploads a monthly KPI dataset ahead of a quarterly review. Instead of assembling charts and writing narrative manually, they get an instant executive summary, a root-cause list with evidence, and a forecast breakdown. The copilot fields stakeholder questions live during the meeting.
 
 ---
@@ -381,6 +418,7 @@ An analyst uploads a monthly KPI dataset ahead of a quarterly review. Instead of
 ## 14. Local Setup
 
 ### Prerequisites
+
 - Python 3.9+
 - PostgreSQL 13+
 - Redis 6+
@@ -435,22 +473,26 @@ Database tables are created automatically on startup. No migration tool required
 ## 15. Roadmap
 
 **Live Data Integrations**
+
 - Shopify, Stripe, Square, Google Analytics 4, Xero connectors
 - Scheduled data refresh (daily / weekly)
 - Real-time anomaly alerts via email or Slack
 
 **Deeper Analysis**
+
 - Multi-metric dashboards with cross-KPI correlation
 - Segment-level breakdowns (product, channel, region, cohort)
 - Industry benchmarking against sector averages
 
 **Outputs & Collaboration**
+
 - Scheduled email digests with AI-generated summaries
 - Exportable PDF reports for stakeholder presentations
 - Team workspaces with shared datasets and role-based access
 - What-if scenario simulations
 
 **AI & Intelligence**
+
 - Goal tracking ("we want $50k/month — are we on track?")
 - Multi-step strategic planning assistant
 - Cross-metric anomaly correlation
@@ -470,6 +512,6 @@ Upload a CSV. Get clarity.
 
 ---
 
-*FastAPI · PostgreSQL · Redis · Prophet · STL · Groq · LLaMA 3.3 · Python*
+_FastAPI · PostgreSQL · Redis · Prophet · STL · Groq · LLaMA 3.3 · Python_
 
 </div>
