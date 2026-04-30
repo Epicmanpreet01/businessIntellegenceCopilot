@@ -34,3 +34,11 @@ export function formatFileSize(bytes) {
 
   return `${size.toFixed(size >= 10 || index === 0 ? 0 : 2)} ${units[index]}`;
 }
+
+export function formatModelText(text) {
+  if (typeof text !== "string") return text;
+  // Rounds numbers with 3 or more decimal places to 2 decimal places
+  return text.replace(/\d+\.\d{3,}/g, (match) => {
+    return parseFloat(match).toFixed(2);
+  });
+}

@@ -1,6 +1,7 @@
 import { Lightbulb, ArrowRight } from "lucide-react";
 import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
+import { formatModelText } from "../../utils/common";
 
 const Recommendations = ({ recommendations }) => {
   const { t, isDark } = useTheme();
@@ -28,7 +29,7 @@ const Recommendations = ({ recommendations }) => {
               className={`w-5 h-5 ${t.primaryText} shrink-0 mt-0.5`}
             />
             <p className={`${t.text} font-medium text-sm leading-relaxed`}>
-              {rec}
+              {formatModelText(rec)}
             </p>
           </div>
         ))}

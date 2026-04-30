@@ -9,6 +9,7 @@ import LoadingSpinner from "../layout/LoadingSpinner";
 import useMessagesQuery from "../../hooks/queries/useMessagesQuery";
 
 import useMessageMutation from "../../hooks/mutations/useMessageMutation";
+import { formatModelText } from "../../utils/common";
 
 const INTRO_MESSAGE = {
   role: "assistant",
@@ -197,7 +198,7 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
                         ),
                     }}
                   >
-                    {msg.content}
+                    {formatModelText(msg.content)}
                   </ReactMarkdown>
                 </div>
               </div>
@@ -243,7 +244,7 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
                     strong: ({ ...props }) => <strong className="font-bold" {...props} />,
                   }}
                 >
-                  {msg.content}
+                  {formatModelText(msg.content)}
                 </ReactMarkdown>
               </div>
             </div>

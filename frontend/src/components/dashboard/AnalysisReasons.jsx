@@ -1,6 +1,7 @@
 import { CheckCircle2, ChevronRight } from "lucide-react";
 import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
+import { formatModelText } from "../../utils/common";
 
 const AnalysisReasons = ({ reasons }) => {
   const { t } = useTheme();
@@ -23,7 +24,7 @@ const AnalysisReasons = ({ reasons }) => {
             </div>
             <div className="flex-1">
               <p className={`text-sm font-medium ${t.text} leading-snug`}>
-                {reason}
+                {formatModelText(reason)}
               </p>
             </div>
             <ChevronRight

@@ -14,6 +14,7 @@ import { useGlobal } from "../../context/GlobalContext";
 import useDashboardQuery from "../../hooks/queries/useDashboardQuery";
 import LoadingSpinner from "../../components/layout/LoadingSpinner";
 import { generateProfessionalPDF } from "../../utils/reportGenerator";
+import { formatModelText } from "../../utils/common";
 
 import StatCard from "../../components/dashboard/StatCard";
 import RevenueChart from "../../components/dashboard/RevenueChart";
@@ -250,7 +251,7 @@ const DashboardPage = () => {
           <p
             className={`text-2xl lg:text-4xl font-semibold ${t.text} leading-tight tracking-tight max-w-6xl`}
           >
-            {insights.summary}
+            {formatModelText(insights.summary)}
           </p>
         </div>
       </div>
