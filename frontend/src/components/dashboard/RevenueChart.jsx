@@ -26,9 +26,10 @@ const CustomTooltip = ({ active, payload, label, t }) => {
         <div className="space-y-1.5">
           {payload
             .filter((entry) =>
-              ["Revenue", "Forecast", "Anomaly"].includes(entry.name)
+              ["Revenue", "Forecast", "Anomaly"].includes(entry.name),
             )
             .map((entry, index) => {
+              // eslint-disable-next-line no-useless-assignment
               let displayValue = entry.value;
               let displayLabel = entry.name;
 
@@ -78,7 +79,7 @@ const RevenueChart = ({ data }) => {
     const maxForecast = Math.min(
       Math.floor(T / 2),
       forecastData.length,
-      historyData.length
+      historyData.length,
     );
 
     const targetHistory = T - maxForecast;
@@ -87,7 +88,6 @@ const RevenueChart = ({ data }) => {
     const historySlice = historyData.slice(-numHistory);
     const forecastSlice = forecastData.slice(0, maxForecast);
 
-    // Prevent duplication of the handover point (shared point)
     const lastHistoryItem = historySlice[historySlice.length - 1];
     const finalForecastSlice =
       lastHistoryItem &&

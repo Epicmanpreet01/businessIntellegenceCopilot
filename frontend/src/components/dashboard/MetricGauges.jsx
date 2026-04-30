@@ -54,16 +54,16 @@ const Gauge = ({ label, value, color, t }) => {
 const MetricGauges = ({ analytics, totalPoints }) => {
   const { t } = useTheme();
 
-  // 1. Trend Strength Score
+  // Trend Strength Score
   const trendMap = { weak: 35, moderate: 65, strong: 95 };
   const trendScore = trendMap[analytics.trend.strength] || 0;
 
-  // 2. Seasonality Score
+  // Seasonality Score
   let seasonalityScore =
     (analytics.seasonality.seasonal_strength_score || 0) * 100;
   seasonalityScore = seasonalityScore < 0 ? 0 : seasonalityScore;
 
-  // 3. Data Health (100% - anomaly density)
+  // Data Health (100% - anomaly density)
   const anomalyDensity =
     totalPoints > 0 ? (analytics.anomalies.length / totalPoints) * 100 : 0;
   const healthScore = Math.max(0, 100 - anomalyDensity * 5); // Scaled for visibility

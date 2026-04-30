@@ -33,8 +33,16 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
 
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");
-    doc.text(`Intelligence Report | Dataset ID: ${String(datasetId || "N/A").substring(0, 12)}...`, 15, 28);
-    doc.text(`Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 15, 33);
+    doc.text(
+      `Intelligence Report | Dataset ID: ${String(datasetId || "N/A").substring(0, 12)}...`,
+      15,
+      28,
+    );
+    doc.text(
+      `Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+      15,
+      33,
+    );
 
     // Confidence Score in Header
     const conf = String(insights?.confidence || "medium").toUpperCase();
@@ -65,24 +73,59 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
     doc.text("Key Performance Indicators", 15, currentY);
     currentY += 5;
 
-    const growthPos = (analytics?.change?.last_7d >= analytics?.change?.last_30d) ? "Accelerating" : "Softening";
+    const growthPos =
+      analytics?.change?.last_7d >= analytics?.change?.last_30d
+        ? "Accelerating"
+        : "Softening";
 
     const kpiData = [
       ["Metric", "Value", "Status / Details"],
       ["Growth Positioning", growthPos, "Short vs Long-term Momentum"],
-      ["30-Day Growth", `${Number(analytics?.change?.last_30d || 0) >= 0 ? "+" : ""}${formatNum(analytics?.change?.last_30d, 1)}%`, (Number(analytics?.change?.last_30d || 0) >= 0 ? "Positive Momentum" : "Requires Attention")],
-      ["Overall Trend", String(analytics?.trend?.direction || "Unknown").toUpperCase(), `${String(analytics?.trend?.strength || "N/A")} Trajectory`],
-      ["7-Day Momentum", `${Number(analytics?.change?.last_7d || 0) >= 0 ? "+" : ""}${formatNum(analytics?.change?.last_7d, 1)}%`, "Short-term Velocity"],
-      ["Forecast", String(analytics?.forecast?.trend || "Stable").toUpperCase(), `${formatNum(analytics?.forecast?.change_pct, 1)}% Expected Change`],
-      ["Seasonality", String(analytics?.seasonality?.dominant_period || "None"), `${String(analytics?.seasonality?.strength || "")} ${String(analytics?.seasonality?.pattern || "")}`],
-      ["Data Health", `${analytics?.anomaly_summary?.count || 0} Anomalies`, (Number(analytics?.anomaly_summary?.count || 0) > 3 ? "Volatile" : "Stable")],
+      [
+        "30-Day Growth",
+        `${Number(analytics?.change?.last_30d || 0) >= 0 ? "+" : ""}${formatNum(analytics?.change?.last_30d, 1)}%`,
+        Number(analytics?.change?.last_30d || 0) >= 0
+          ? "Positive Momentum"
+          : "Requires Attention",
+      ],
+      [
+        "Overall Trend",
+        String(analytics?.trend?.direction || "Unknown").toUpperCase(),
+        `${String(analytics?.trend?.strength || "N/A")} Trajectory`,
+      ],
+      [
+        "7-Day Momentum",
+        `${Number(analytics?.change?.last_7d || 0) >= 0 ? "+" : ""}${formatNum(analytics?.change?.last_7d, 1)}%`,
+        "Short-term Velocity",
+      ],
+      [
+        "Forecast",
+        String(analytics?.forecast?.trend || "Stable").toUpperCase(),
+        `${formatNum(analytics?.forecast?.change_pct, 1)}% Expected Change`,
+      ],
+      [
+        "Seasonality",
+        String(analytics?.seasonality?.dominant_period || "None"),
+        `${String(analytics?.seasonality?.strength || "")} ${String(analytics?.seasonality?.pattern || "")}`,
+      ],
+      [
+        "Data Health",
+        `${analytics?.anomaly_summary?.count || 0} Anomalies`,
+        Number(analytics?.anomaly_summary?.count || 0) > 3
+          ? "Volatile"
+          : "Stable",
+      ],
     ];
 
     autoTable(doc, {
       startY: currentY,
       head: [kpiData[0]],
       body: kpiData.slice(1),
-      headStyles: { fillColor: primaryColor, textColor: 255, fontStyle: "bold" },
+      headStyles: {
+        fillColor: primaryColor,
+        textColor: 255,
+        fontStyle: "bold",
+      },
       alternateRowStyles: { fillColor: lightBg },
       margin: { left: 15, right: 15 },
       theme: "striped",
@@ -107,7 +150,7 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
 
-      insights.reasons.forEach((reason, index) => {
+      insights.reasons.forEach((reason) => {
         const reasonLines = doc.splitTextToSize(`\u2022 ${reason}`, 170);
         if (currentY + reasonLines.length * 5 > 280) {
           doc.addPage();
@@ -133,19 +176,27 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
             for (let i = 0; i < allElements.length; i++) {
               const el = allElements[i];
               const style = window.getComputedStyle(el);
-              if (style.color && style.color.includes("oklch")) el.style.color = "rgb(64, 64, 64)";
-              if (style.backgroundColor && style.backgroundColor.includes("oklch")) el.style.backgroundColor = "transparent";
-              if (style.borderColor && style.borderColor.includes("oklch")) el.style.borderColor = "rgb(229, 229, 229)";
+              if (style.color && style.color.includes("oklch"))
+                el.style.color = "rgb(64, 64, 64)";
+              if (
+                style.backgroundColor &&
+                style.backgroundColor.includes("oklch")
+              )
+                el.style.backgroundColor = "transparent";
+              if (style.borderColor && style.borderColor.includes("oklch"))
+                el.style.borderColor = "rgb(229, 229, 229)";
             }
 
-            const clonedChart = clonedDoc.querySelector('[ref-id="revenue-chart-container"]');
+            const clonedChart = clonedDoc.querySelector(
+              '[ref-id="revenue-chart-container"]',
+            );
             if (clonedChart) {
               clonedChart.style.width = "1200px";
               clonedChart.style.height = "500px";
               clonedChart.style.display = "block";
               clonedChart.style.visibility = "visible";
             }
-          }
+          },
         });
 
         const imgData = canvas.toDataURL("image/png");
@@ -177,15 +228,43 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
       doc.text("Weekly Performance Distribution", 15, currentY);
       currentY += 5;
 
-      const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-      const monthOrder = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const dayOrder = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ];
+      const monthOrder = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
 
       const weeklyData = Object.entries(seasonalityDist)
         .sort((a, b) => {
-          const order = analytics?.seasonality?.dominant_period === "yearly" ? monthOrder : dayOrder;
+          const order =
+            analytics?.seasonality?.dominant_period === "yearly"
+              ? monthOrder
+              : dayOrder;
           return order.indexOf(a[0]) - order.indexOf(b[0]);
         })
-        .map(([day, val]) => [day, formatNum(val, 2), val >= 0 ? "Strong" : "Weak"]);
+        .map(([day, val]) => [
+          day,
+          formatNum(val, 2),
+          val >= 0 ? "Strong" : "Weak",
+        ]);
 
       autoTable(doc, {
         startY: currentY,
@@ -229,7 +308,11 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
     currentY += 10;
 
     // --- Anomaly Log ---
-    if (analytics?.anomalies && Array.isArray(analytics.anomalies) && analytics.anomalies.length > 0) {
+    if (
+      analytics?.anomalies &&
+      Array.isArray(analytics.anomalies) &&
+      analytics.anomalies.length > 0
+    ) {
       if (currentY > 230) {
         doc.addPage();
         currentY = 20;
@@ -241,12 +324,14 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
       doc.text("Anomaly Detection Log", 15, currentY);
       currentY += 5;
 
-      const anomalyData = analytics.anomalies.slice(0, 10).map(a => [
-        new Date(a.ds).toLocaleDateString(),
-        String(a.type || "Anomaly").toUpperCase(),
-        String(a.strength || "Normal").toUpperCase(),
-        formatNum(a.severity, 2),
-      ]);
+      const anomalyData = analytics.anomalies
+        .slice(0, 10)
+        .map((a) => [
+          new Date(a.ds).toLocaleDateString(),
+          String(a.type || "Anomaly").toUpperCase(),
+          String(a.strength || "Normal").toUpperCase(),
+          formatNum(a.severity, 2),
+        ]);
 
       autoTable(doc, {
         startY: currentY,
@@ -268,11 +353,13 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
         `Confidential Business Intelligence Report - Page ${i} of ${pageCount}`,
         105,
         287,
-        { align: "center" }
+        { align: "center" },
       );
     }
 
-    doc.save(`Business_Report_${String(datasetId || "export").substring(0, 8)}.pdf`);
+    doc.save(
+      `Business_Report_${String(datasetId || "export").substring(0, 8)}.pdf`,
+    );
   } catch (globalError) {
     console.error("Critical error in PDF generation:", globalError);
     // Explicitly alert the user via console for debugging

@@ -56,7 +56,8 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
       textareaRef.current.style.height = "auto";
       const scrollHeight = textareaRef.current.scrollHeight;
       textareaRef.current.style.height = `${Math.min(scrollHeight, 200)}px`;
-      textareaRef.current.style.overflowY = scrollHeight > 200 ? "auto" : "hidden";
+      textareaRef.current.style.overflowY =
+        scrollHeight > 200 ? "auto" : "hidden";
     }
   }, []);
 
@@ -64,43 +65,44 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
     adjustHeight();
   }, [chatInput, adjustHeight]);
 
-  const handleChatSubmit = useCallback((e, directMessage = null) => {
-    if (e) e.preventDefault();
-    const messageToSend = directMessage || chatInput;
-    if (!messageToSend.trim() || isMessagePending) return;
+  const handleChatSubmit = useCallback(
+    (e, directMessage = null) => {
+      if (e) e.preventDefault();
+      const messageToSend = directMessage || chatInput;
+      if (!messageToSend.trim() || isMessagePending) return;
 
-    const userMsgContent = messageToSend;
-    const tempId = Date.now().toString();
-    const userMsg = {
-      id: tempId,
-      role: "user",
-      content: userMsgContent,
-      created_at: new Date().toISOString(),
-    };
+      const userMsgContent = messageToSend;
+      const tempId = Date.now().toString();
+      const userMsg = {
+        id: tempId,
+        role: "user",
+        content: userMsgContent,
+        created_at: new Date().toISOString(),
+      };
 
-    // 1. Optimistic Update (Local State)
-    setChatMessages((prev) => {
-      // If only intro message exists, replace it
-      if (prev.length === 1 && prev[0].content === INTRO_MESSAGE.content) {
-        return [userMsg];
+      setChatMessages((prev) => {
+        if (prev.length === 1 && prev[0].content === INTRO_MESSAGE.content) {
+          return [userMsg];
+        }
+        return [...prev, userMsg];
+      });
+      setChatInput("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+        textareaRef.current.style.overflowY = "hidden";
       }
-      return [...prev, userMsg];
-    });
-    setChatInput("");
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.overflowY = "hidden";
-    }
 
-    sendMessage(userMsgContent, {
-      onError: (error) => {
-        setChatMessages((prev) => prev.filter((msg) => msg.id !== tempId));
-        toast.error(
-          error?.response?.data?.detail || "Failed to get AI response",
-        );
-      },
-    });
-  }, [chatInput, isMessagePending, sendMessage]);
+      sendMessage(userMsgContent, {
+        onError: (error) => {
+          setChatMessages((prev) => prev.filter((msg) => msg.id !== tempId));
+          toast.error(
+            error?.response?.data?.detail || "Failed to get AI response",
+          );
+        },
+      });
+    },
+    [chatInput, isMessagePending, sendMessage],
+  );
 
   return (
     <div className={`flex flex-col flex-1 min-h-0 bg-transparent`}>
@@ -167,23 +169,44 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
                     remarkPlugins={[remarkGfm]}
                     components={{
                       h1: ({ ...props }) => (
-                        <h1 className="text-xl font-bold mb-3 mt-4 first:mt-0" {...props} />
+                        <h1
+                          className="text-xl font-bold mb-3 mt-4 first:mt-0"
+                          {...props}
+                        />
                       ),
                       h2: ({ ...props }) => (
-                        <h2 className="text-lg font-bold mb-2 mt-3 first:mt-0" {...props} />
+                        <h2
+                          className="text-lg font-bold mb-2 mt-3 first:mt-0"
+                          {...props}
+                        />
                       ),
                       h3: ({ ...props }) => (
-                        <h3 className="text-base font-bold mb-2 mt-2 first:mt-0" {...props} />
+                        <h3
+                          className="text-base font-bold mb-2 mt-2 first:mt-0"
+                          {...props}
+                        />
                       ),
-                      p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                      p: ({ ...props }) => (
+                        <p className="mb-2 last:mb-0" {...props} />
+                      ),
                       ul: ({ ...props }) => (
-                        <ul className="list-disc ml-5 mb-3 space-y-1" {...props} />
+                        <ul
+                          className="list-disc ml-5 mb-3 space-y-1"
+                          {...props}
+                        />
                       ),
                       ol: ({ ...props }) => (
-                        <ol className="list-decimal ml-5 mb-3 space-y-1" {...props} />
+                        <ol
+                          className="list-decimal ml-5 mb-3 space-y-1"
+                          {...props}
+                        />
                       ),
-                      li: ({ ...props }) => <li className="mb-0.5" {...props} />,
-                      strong: ({ ...props }) => <strong className="font-bold" {...props} />,
+                      li: ({ ...props }) => (
+                        <li className="mb-0.5" {...props} />
+                      ),
+                      strong: ({ ...props }) => (
+                        <strong className="font-bold" {...props} />
+                      ),
                       code: ({ inline, ...props }) =>
                         inline ? (
                           <code
@@ -234,14 +257,24 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    p: ({ ...props }) => <p className="mb-1.5 last:mb-0" {...props} />,
+                    p: ({ ...props }) => (
+                      <p className="mb-1.5 last:mb-0" {...props} />
+                    ),
                     ul: ({ ...props }) => (
-                      <ul className="list-disc ml-4 mb-2 space-y-0.5" {...props} />
+                      <ul
+                        className="list-disc ml-4 mb-2 space-y-0.5"
+                        {...props}
+                      />
                     ),
                     ol: ({ ...props }) => (
-                      <ol className="list-decimal ml-4 mb-2 space-y-0.5" {...props} />
+                      <ol
+                        className="list-decimal ml-4 mb-2 space-y-0.5"
+                        {...props}
+                      />
                     ),
-                    strong: ({ ...props }) => <strong className="font-bold" {...props} />,
+                    strong: ({ ...props }) => (
+                      <strong className="font-bold" {...props} />
+                    ),
                   }}
                 >
                   {formatModelText(msg.content)}
@@ -262,13 +295,17 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
       >
         <div className="flex flex-wrap gap-2 mb-3">
           <button
-            onClick={() => handleChatSubmit(null, "What was last week's trend?")}
+            onClick={() =>
+              handleChatSubmit(null, "What was last week's trend?")
+            }
             className={`text-xs px-3 py-1.5 rounded-full transition-all duration-300 ${t.border} border ${t.textMuted} hover:${t.primaryText} hover:border-orange-300 hover:-translate-y-0.5`}
           >
             "What was last week's trend?"
           </button>
           <button
-            onClick={() => handleChatSubmit(null, "What will happen next week?")}
+            onClick={() =>
+              handleChatSubmit(null, "What will happen next week?")
+            }
             className={`text-xs px-3 py-1.5 rounded-full transition-all duration-300 ${t.border} border ${t.textMuted} hover:${t.primaryText} hover:border-orange-300 hover:-translate-y-0.5`}
           >
             "Forecast for next week?"

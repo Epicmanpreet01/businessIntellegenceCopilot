@@ -9,13 +9,13 @@ export const GlobalProvider = ({ children }) => {
   const [chatMode, setChatMode] = useState("hidden"); // 'sidebar', 'fullscreen', 'hidden'
   const [showNav, setShowNav] = useState(true);
   const [activeSession, setActiveSession] = useState(
-    () => localStorage.getItem("active_session") === "true"
+    () => localStorage.getItem("active_session") === "true",
   );
   const lastScrollY = useRef(0);
 
-  // Auto-collapse sidebar/chat on route change
   useEffect(() => {
     if (location.pathname.startsWith("/dashboard")) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSidebarCollapsed(true);
       if (chatMode === "hidden") setChatMode("sidebar");
     } else if (location.pathname === "/chat") {
