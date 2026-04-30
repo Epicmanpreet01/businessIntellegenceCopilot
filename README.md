@@ -21,6 +21,11 @@
 > **Project Status: MVP Stage**
 > This system is currently in its Minimum Viable Product (MVP) stage. While core features—including CSV processing, forecasting, and AI chat—are fully functional, the platform is under active development. Expect updates, performance optimizations, and feature expansions.
 
+> [!IMPORTANT]
+> This project is NOT open source.  
+> It is released under a proprietary license.  
+> Commercial use, redistribution, or SaaS deployment is not allowed without explicit permission.
+
 ---
 
 ## Table of Contents
@@ -503,6 +508,18 @@ Database tables are created automatically on startup. No migration tool required
 - Multi-step strategic planning assistant
 - Cross-metric anomaly correlation
 - Holiday calendar support for seasonality modeling
+
+---
+
+## License
+
+This project is proprietary software.
+
+- Personal/internal use allowed
+- Modification allowed with attribution
+- Commercial use requires permission
+
+See [LICENSE](./LICENSE) and [CLAUSES.txt](./CLAUSES.txt).
 
 ---
 

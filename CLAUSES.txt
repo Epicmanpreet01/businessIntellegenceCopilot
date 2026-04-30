@@ -1,0 +1,75 @@
+AI Business Intelligence Copilot — License Summary
+
+This is a simplified explanation of the license.
+The LICENSE file is the official legal document.
+
+----------------------------------------
+YOU ARE ALLOWED TO:
+----------------------------------------
+
+1. Use the software:
+- For personal projects
+- For learning and education
+- Inside a company (internal use only)
+
+2. Modify the code:
+- Add features
+- Customize behavior
+- Adapt it for your own use
+
+----------------------------------------
+YOU MUST:
+----------------------------------------
+
+- Give credit:
+  "Original work by Manpreet Singh"
+
+- Keep the LICENSE file in any shared copies
+
+----------------------------------------
+YOU ARE NOT ALLOWED TO:
+----------------------------------------
+
+1. Make money using this software:
+- Do not sell it
+- Do not include it in paid products
+- Do not use it in client work
+
+2. Build a SaaS or hosted service:
+- Do not deploy it as a web app for users
+- Do not expose it via APIs
+- Do not let external users access it
+
+3. Commercial distribution:
+- Do not resell or redistribute for profit
+- Do not package it into commercial software
+
+4. Sell modified versions:
+- Even if you change the code, you cannot sell it
+
+----------------------------------------
+IMPORTANT CLARIFICATIONS:
+----------------------------------------
+
+- Internal company use is allowed
+  (e.g., using it inside your own business)
+
+- Client work is NOT allowed
+  (you cannot use this for paid projects for others)
+
+- SaaS is NOT allowed
+  (even if free, if users access it online, it's restricted)
+
+----------------------------------------
+COMMERCIAL USE:
+----------------------------------------
+
+If you want to:
+- Use it in a startup
+- Build a product on top of it
+- Offer it as a service
+
+You MUST get permission.
+
+Contact:
+[manpreet210028@gmail.com]
