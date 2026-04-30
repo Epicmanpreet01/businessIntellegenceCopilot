@@ -59,8 +59,9 @@ const MetricGauges = ({ analytics, totalPoints }) => {
   const trendScore = trendMap[analytics.trend.strength] || 0;
 
   // 2. Seasonality Score
-  const seasonalityScore =
+  let seasonalityScore =
     (analytics.seasonality.seasonal_strength_score || 0) * 100;
+  seasonalityScore = seasonalityScore < 0 ? 0 : seasonalityScore;
 
   // 3. Data Health (100% - anomaly density)
   const anomalyDensity =
@@ -72,9 +73,7 @@ const MetricGauges = ({ analytics, totalPoints }) => {
       className={`${t.panelBg} rounded-[2rem] p-8 shadow-sm border ${t.border} flex flex-col h-full transition-all hover:shadow-md`}
     >
       <div className="flex items-center gap-2 mb-8">
-        <h3 className={`text-lg font-bold ${t.text}`}>
-          Analysis Reliability
-        </h3>
+        <h3 className={`text-lg font-bold ${t.text}`}>Analysis Reliability</h3>
         <InfoTooltip text="Gauges how certain the AI is about its findings. High scores mean the data is very clear, consistent, and follows predictable patterns." />
       </div>
       <div className="flex-1 flex items-center justify-around gap-4">

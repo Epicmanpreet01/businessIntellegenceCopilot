@@ -13,6 +13,9 @@ from backend.api.routes.analytics_routes import router as analytics_router
 from backend.api.routes.chat_routes import router as chats_router
 
 from backend.core.exceptions import AppException
+from backend.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 app = FastAPI()
 
@@ -20,9 +23,9 @@ app = FastAPI()
 def startup():
   try:
     Base.metadata.create_all(bind=engine)
-    print("Database connected")
+    logger.info("Database connected and schema created successfully")
   except Exception as e:
-    print("Database startup failed:", e)
+    logger.error(f"Database startup failed: {e}")
     raise e
 
 @app.get('/health')

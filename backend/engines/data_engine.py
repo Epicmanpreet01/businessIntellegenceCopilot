@@ -3,6 +3,9 @@ import re
 from dateutil.parser import parse
 
 from backend.core.exceptions import BadRequestException, NotFoundException
+from backend.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 key_map = {
   'ds': [
@@ -159,12 +162,14 @@ class DataEngine:
       scores[col] = score
 
     if not scores:
+      logger.warning("No potential date columns found in dataset")
       return None
 
     best_col = max(scores, key=scores.get)
     best_score = scores[best_col]
 
     if best_score < threshold:
+      logger.warning(f"Best date column '{best_col}' score {best_score} is below threshold {threshold}")
       return None
 
     try:
@@ -223,11 +228,13 @@ class DataEngine:
       scores[col] = score
 
     if not scores:
+      logger.warning("No potential target (numeric) columns found in dataset")
       return None
 
     best_col = max(scores, key=scores.get)
 
     if scores[best_col] < threshold:
+      logger.warning(f"Best target column '{best_col}' score {scores[best_col]} is below threshold {threshold}")
       return None
 
     return data[best_col]
@@ -257,8 +264,11 @@ class DataEngine:
     if data.empty:
       raise NotFoundException("Empty dataframe error")
     
+    logger.info("Normalizing column names...")
     data.columns = [self._normalize_col_name(col_name) for col_name in data.columns]
+    logger.info(f"Columns after normalization: {list(data.columns)}")
     data = self._extract_columns(data, self.key_map.get('all'))
+    logger.info("Extracting date and target columns...")
     ds = self._extract_date_column(data, self.key_map.get('ds'), thresh, min_non_null)
     y = self._extract_target_column(data, self.key_map.get('y'), self.weights, thresh, min_non_null)
     
