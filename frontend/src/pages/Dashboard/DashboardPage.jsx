@@ -173,12 +173,19 @@ const DashboardPage = () => {
   const { analytics, insights, processed_data } = dashboardData;
 
   // Prepare Seasonality Data
-  const seasonalityData = Object.entries(
-    analytics.seasonality.distribution,
-  ).map(([day, val]) => ({
-    day: day.substring(0, 3),
-    avg: val,
-  }));
+  const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const monthOrder = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  const seasonalityData = Object.entries(analytics.seasonality.distribution)
+    .map(([day, val]) => ({
+      day: day.substring(0, 3),
+      fullName: day,
+      avg: val,
+    }))
+    .sort((a, b) => {
+      const order = analytics.seasonality.dominant_period === "yearly" ? monthOrder : dayOrder;
+      return order.indexOf(a.fullName) - order.indexOf(b.fullName);
+    });
 
   return (
     <div className="max-w-7xl mx-auto space-y-10 animate-in fade-in duration-500 pb-12">

@@ -35,7 +35,7 @@ app.include_router(analytics_router,prefix='/api/analytics')
 app.include_router(chats_router, prefix='/api/chats')
 
 # Production: Serve Frontend
-if os.path.exists(settings.STATIC_DIR):
+if os.path.exists(settings.STATIC_DIR) and settings.MODE == 'production':
     # Serve static assets (js, css, images)
     app.mount("/assets", StaticFiles(directory=os.path.join(settings.STATIC_DIR, "assets")), name="static")
 

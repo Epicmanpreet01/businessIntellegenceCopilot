@@ -1,13 +1,37 @@
 import pandas as pd
+import re
 from dateutil.parser import parse
 
 from backend.core.exceptions import BadRequestException, NotFoundException
 
-key_map={
-  'ds': ['date', 'time', 'datetime'],
-  'y': ['sales', 'profit', 'revenue', 'ammount', 'loss', 'price','cost', 'discount'],
-  'all': ['date', 'time', 'datetime', 'sales', 'profit', 'revenue', 'ammount', 'loss', 'price', 'discount', 'cost']
+key_map = {
+  'ds': [
+    'date', 'time', 'datetime',
+    'timestamp', 'day', 'week', 'month', 'year',
+    'created', 'updated', 'event', 'record',
+    'dt', 'wk', 'yr', 'ts'
+  ],
+
+  'y': [
+    'sales', 'profit', 'revenue', 'amount', 'loss',
+    'price', 'cost', 'discount',
+    'income', 'earnings', 'value', 'total', 'gmv'
+  ],
+
+  'all': [
+    # ds
+    'date', 'time', 'datetime', 'timestamp',
+    'day', 'week', 'month', 'year',
+    'created', 'updated', 'event', 'record',
+    'dt', 'wk', 'yr', 'ts',
+
+    # y
+    'sales', 'profit', 'revenue', 'amount', 'loss',
+    'price', 'cost', 'discount',
+    'income', 'earnings', 'value', 'total', 'gmv'
+  ]
 }
+
 weights={
   'revenue': 1.0,
   'sales': 0.95,
@@ -18,6 +42,28 @@ weights={
   'cost': 0.5,
   'loss': 0.4,
   'discount': 0.3
+}
+
+replacements = {
+    # date/time
+    "dt": "date",
+    "ts": "timestamp",
+    "wk": "week",
+    "yr": "year",
+    "mo": "month",
+    "hr": "hour",
+    "min": "minute",
+    "sec": "second",
+
+    # business / metrics
+    "amt": "amount",
+    "qty": "quantity",
+    "rev": "revenue",
+    "gmv": "gmv",
+
+    # common prefixes/suffixes
+    "num": "number",
+    "cnt": "count"
 }
 
 class DataEngine:
@@ -39,7 +85,13 @@ class DataEngine:
       "rate": "mean"
     }
   
+  def _expand_abbreviations(self, col_name: str):
+    tokens = re.split(r'[^a-zA-Z]+', col_name.lower())
+    tokens = [replacements.get(t, t) for t in tokens]
+    return "".join(tokens)
+
   def _normalize_col_name(self,col_name:str):
+    col_name = self._expand_abbreviations(col_name)
     return "".join(filter(str.isalpha, col_name)).lower()
 
   def _detect_aggregation(self, col_name: str):
@@ -102,7 +154,7 @@ class DataEngine:
 
       if desired_keys:
         if any(key.lower() in col.lower() for key in desired_keys):
-          score += 0.2  
+          score += 0.35  
 
       scores[col] = score
 
@@ -181,7 +233,7 @@ class DataEngine:
     return data[best_col]
 
   def _finalize_for_prophet(self, df: pd.DataFrame, target_col_name: str):
-    df = df.dropna(subset=["ds", "y"])
+    df = df.dropna(subset=['ds','y'])
     
     df["ds"] = pd.to_datetime(df["ds"], errors="coerce")
     df["y"] = pd.to_numeric(df["y"], errors="coerce")

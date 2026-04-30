@@ -3,7 +3,6 @@ import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas";
 
 export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
-  // Use a try-catch for the whole process to ensure we can at least show a meaningful error
   try {
     const doc = new jsPDF({
       orientation: "portrait",
@@ -11,21 +10,19 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
       format: "a4",
     });
 
-    // Helper to safely format numbers
     const formatNum = (val, dec = 1) => {
       const n = Number(val);
       return isNaN(n) ? "0.0" : n.toFixed(dec);
     };
 
     const { analytics, insights } = data || {};
-    const primaryColor = [234, 88, 12]; // #ea580c (Orange)
-    const secondaryColor = [38, 38, 38]; // #262626 (Neutral-800)
-    const textColor = [64, 64, 64]; // #404040
-    const lightBg = [250, 250, 250]; // #fafafa
+    const primaryColor = [234, 88, 12];
+    const secondaryColor = [38, 38, 38];
+    const textColor = [64, 64, 64];
+    const lightBg = [250, 250, 250];
 
     let currentY = 20;
 
-    // --- Header ---
     doc.setFillColor(...primaryColor);
     doc.rect(0, 0, 210, 40, "F");
 
@@ -180,11 +177,15 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
       doc.text("Weekly Performance Distribution", 15, currentY);
       currentY += 5;
 
-      const weeklyData = Object.entries(seasonalityDist).map(([day, val]) => [
-        day,
-        formatNum(val, 2),
-        val >= 0 ? "Strong" : "Weak"
-      ]);
+      const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const monthOrder = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+      const weeklyData = Object.entries(seasonalityDist)
+        .sort((a, b) => {
+          const order = analytics?.seasonality?.dominant_period === "yearly" ? monthOrder : dayOrder;
+          return order.indexOf(a[0]) - order.indexOf(b[0]);
+        })
+        .map(([day, val]) => [day, formatNum(val, 2), val >= 0 ? "Strong" : "Weak"]);
 
       autoTable(doc, {
         startY: currentY,
