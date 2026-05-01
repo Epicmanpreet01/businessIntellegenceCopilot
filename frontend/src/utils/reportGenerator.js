@@ -117,6 +117,11 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
       ],
     ];
 
+    const normalize = (text) => {
+      if (!text) return "N/A";
+      return String(text).toLowerCase().split(/[_\s]+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    };
+
     autoTable(doc, {
       startY: currentY,
       head: [kpiData[0]],
@@ -132,6 +137,90 @@ export const generateProfessionalPDF = async (data, datasetId, chartRef) => {
     });
 
     currentY = doc.lastAutoTable.finalY + 15;
+
+    // --- Market Behavioral Dynamics & Strategic Outlook ---
+    if (currentY > 210) {
+      doc.addPage();
+      currentY = 20;
+    }
+
+    doc.setTextColor(...secondaryColor);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Market Behavioral Dynamics", 15, currentY);
+    currentY += 5;
+
+    const marketDynamicsData = [
+      ["Dimension", "Assessment", "Implication"],
+      ["Behavior Profile", normalize(analytics?.behavior_profile), "Core business personality pattern"],
+      ["Volatility Index", normalize(analytics?.volatility), "Consistency of performance baseline"],
+      ["Growth Momentum", normalize(analytics?.momentum), "Short-term velocity and strength"],
+      ["Recovery State", normalize(analytics?.recovery_state), "Resilience after market anomalies"],
+    ];
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [marketDynamicsData[0]],
+      body: marketDynamicsData.slice(1),
+      headStyles: { fillColor: [59, 130, 246] },
+      margin: { left: 15, right: 15 },
+      theme: "grid",
+    });
+
+    currentY = doc.lastAutoTable.finalY + 12;
+
+    doc.setTextColor(...secondaryColor);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Strategic Forward Outlook", 15, currentY);
+    currentY += 5;
+
+    const outlookData = [
+      ["Metric", "Level", "Strategic Focus"],
+      ["Risk Profile", normalize(analytics?.risk_level), "Vulnerability to external shocks"],
+      ["Trend Alignment", normalize(analytics?.trend_alignment), "Consistency with AI-modeled future"],
+      ["Growth Opportunity", normalize(analytics?.opportunity_level), "Available untapped market potential"],
+    ];
+
+    autoTable(doc, {
+      startY: currentY,
+      head: [outlookData[0]],
+      body: outlookData.slice(1),
+      headStyles: { fillColor: [79, 70, 229] },
+      margin: { left: 15, right: 15 },
+      theme: "grid",
+    });
+
+    currentY = doc.lastAutoTable.finalY + 15;
+
+    // --- Historical Landmarks ---
+    if (analytics?.landmarks) {
+      if (currentY > 240) {
+        doc.addPage();
+        currentY = 20;
+      }
+      doc.setTextColor(...secondaryColor);
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Performance Landmarks", 15, currentY);
+      currentY += 8;
+
+      const landmarks = [
+        ["Landmark", "Date", "Performance Value"],
+        ["Peak Performance", new Date(analytics.landmarks.peak?.ds).toLocaleDateString(), formatNum(analytics.landmarks.peak?.y, 2)],
+        ["Trough / Floor", new Date(analytics.landmarks.floor?.ds).toLocaleDateString(), formatNum(analytics.landmarks.floor?.y, 2)],
+      ];
+
+      autoTable(doc, {
+        startY: currentY,
+        head: [landmarks[0]],
+        body: landmarks.slice(1),
+        headStyles: { fillColor: [31, 41, 55] },
+        margin: { left: 15, right: 15 },
+        theme: "striped",
+      });
+      currentY = doc.lastAutoTable.finalY + 15;
+    }
 
     // --- Root Cause Analysis (Analysis Reasons) ---
     if (insights?.reasons && insights.reasons.length > 0) {

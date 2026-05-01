@@ -132,6 +132,7 @@ def create_chat_context(analytics, insights):
     f"- Pattern: {seasonality.get('pattern', 'unknown')}",
     f"- Strength: {seasonality.get('strength', 'unknown')}",
     f"- Dominant period: {seasonality.get('dominant_period', 'unknown')}",
+    f"- Performance Distribution: {seasonality.get('distribution', 'unknown')}"
     "",
 
     "## Forecast Outlook",

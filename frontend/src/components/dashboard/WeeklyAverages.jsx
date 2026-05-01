@@ -54,7 +54,7 @@ const WeeklyAverages = ({ data }) => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
             >
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -63,27 +63,27 @@ const WeeklyAverages = ({ data }) => {
               />
               <XAxis
                 dataKey="day"
-                tick={{ fontSize: 12, fill: t.chart.text }}
+                tick={{ fontSize: 10, fill: t.chart.text, fontWeight: 700 }}
                 axisLine={false}
                 tickLine={false}
                 dy={10}
               />
               <YAxis
-                tick={{ fontSize: 12, fill: t.chart.text }}
+                tick={{ fontSize: 10, fill: t.chart.text, fontWeight: 700 }}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={(val) => `${val.toFixed(0)}`}
+                tickFormatter={(val) => `${val > 0 ? '+' : ''}${val.toFixed(0)}`}
               />
               <RechartsTooltip
-                cursor={{ fill: isDark ? "#262626" : "#f1f5f9" }}
+                cursor={{ fill: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.05)" }}
                 content={<CustomTooltip t={t} />}
               />
-              <ReferenceLine y={0} stroke={isDark ? "#444" : "#ccc"} />
-              <Bar dataKey="avg" radius={[4, 4, 0, 0]} barSize={40}>
+              <ReferenceLine y={0} stroke={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"} />
+              <Bar dataKey="avg" radius={[3, 3, 0, 0]} barSize={24}>
                 {chartData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={entry.avg >= 0 ? t.chart.line : "#ef4444"}
+                    fill={entry.avg >= 0 ? t.chart.line : "#f43f5e"}
                   />
                 ))}
               </Bar>

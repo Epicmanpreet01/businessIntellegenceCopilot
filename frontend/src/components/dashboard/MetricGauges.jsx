@@ -68,28 +68,74 @@ const MetricGauges = ({ analytics, totalPoints }) => {
     totalPoints > 0 ? (analytics.anomalies.length / totalPoints) * 100 : 0;
   const healthScore = Math.max(0, 100 - anomalyDensity * 5); // Scaled for visibility
 
+  // Forecast Reliability
+  const reliabilityMap = { low: 30, medium: 60, high: 90 };
+  const reliabilityScore = reliabilityMap[analytics.forecast_reliability] || 0;
+
+  // Anomaly Impact (Inverted: high impact = lower stability score)
+  const impactMap = { none: 100, low: 80, moderate: 50, high: 20 };
+  const impactScore = impactMap[analytics.anomaly_impact] || 0;
+
   return (
     <div
-      className={`${t.panelBg} rounded-[2rem] p-8 shadow-sm border ${t.border} flex flex-col h-full transition-all hover:shadow-md`}
+      className={`${t.panelBg} rounded-[2rem] p-8 lg:p-10 shadow-sm border ${t.border} flex flex-col h-full transition-all hover:shadow-md`}
     >
-      <div className="flex items-center gap-2 mb-8">
-        <h3 className={`text-lg font-bold ${t.text}`}>Analysis Reliability</h3>
-        <InfoTooltip text="Gauges how certain the AI is about its findings. High scores mean the data is very clear, consistent, and follows predictable patterns." />
+      <div className="flex items-center gap-2 mb-10">
+        <h3 className={`text-lg font-bold ${t.text}`}>Reliability & Impact Matrix</h3>
+        <InfoTooltip text="Our AI reliability matrix:
+• Trend: Certainty of long-term trajectory.
+• Forecast: Statistical confidence in upcoming predictions.
+• Seasonality: Strength of recurring weekly/monthly patterns.
+• Health: Cleanliness of data points.
+• Stability: Impact of anomalies on overall performance." />
       </div>
-      <div className="flex-1 flex items-center justify-around gap-4">
-        <Gauge
-          label="Trend Strength"
-          value={trendScore}
-          color="#f97316"
-          t={t}
-        />
-        <Gauge
-          label="Seasonality"
-          value={seasonalityScore}
-          color="#3b82f6"
-          t={t}
-        />
-        <Gauge label="Data Health" value={healthScore} color="#10b981" t={t} />
+      
+      <div className="flex-1 flex flex-col sm:flex-row items-center gap-10">
+        {/* Group 1: Confidence */}
+        <div className="flex flex-col items-center gap-6">
+          <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${t.textMuted} opacity-60`}>Analysis Confidence</p>
+          <div className="flex items-center gap-8">
+            <Gauge
+              label="Trend"
+              value={trendScore}
+              color="#f97316"
+              t={t}
+            />
+            <Gauge
+              label="Forecast"
+              value={reliabilityScore}
+              color="#8b5cf6"
+              t={t}
+            />
+          </div>
+        </div>
+
+        <div className="hidden sm:block w-px h-20 bg-neutral-200 dark:bg-neutral-800" />
+
+        {/* Group 2: Stability */}
+        <div className="flex-1 flex flex-col items-center gap-6">
+          <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${t.textMuted} opacity-60`}>Business Stability</p>
+          <div className="flex flex-wrap items-center justify-center gap-8">
+            <Gauge
+              label="Seasonality"
+              value={seasonalityScore}
+              color="#3b82f6"
+              t={t}
+            />
+            <Gauge 
+              label="Health" 
+              value={healthScore} 
+              color="#10b981" 
+              t={t} 
+            />
+            <Gauge
+              label="Stability"
+              value={impactScore}
+              color="#f43f5e"
+              t={t}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -42,3 +42,8 @@ export function formatModelText(text) {
     return parseFloat(match).toFixed(2);
   });
 }
+
+export function normalizeText(text) {
+  if (typeof text !== "string") return text;
+  return text.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+}

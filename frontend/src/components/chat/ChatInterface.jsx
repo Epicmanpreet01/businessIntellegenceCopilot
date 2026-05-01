@@ -53,13 +53,18 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
 
   const adjustHeight = useCallback(() => {
     if (textareaRef.current) {
+      if (!chatInput.trim()) {
+        textareaRef.current.style.height = "44px";
+        textareaRef.current.style.overflowY = "hidden";
+        return;
+      }
       textareaRef.current.style.height = "auto";
       const scrollHeight = textareaRef.current.scrollHeight;
       textareaRef.current.style.height = `${Math.min(scrollHeight, 200)}px`;
       textareaRef.current.style.overflowY =
         scrollHeight > 200 ? "auto" : "hidden";
     }
-  }, []);
+  }, [chatInput]);
 
   useEffect(() => {
     adjustHeight();
@@ -325,9 +330,9 @@ const ChatInterface = ({ isFullscreen, setChatMode }) => {
               }
             }}
             placeholder="Ask a question..."
-            className={`block w-full pl-4 pr-12 py-3.5 rounded-xl focus:outline-none focus:ring-2 transition-all shadow-sm ${t.inputBg} resize-none custom-scrollbar`}
+            className={`block w-full pl-4 pr-12 py-2.5 rounded-xl focus:outline-none focus:ring-2 transition-all shadow-sm ${t.inputBg} resize-none custom-scrollbar`}
             style={{
-              minHeight: "54px",
+              minHeight: "44px",
               maxHeight: "200px",
               overflowY: "hidden",
               overflowX: "hidden",

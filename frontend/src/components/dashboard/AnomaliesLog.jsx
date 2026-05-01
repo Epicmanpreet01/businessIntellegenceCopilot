@@ -2,7 +2,7 @@ import { TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import InfoTooltip from "./InfoTooltip";
 import { useTheme } from "../../context/ThemeContext";
 
-const AnomaliesLog = ({ anomalies = [] }) => {
+const AnomaliesLog = ({ anomalies = [], analytics }) => {
   const { t, isDark } = useTheme();
 
   // Reverse to show most recent first
@@ -12,11 +12,18 @@ const AnomaliesLog = ({ anomalies = [] }) => {
     <div
       className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} flex flex-col transition-all hover:shadow-md h-full`}
     >
-      <div className="flex items-center gap-2 mb-6">
-        <h3 className={`text-lg font-bold ${t.text}`}>
-          Recent Anomalies Log
-        </h3>
-        <InfoTooltip text="A detailed history of every time your revenue was significantly higher (spike) or lower (drop) than the AI's expected range." />
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <h3 className={`text-lg font-bold ${t.text}`}>
+            Recent Anomalies Log
+          </h3>
+          <InfoTooltip text="A detailed history of every time your revenue was significantly higher (spike) or lower (drop) than the AI's expected range." />
+        </div>
+        {anomalies.length > 0 && (
+          <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${t.border} ${t.textMuted}`}>
+            Recent Bias: <span className={analytics?.anomaly_bias === 'positive_bias' ? 'text-emerald-500' : analytics?.anomaly_bias === 'negative_bias' ? 'text-red-500' : ''}>{analytics?.anomaly_bias?.replace('_', ' ') || 'None'}</span>
+          </div>
+        )}
       </div>
       <div
         className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2"
