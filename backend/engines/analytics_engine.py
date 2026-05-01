@@ -272,11 +272,20 @@ class AnalyticsEngine:
         "distribution": {}
       }
 
+
+  # Extended analytics for chat intellegence, dashboard already extracts most of them automatically
   def _forecast_analysis(self):
     future = self.forecast_df.tail(7)
 
     if len(future) < 2:
-      return {"trend": "flat", "change_pct": 0}
+      return {
+        "trend": "flat",
+        "change_pct": 0,
+        "strength": "weak",
+        "volatility": "low",
+        "confidence": "low",
+        "consistency": "mixed"
+      }
 
     y = future['yhat'].values
     x = np.arange(len(y))
@@ -292,20 +301,254 @@ class AnalyticsEngine:
     if start != 0:
       change = ((end - start) / start) * 100
 
+    # strength
+    if abs(slope) > 0.05:
+      strength = "strong"
+    elif abs(slope) > 0.02:
+      strength = "moderate"
+    else:
+      strength = "weak"
+
+    # volatility
+    volatility_ratio = np.std(y) / (np.mean(y) + 1e-9)
+    if volatility_ratio > 0.3:
+      volatility = "high"
+    elif volatility_ratio > 0.1:
+      volatility = "medium"
+    else:
+      volatility = "low"
+
+    # consistency
+    diffs = np.diff(y)
+    positive_ratio = np.sum(diffs > 0) / len(diffs)
+    if positive_ratio > 0.7:
+      consistency = "consistent_growth"
+    elif positive_ratio < 0.3:
+      consistency = "consistent_decline"
+    else:
+      consistency = "mixed"
+
+    # confidence
+    if abs(change) > 15:
+      confidence = "high"
+    elif abs(change) > 5:
+      confidence = "medium"
+    else:
+      confidence = "low"
+
+    # extremes
+    peak_idx = np.argmax(y)
+    dip_idx = np.argmin(y)
+
     return {
       "trend": direction,
-      "change_pct": float(change)
+      "change_pct": float(change),
+      "strength": strength,
+      "volatility": volatility,
+      "consistency": consistency,
+      "confidence": confidence,
+      "peak": {
+        "index": int(peak_idx),
+        "value": float(y[peak_idx])
+      },
+      "dip": {
+        "index": int(dip_idx),
+        "value": float(y[dip_idx])
+      }
     }
+
+  def _momentum(self):
+    change = self._change()['last_7d']
+
+    if change > 10:
+      return "strong_positive"
+    elif change > 3:
+      return "positive"
+    elif change < -10:
+      return "strong_negative"
+    elif change < -3:
+      return "negative"
+    return "flat"
+
+  def _volatility(self):
+    y = self.df['y']
+    ratio = y.std() / (y.mean() + 1e-9)
+
+    if ratio > 0.5:
+      return "high"
+    elif ratio > 0.2:
+      return "medium"
+    return "low"
+
+  def _relative_performance(self):
+    window = self._get_window_size(7)
+
+    recent = self.df['y'].tail(window).mean()
+    overall = self.df['y'].mean()
+
+    if recent > overall * 1.1:
+      return "above_average"
+    elif recent < overall * 0.9:
+      return "below_average"
+    return "average"
+  
+  def _acceleration(self):
+    short = self._change()['last_7d']
+    long = self._change()['last_30d']
+
+    if short > long:
+      return "accelerating"
+    elif short < long:
+      return "decelerating"
+    return "stable"
+
+  def _anomaly_impact(self, anomalies):
+    if len(anomalies) == 0:
+      return "none"
+
+    high = sum(1 for a in anomalies if a['severity'] == 'high')
+
+    if high > 2:
+      return "high"
+    elif len(anomalies) > 3:
+      return "moderate"
+    return "low"
+
+  def _forecast_reliability(self, volatility, anomaly_impact):
+    if volatility == "high" or anomaly_impact == "high":
+      return "low"
+    elif volatility == "medium":
+      return "medium"
+    return "high"
+
+  def _extremes(self):
+    idx_max = self.df['y'].idxmax()
+    idx_min = self.df['y'].idxmin()
+
+    return {
+      "peak": {
+        "date": self.df.loc[idx_max, 'ds'].isoformat(),
+        "value": float(self.df.loc[idx_max, 'y'])
+      },
+      "trough": {
+        "date": self.df.loc[idx_min, 'ds'].isoformat(),
+        "value": float(self.df.loc[idx_min, 'y'])
+      }
+    }
+
+  def _risk_level(self, volatility, anomaly_impact, forecast):
+    if forecast['trend'] == 'downward' and anomaly_impact == 'high':
+      return "high"
+    elif volatility == "high":
+      return "medium"
+    return "low"
+
+  def _opportunity(self, forecast):
+    momentum = self._momentum()
+
+    if momentum in ["positive", "strong_positive"] and forecast['trend'] == "upward":
+      return "high"
+    elif momentum == "positive":
+      return "medium"
+    return "low"
+  
+  def _recovery(self):
+    change = self._change()['last_7d']
+    prev = self._change()['last_30d']
+
+    if prev < 0 and change > 0:
+      return "recovering"
+    return "stable"
+    
+  def _behavior_profile(self):
+    volatility = self._volatility()
+    trend = self._trend()['direction']
+
+    if volatility == "low" and trend == "upwards":
+      return "stable_growth"
+    elif volatility == "high" and trend == "upwards":
+      return "volatile_growth"
+    elif volatility == "high" and trend == "downwards":
+      return "unstable_decline"
+    return "stable"
+  
+  def _recent_anomaly_bias(self, anomalies):
+    if not anomalies:
+      return "none"
+
+    recent = sorted(anomalies, key=lambda x: x['ds'], reverse=True)[:3]
+
+    drops = sum(1 for a in recent if a['type'] == 'drop')
+    spikes = sum(1 for a in recent if a['type'] == 'spike')
+
+    if drops > spikes:
+      return "negative_bias"
+    elif spikes > drops:
+      return "positive_bias"
+    return "neutral"
+  
+  def _trend_alignment(self, forecast):
+    past = self._trend()['direction']
+    future = forecast['trend']
+
+    if past == future:
+      return "aligned"
+    return "reversal_expected"
+
+  def _overall_state(self):
+    trend = self._trend()['direction']
+    momentum = self._momentum()
+
+    if trend == "downwards":
+      return "declining"
+    elif momentum in ["strong_positive", "positive"]:
+      return "growing"
+    return "stable"
 
   def run(self) -> AnalyticsEngineOut:
     anomalies = self._detect_annomalies()
 
+    trend = self._trend()
+    change = self._change()
+    forecast = self._forecast_analysis()
+    momentum = self._momentum()
+    volatility = self._volatility()
+    anomaly_impact = self._anomaly_impact(anomalies)
+
     return AnalyticsEngineOut(
       dataset_id=self.dataset_id,
-      trend=self._trend(),
-      change=self._change(),
+
+      # Core
+      trend=trend,
+      change=change,
+
+      # Derived
+      momentum=momentum,
+      volatility=volatility,
+      relative_performance=self._relative_performance(),
+      acceleration=self._acceleration(),
+
+      # Anomalies
       anomalies=anomalies,
       anomaly_summary=self._anomaly_summary(anomalies),
+      anomaly_impact=anomaly_impact,
+      anomaly_bias=self._recent_anomaly_bias(anomalies),
+
+      # Seasonality
       seasonality=self._seasonality(),
-      forecast=self._forecast_analysis()
+
+      # Forecast
+      forecast=forecast,
+      forecast_reliability=self._forecast_reliability(volatility, anomaly_impact),
+      trend_alignment=self._trend_alignment(forecast),
+
+      # Extremes
+      extremes=self._extremes(),
+
+      # High-level signals
+      risk_level=self._risk_level(volatility, anomaly_impact, forecast),
+      opportunity_level=self._opportunity(forecast),
+      recovery_state=self._recovery(),
+      behavior_profile=self._behavior_profile(),
+      overall_state=self._overall_state()
     )

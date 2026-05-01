@@ -15,6 +15,15 @@ def create_chat_context(analytics, insights):
   seasonality = analytics_data.get("seasonality", {})
   forecast = analytics_data.get("forecast", {})
 
+  overall_state = analytics_data.get("overall_state", "unknown")
+  risk_level = analytics_data.get("risk_level", "unknown")
+  opportunity_level = analytics_data.get("opportunity_level", "unknown")
+
+  momentum = analytics_data.get("momentum", "unknown")
+  volatility = analytics_data.get("volatility", "unknown")
+  forecast_reliability = analytics_data.get("forecast_reliability", "unknown")
+  trend_alignment = analytics_data.get("trend_alignment", "unknown")
+
   summary = insights_data.get("summary", "")
   reasons = insights_data.get("reasons", [])
   recommendations = insights_data.get("recommendations", [])
@@ -87,6 +96,12 @@ def create_chat_context(analytics, insights):
     "DASHBOARD DATA STARTS BELOW",
     "",
 
+    "## Business Status",
+    f"- Overall State: {overall_state}",
+    f"- Risk Level: {risk_level}",
+    f"- Opportunity Level: {opportunity_level}",
+    "",
+
     "## Executive Summary",
     summary,
     "",
@@ -99,6 +114,13 @@ def create_chat_context(analytics, insights):
     "## Performance Change",
     f"- Last 7 days: {change.get('last_7d', 'n/a')}%",
     f"- Last 30 days: {change.get('last_30d', 'n/a')}%",
+    "",
+
+    "## Supporting Signals",
+    f"- Momentum: {momentum}",
+    f"- Volatility: {volatility}",
+    f"- Forecast Reliability: {forecast_reliability}",
+    f"- Trend Alignment: {trend_alignment}",
     "",
 
     "## Anomalies",

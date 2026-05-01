@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy import ForeignKey
 import uuid
 
 from backend.db.base import Base
@@ -16,26 +16,27 @@ class Analytics(Base):
     index=True
   )
 
-  # {"direction": "downward", "strength": "strong"}
   trend: Mapped[dict] = mapped_column(JSONB, nullable=False)
-
-  # {"last_7d": -12, "last_30d": -18}
   change: Mapped[dict] = mapped_column(JSONB, nullable=False)
-
-  # FULL anomaly objects (NOT just dates)
   anomalies: Mapped[list] = mapped_column(JSONB, nullable=False)
-
-  # {"count": 2, "recent_count": 1}
   anomaly_summary: Mapped[dict] = mapped_column(JSONB, nullable=False)
-
-  # {
-  #   "pattern": "",
-  #   "strength": "",
-  #   "seasonal_strength_score": ,
-  #   "dominant_period": ,
-  #   "distribution": {}
-  # }
   seasonality: Mapped[dict] = mapped_column(JSONB, nullable=False)
-
-  # {"trend": "downward", "change_pct": -5}
   forecast: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+  # Extended analytics for chat right now
+  forecast_reliability: Mapped[str] = mapped_column(String, nullable=False)
+  trend_alignment: Mapped[str] = mapped_column(String, nullable=False)
+  momentum: Mapped[str] = mapped_column(String, nullable=False)
+  volatility: Mapped[str] = mapped_column(String, nullable=False)
+  relative_performance: Mapped[str] = mapped_column(String, nullable=False)
+  acceleration: Mapped[str] = mapped_column(String, nullable=False)
+  anomaly_impact: Mapped[str] = mapped_column(String, nullable=False)
+  anomaly_bias: Mapped[str] = mapped_column(String, nullable=False)
+
+  extremes: Mapped[dict] = mapped_column(JSONB, nullable=False)
+
+  risk_level: Mapped[str] = mapped_column(String, nullable=False)
+  opportunity_level: Mapped[str] = mapped_column(String, nullable=False)
+  recovery_state: Mapped[str] = mapped_column(String, nullable=False)
+  behavior_profile: Mapped[str] = mapped_column(String, nullable=False)
+  overall_state: Mapped[str] = mapped_column(String, nullable=False)

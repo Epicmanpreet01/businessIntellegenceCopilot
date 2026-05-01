@@ -6,6 +6,7 @@ class InsightsEngine:
   def __init__(self, dataset_id: uuid.UUID,analytics : AnalyticsEngineOut):
     self.a = analytics
     self.dataset_id = dataset_id
+  
   def generate(self):
     return InsightEngineOut(
       dataset_id=self.dataset_id,
@@ -18,14 +19,22 @@ class InsightsEngine:
   def _summary(self) -> str:
     trend = self.a.trend
     seasonality = self.a.seasonality
-    chnage = self.a.change
+    change = self.a.change
 
-    text = f"Your business is experiencing a {trend['strength']} {trend['direction']} trend"
+    overall_state = getattr(self.a, "overall_state", "stable")
+    risk = getattr(self.a, "risk_level", "low")
+    opportunity = getattr(self.a, "opportunity_level", "moderate")
+
+    text = f"Your business is currently in a {overall_state} state"
+
+    text += f", with a {trend['strength']} {trend['direction']} trend"
 
     if seasonality['strength'] != 'none':
-      text += f", driven by {seasonality['strength']} {seasonality['pattern']}"
-    
-    text += f" ({round(chnage['last_30d'], 1)}% over last 30 days)"
+      text += f", influenced by {seasonality['strength']} {seasonality['pattern']}"
+
+    text += f" ({round(change['last_30d'], 1)}% over last 30 days)"
+
+    text += f". Risk level is {risk}, with {opportunity} growth opportunity."
 
     return text
   
@@ -38,6 +47,9 @@ class InsightsEngine:
     anomaly_summary = self.a.anomaly_summary or {}
     forecast = self.a.forecast or {}
     anomalies = self.a.anomalies or {}
+    momentum = getattr(self.a, "momentum", "flat")
+    volatility = getattr(self.a, "volatility", "low")
+    trend_alignment = getattr(self.a, "trend_alignment", "mixed")
 
     # trend analysis
     direction = trend.get("direction")
@@ -173,6 +185,25 @@ class InsightsEngine:
     if direction == "flat" and anomaly_count > 0:
       reasons.append("Overall performance is stable, but disrupted by irregular events")
 
+    if momentum == "strong_positive":
+      reasons.append("Strong positive momentum indicates accelerating performance")
+
+    elif momentum == "strong_negative":
+      reasons.append("Strong negative momentum indicates rapid deterioration")
+
+    if volatility == "high":
+      reasons.append("High volatility suggests unstable or inconsistent performance")
+
+    elif volatility == "medium":
+      reasons.append("Moderate fluctuations present in performance")
+
+    if trend_alignment == "aligned":
+      reasons.append("Historical, recent, and forecast trends are aligned")
+
+    elif trend_alignment == "diverging":
+      reasons.append("Recent or forecast behavior is diverging from long-term trend")
+
+
     # CLEAN DUPLICATES
     cleaned = []
     seen = set()
@@ -208,6 +239,9 @@ class InsightsEngine:
 
     future_trend = forecast.get("trend")
     future_change = forecast.get("change_pct", 0)
+
+    momentum = getattr(self.a, "momentum", "flat")
+    volatility = getattr(self.a, "volatility", "low")
 
     # trend actions
     if direction == "downwards":
@@ -311,6 +345,18 @@ class InsightsEngine:
     if direction == "flat" and anomaly_count == 0:
       recs.append("Use controlled experiments to unlock new growth opportunities")
 
+    if momentum == "strong_positive":
+      recs.append("Accelerate investments while growth momentum is strong")
+
+    elif momentum == "strong_negative":
+      recs.append("Act quickly to stabilize performance due to declining momentum")
+
+    if volatility == "high":
+      recs.append("Stabilize operations before scaling due to high variability")
+
+    elif volatility == "medium":
+      recs.append("Monitor fluctuations and adjust strategy dynamically")
+
     # clean duplicates
     cleaned = []
     seen = set()
@@ -326,16 +372,21 @@ class InsightsEngine:
     score = 0
 
     if self.a.trend["strength"] == "strong":
+      score += 2
+    elif self.a.trend["strength"] == "moderate":
       score += 1
 
-    if self.a.seasonality["pattern"] != "none":
+    if self.a.seasonality["strength"] in ["strong", "medium"]:
       score += 1
 
     if self.a.anomaly_summary["count"] > 0:
       score += 1
 
-    if score >= 2:
+    if getattr(self.a, "forecast_reliability", "low") == "high":
+      score += 1
+
+    if score >= 4:
       return "high"
-    elif score == 1:
+    elif score >= 2:
       return "medium"
     return "low"
