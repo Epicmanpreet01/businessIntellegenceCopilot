@@ -1,5 +1,8 @@
 import { Heart } from "lucide-react";
 import InfoTooltip from "./InfoTooltip";
+import { normalizeText } from "../../utils/common";
+import { motion } from "framer-motion";
+import AnimatedNumber from "./AnimatedNumber";
 
 const BusinessHealthScorecard = ({ analytics, t }) => {
   const trendMap = { weak: 10, moderate: 20, strong: 30 };
@@ -63,11 +66,19 @@ const BusinessHealthScorecard = ({ analytics, t }) => {
           {/* Compact Score */}
           <div className="flex flex-col items-center gap-3 shrink-0 lg:min-w-[140px]">
             <div className="flex items-baseline gap-1">
-              <span className={`text-5xl font-black ${scoreColor}`}>{compositeScore}</span>
+              <span className={`text-5xl font-black ${scoreColor}`}>
+                <AnimatedNumber value={compositeScore} duration={1500} />
+              </span>
               <span className={`text-lg font-bold ${t.textMuted}`}>/100</span>
             </div>
             <div className={`w-full h-2 rounded-full ${t.name === 'dark' ? 'bg-neutral-800' : 'bg-neutral-200'} overflow-hidden`}>
-              <div className={`h-full rounded-full ${barColor} transition-all duration-1000`} style={{ width: `${compositeScore}%` }} />
+              <motion.div 
+                className={`h-full rounded-full ${barColor}`} 
+                initial={{ width: 0 }}
+                whileInView={{ width: `${compositeScore}%` }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+                viewport={{ once: true, margin: "-50px" }}
+              />
             </div>
             <span className={`text-xs font-black uppercase tracking-widest ${scoreColor}`}>{scoreLabel}</span>
           </div>
@@ -80,8 +91,25 @@ const BusinessHealthScorecard = ({ analytics, t }) => {
               Your business is <span className="font-bold">{trendText}</span>. {momentumText}
             </p>
             {contextText && (
-              <p className={`text-sm ${t.textMuted} leading-relaxed italic`}>{contextText}</p>
+              <p className={`text-sm ${t.textMuted} leading-relaxed italic mb-6`}>{contextText}</p>
             )}
+            {!contextText && <div className="mb-6" />}
+
+            {/* Inline metrics display */}
+            <div className={`flex flex-wrap gap-8 pt-5 border-t ${t.name === 'dark' ? 'border-neutral-800' : 'border-neutral-200'}`}>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Trend Strength</p>
+                <p className={`text-xl font-black ${analytics.trend?.strength === 'strong' ? 'text-emerald-500' : analytics.trend?.strength === 'moderate' ? 'text-amber-500' : 'text-red-500'}`}>{normalizeText(analytics.trend?.strength || 'Unknown')}</p>
+              </div>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Volatility</p>
+                <p className={`text-xl font-black ${analytics.volatility === 'low' ? 'text-emerald-500' : analytics.volatility === 'medium' ? 'text-amber-500' : 'text-red-500'}`}>{normalizeText(analytics.volatility || 'Unknown')}</p>
+              </div>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Relative Performance</p>
+                <p className={`text-xl font-black ${analytics.relative_performance === 'above_average' ? 'text-emerald-500' : analytics.relative_performance === 'below_average' ? 'text-red-500' : 'text-neutral-500'}`}>{normalizeText(analytics.relative_performance || 'Unknown')}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

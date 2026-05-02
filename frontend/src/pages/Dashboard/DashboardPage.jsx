@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import {
   TrendingDown,
   TrendingUp,
@@ -229,7 +230,7 @@ const DashboardPage = () => {
         </div>
 
         {/* --- SECTION 1: STRATEGIC PULSE --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <div className={`${t.panelBg} rounded-[2.5rem] p-10 lg:p-14 shadow-xl border ${t.border} relative overflow-hidden group`}>
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-orange-500/5 rounded-full blur-3xl group-hover:bg-orange-500/10 transition-colors" />
             
@@ -293,7 +294,8 @@ const DashboardPage = () => {
           </div>
 
           <KeyMetricsGrid analytics={analytics} />
-        </section>
+          <AnalysisReasons reasons={insights.reasons} />
+        </motion.section>
 
         {/* ═══════ DEEP DIVE: THE STORY BEHIND YOUR NUMBERS ═══════ */}
         <div className="relative py-4">
@@ -306,22 +308,22 @@ const DashboardPage = () => {
         </div>
 
         {/* --- SECTION: BUSINESS HEALTH --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <BusinessHealthScorecard analytics={analytics} t={t} />
-        </section>
+        </motion.section>
 
         {/* --- SECTION 3: MARKET DYNAMICS --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <MarketPersonality analytics={analytics} t={t} />
-        </section>
+        </motion.section>
 
         {/* --- SECTION 4: SEASONALITY DEEP DIVE --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <SeasonalityDeepDive analytics={analytics} seasonalityData={seasonalityData} />
-        </section>
+        </motion.section>
 
         {/* --- SECTION 5: CORE INTELLIGENCE --- */}
-        <section className="space-y-12">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-12">
           <div className="flex items-center gap-3 px-2">
             <div className={`p-2 rounded-xl bg-orange-500/10 text-orange-500`}>
               <Activity className="w-5 h-5" />
@@ -334,30 +336,25 @@ const DashboardPage = () => {
           <div className="w-full" ref={chartRef} ref-id="revenue-chart-container">
             <RevenueChart data={chartData} />
           </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-            <Recommendations recommendations={insights.recommendations} />
-            <AnalysisReasons reasons={insights.reasons} />
-          </div>
-        </section>
+        </motion.section>
 
         {/* --- SECTION 6: FORECAST INTELLIGENCE --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <ForecastIntelligence analytics={analytics} t={t} />
-        </section>
+        </motion.section>
 
         {/* --- SECTION 7: STRATEGIC OUTLOOK --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <StrategicOutlook analytics={analytics} t={t} />
-        </section>
+        </motion.section>
 
         {/* --- SECTION 8: HISTORICAL LANDMARKS --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <PerformanceRecords analytics={analytics} t={t} />
-        </section>
+        </motion.section>
 
         {/* --- SECTION 9: EVENTS THAT NEED ATTENTION --- */}
-        <section className="space-y-8">
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8">
           <div className="flex items-center gap-3 px-2">
             <div className={`p-2 rounded-xl bg-red-500/10 text-red-500`}>
               <AlertTriangle className="w-5 h-5" />
@@ -369,7 +366,12 @@ const DashboardPage = () => {
           </div>
           <AnomalyIntelligenceStrip analytics={analytics} t={t} />
           <AnomaliesLog anomalies={analytics.anomalies} analytics={analytics} />
-        </section>
+        </motion.section>
+
+        {/* --- SECTION 10: STRATEGIC ACTION PLAN --- */}
+        <motion.section initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="space-y-8 pt-8 mt-8 border-t border-dashed border-orange-500/30">
+          <Recommendations recommendations={insights.recommendations} />
+        </motion.section>
 
       </div>
     </div>

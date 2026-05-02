@@ -1,6 +1,8 @@
 import { TrendingUp, TrendingDown, Gauge } from "lucide-react";
 import InfoTooltip from "./InfoTooltip";
 import { normalizeText } from "../../utils/common";
+import { motion } from "framer-motion";
+import AnimatedNumber from "./AnimatedNumber";
 
 const ForecastIntelligence = ({ analytics, t }) => {
   const forecast = analytics.forecast || {};
@@ -54,7 +56,8 @@ const ForecastIntelligence = ({ analytics, t }) => {
             </div>
             <div className="text-center">
               <p className={`text-4xl font-black ${t.text} tracking-tighter`}>
-                {changePct >= 0 ? "+" : ""}{changePct.toFixed(1)}%
+                {changePct >= 0 ? "+" : ""}
+                <AnimatedNumber value={changePct} duration={1500} decimalPlaces={1} />%
               </p>
               <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} mt-1`}>Projected Change</p>
             </div>
@@ -68,7 +71,13 @@ const ForecastIntelligence = ({ analytics, t }) => {
                 <span className={`text-[9px] font-black uppercase tracking-widest ${t.text}`}>{normalizeText(strength)}</span>
               </div>
               <div className={`h-1.5 w-full rounded-full ${t.name === 'dark' ? 'bg-neutral-800' : 'bg-neutral-200'} overflow-hidden`}>
-                <div className={`h-full rounded-full transition-all duration-1000 ${isUp ? 'bg-emerald-500' : 'bg-red-500'}`} style={{ width: `${strengthPct}%` }} />
+                <motion.div 
+                  className={`h-full rounded-full ${isUp ? 'bg-emerald-500' : 'bg-red-500'}`} 
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${strengthPct}%` }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  viewport={{ once: true, margin: "-50px" }}
+                />
               </div>
             </div>
           </div>

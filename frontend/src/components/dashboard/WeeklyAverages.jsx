@@ -10,6 +10,8 @@ import {
   ReferenceLine,
 } from "recharts";
 import { AlertCircle } from "lucide-react";
+import { useRef } from "react";
+import { useInView } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
 
 import InfoTooltip from "./InfoTooltip";
@@ -36,6 +38,8 @@ const CustomTooltip = ({ active, payload, label, t }) => {
 
 const WeeklyAverages = ({ data }) => {
   const { t, isDark } = useTheme();
+  const chartRef = useRef(null);
+  const isInView = useInView(chartRef, { once: true, margin: "-50px" });
 
   const chartData = data;
 
@@ -49,8 +53,8 @@ const WeeklyAverages = ({ data }) => {
         </h3>
         <InfoTooltip text="Visualizes your typical performance for each day of the week. Bars above the zero line indicate stronger-than-average days, while bars below show slower days." />
       </div>
-      <div className="h-[260px] w-full">
-        {chartData && chartData.length > 0 ? (
+      <div className="h-[260px] w-full" ref={chartRef}>
+        {isInView && chartData && chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
@@ -89,14 +93,14 @@ const WeeklyAverages = ({ data }) => {
               </Bar>
             </BarChart>
           </ResponsiveContainer>
-        ) : (
+        ) : isInView ? (
           <div className="h-full flex flex-col items-center justify-center opacity-50">
             <AlertCircle className={`w-8 h-8 ${t.textMuted} mb-2`} />
             <p className={`text-sm ${t.textMuted} text-center`}>
               Insufficient data to calculate <br /> performance distribution.
             </p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

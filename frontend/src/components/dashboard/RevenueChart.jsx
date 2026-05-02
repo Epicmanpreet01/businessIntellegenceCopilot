@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
+import { useInView } from "framer-motion";
 import {
   Line,
   XAxis,
@@ -64,6 +65,8 @@ const CustomTooltip = ({ active, payload, label, t }) => {
 const RevenueChart = ({ data }) => {
   const { t, isDark } = useTheme();
   const [timeframe, setTimeframe] = useState("3M");
+  const chartRef = useRef(null);
+  const isInView = useInView(chartRef, { once: true, margin: "-100px" });
 
   const filteredData = useMemo(() => {
     if (timeframe === "All" || !data || data.length === 0) return data;
@@ -149,71 +152,73 @@ const RevenueChart = ({ data }) => {
         </div>
       </div>
 
-      <div className="h-[350px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[350px] w-full" ref={chartRef}>
+        {isInView && (
+          <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
-            data={filteredData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke={t.chart.grid}
-            />
-            <XAxis
-              dataKey="date"
-              tick={{ fontSize: 11, fill: t.chart.text }}
-              axisLine={false}
-              tickLine={false}
-              dy={10}
-              minTickGap={50}
-            />
-            <YAxis
-              tick={{ fontSize: 11, fill: t.chart.text }}
-              axisLine={false}
-              tickLine={false}
-              tickFormatter={(val) => `$${val}`}
-            />
-            <RechartsTooltip
-              cursor={{ fill: isDark ? "#262626" : "#f1f5f9" }}
-              content={<CustomTooltip t={t} />}
-            />
-            <Line
-              type="monotone"
-              dataKey="historical"
-              name="Revenue"
-              stroke={t.chart.line}
-              strokeWidth={3}
-              dot={false}
-              activeDot={{ r: 6 }}
-              connectNulls
-            />
-            <Line
-              type="monotone"
-              dataKey="forecast"
-              name="Forecast"
-              stroke={t.chart.forecast}
-              strokeWidth={3}
-              strokeDasharray="5 5"
-              dot={false}
-              connectNulls
-            />
-            <Scatter
-              dataKey="anomaly"
-              name="Anomaly"
-              fill={t.chart.anomaly}
-              shape="circle"
-              r={7}
-            />
-            <Brush
-              dataKey="date"
-              height={30}
-              stroke={t.chart.line}
-              fill={isDark ? "#1A1A1A" : "#fff"}
-              tickFormatter={() => ""}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+              data={filteredData}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke={t.chart.grid}
+              />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 11, fill: t.chart.text }}
+                axisLine={false}
+                tickLine={false}
+                dy={10}
+                minTickGap={50}
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: t.chart.text }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(val) => `$${val}`}
+              />
+              <RechartsTooltip
+                cursor={{ fill: isDark ? "#262626" : "#f1f5f9" }}
+                content={<CustomTooltip t={t} />}
+              />
+              <Line
+                type="monotone"
+                dataKey="historical"
+                name="Revenue"
+                stroke={t.chart.line}
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6 }}
+                connectNulls
+              />
+              <Line
+                type="monotone"
+                dataKey="forecast"
+                name="Forecast"
+                stroke={t.chart.forecast}
+                strokeWidth={3}
+                strokeDasharray="5 5"
+                dot={false}
+                connectNulls
+              />
+              <Scatter
+                dataKey="anomaly"
+                name="Anomaly"
+                fill={t.chart.anomaly}
+                shape="circle"
+                r={7}
+              />
+              <Brush
+                dataKey="date"
+                height={30}
+                stroke={t.chart.line}
+                fill={isDark ? "#1A1A1A" : "#fff"}
+                tickFormatter={() => ""}
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

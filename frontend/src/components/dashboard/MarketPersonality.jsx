@@ -71,7 +71,23 @@ const MarketPersonality = ({ analytics, t }) => {
               <h4 className={`text-sm font-bold ${t.text}`}>What This Means</h4>
               <InfoTooltip text="Your behavior profile combines trend direction, volatility, and momentum into a single archetype that describes how your business performs over time." />
             </div>
-            <p className={`text-base ${t.text} leading-relaxed opacity-80`}>{narrative}</p>
+            <p className={`text-base ${t.text} leading-relaxed opacity-80 mb-6`}>{narrative}</p>
+
+            {/* Inline metrics display */}
+            <div className={`flex flex-wrap gap-8 pt-5 border-t ${t.name === 'dark' ? 'border-neutral-800' : 'border-neutral-200'}`}>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Volatility</p>
+                <p className={`text-xl font-black ${analytics.volatility === 'low' ? 'text-emerald-500' : analytics.volatility === 'medium' ? 'text-amber-500' : 'text-red-500'}`}>{normalizeText(analytics.volatility || 'Unknown')}</p>
+              </div>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Momentum</p>
+                <p className={`text-xl font-black ${['positive', 'strong_positive'].includes(analytics.momentum) ? 'text-emerald-500' : ['negative', 'strong_negative'].includes(analytics.momentum) ? 'text-red-500' : 'text-amber-500'}`}>{normalizeText(analytics.momentum || 'Unknown')}</p>
+              </div>
+              <div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Recovery State</p>
+                <p className={`text-xl font-black ${analytics.recovery_state === 'recovering' ? 'text-emerald-500' : 'text-amber-500'}`}>{normalizeText(analytics.recovery_state || 'None')}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

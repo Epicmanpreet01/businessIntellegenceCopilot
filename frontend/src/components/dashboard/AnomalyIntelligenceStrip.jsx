@@ -1,5 +1,7 @@
 import InfoTooltip from "./InfoTooltip";
 import { normalizeText } from "../../utils/common";
+import { motion } from "framer-motion";
+import AnimatedNumber from "./AnimatedNumber";
 
 const AnomalyIntelligenceStrip = ({ analytics, t }) => {
   const summary = analytics.anomaly_summary || { count: 0, recent_count: 0 };
@@ -54,15 +56,41 @@ const AnomalyIntelligenceStrip = ({ analytics, t }) => {
         </div>
         <div className="flex items-center gap-3">
           <span className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted}`}>Stability:</span>
-          <span className={`text-base font-black ${stabilityColor}`}>{stabilityScore}/100</span>
+          <span className={`text-base font-black ${stabilityColor}`}>
+            <AnimatedNumber value={stabilityScore} duration={1500} />/100
+          </span>
           <div className={`w-16 h-1.5 rounded-full ${t.name === 'dark' ? 'bg-neutral-800' : 'bg-neutral-200'} overflow-hidden`}>
-            <div className={`h-full rounded-full ${barColor}`} style={{ width: `${stabilityScore}%` }} />
+            <motion.div 
+              className={`h-full rounded-full ${barColor}`} 
+              initial={{ width: 0 }}
+              whileInView={{ width: `${stabilityScore}%` }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-50px" }}
+            />
           </div>
           <span className={`text-[10px] font-bold uppercase tracking-widest ${stabilityColor}`}>{stabilityLabel}</span>
         </div>
       </div>
 
-      <p className={`text-sm ${t.text} leading-relaxed opacity-80`}>{narrative}</p>
+      <p className={`text-sm ${t.text} leading-relaxed opacity-80 mb-6`}>{narrative}</p>
+
+      {/* Inline metrics display */}
+      <div className={`flex flex-wrap gap-8 pt-5 border-t ${t.name === 'dark' ? 'border-neutral-800' : 'border-neutral-200'}`}>
+        <div>
+          <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Recent Anomalies</p>
+          <p className={`text-xl font-black ${summary.recent_count === 0 ? 'text-emerald-500' : summary.recent_count < 3 ? 'text-amber-500' : 'text-red-500'}`}>
+            <AnimatedNumber value={summary.recent_count} duration={1500} />
+          </p>
+        </div>
+        <div>
+          <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Overall Impact</p>
+          <p className={`text-xl font-black ${impact === 'none' || impact === 'low' ? 'text-emerald-500' : impact === 'moderate' ? 'text-amber-500' : 'text-red-500'}`}>{normalizeText(impact || 'Unknown')}</p>
+        </div>
+        <div>
+          <p className={`text-[10px] font-black uppercase tracking-widest ${t.textMuted} opacity-60 mb-1`}>Directional Bias</p>
+          <p className={`text-xl font-black ${bias === 'positive_bias' ? 'text-emerald-500' : bias === 'negative_bias' ? 'text-red-500' : 'text-amber-500'}`}>{normalizeText(bias || 'Unknown')}</p>
+        </div>
+      </div>
     </div>
   );
 };

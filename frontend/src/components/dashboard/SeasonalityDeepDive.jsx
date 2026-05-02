@@ -1,4 +1,6 @@
 import { Waves } from "lucide-react";
+import { useRef } from "react";
+import { useInView } from "framer-motion";
 import InfoTooltip from "./InfoTooltip";
 import { normalizeText } from "../../utils/common";
 import {
@@ -23,6 +25,8 @@ const CustomTooltip = ({ active, payload, label, t }) => {
 
 const SeasonalityDeepDive = ({ analytics, seasonalityData }) => {
   const { t, isDark } = useTheme();
+  const chartRef = useRef(null);
+  const isInView = useInView(chartRef, { once: true, margin: "-50px" });
   const seasonality = analytics.seasonality || {};
   const pattern = seasonality.pattern || "none";
   const strength = seasonality.strength || "none";
@@ -85,8 +89,8 @@ const SeasonalityDeepDive = ({ analytics, seasonalityData }) => {
             <h4 className={`text-sm font-bold ${t.text}`}>{dominantPeriod === 'yearly' ? 'Monthly' : 'Weekly'} Distribution</h4>
             <InfoTooltip text="Bars above zero show periods with above-average seasonal effect. Below zero indicates below-average. This isolates the recurring pattern from your overall trend." />
           </div>
-          <div className="h-[200px] w-full">
-            {seasonalityData && seasonalityData.length > 0 ? (
+          <div className="h-[200px] w-full" ref={chartRef}>
+            {isInView && seasonalityData && seasonalityData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={seasonalityData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={t.chart.grid} />
@@ -101,12 +105,12 @@ const SeasonalityDeepDive = ({ analytics, seasonalityData }) => {
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
-            ) : (
+            ) : isInView ? (
               <div className="h-full flex flex-col items-center justify-center opacity-50">
                 <Waves className={`w-8 h-8 ${t.textMuted} mb-2`} />
                 <p className={`text-sm ${t.textMuted} text-center`}>Insufficient data for seasonal distribution.</p>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
