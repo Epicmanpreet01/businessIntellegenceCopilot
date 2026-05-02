@@ -64,3 +64,62 @@
   from { transform: translateX(2rem); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+.zoom-in-95 {
+  animation-name: zoomIn95;
+}
+
+@keyframes zoomIn95 {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Stagger-in for scorecard pills */
+.stagger-in > * {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s ease-out forwards;
+}
+.stagger-in > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-in > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-in > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-in > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-in > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-in > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-in > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-in > *:nth-child(8) { animation-delay: 0.4s; }
+
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Pulse for active alerts */
+.pulse-soft {
+  animation: pulseSoft 2.5s ease-in-out infinite;
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Arc drawing animation for gauges */
+.arc-draw {
+  animation: arcDraw 1.2s ease-out forwards;
+}
+
+@keyframes arcDraw {
+  from { stroke-dashoffset: var(--arc-circumference, 226); }
+  to { stroke-dashoffset: var(--arc-offset, 0); }
+}
+
+/* Score counter */
+.score-reveal {
+  animation: scoreReveal 0.6s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+@keyframes scoreReveal {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}

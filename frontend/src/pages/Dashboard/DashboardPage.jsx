@@ -22,13 +22,18 @@ import Recommendations from "../../components/dashboard/Recommendations";
 import WeeklyAverages from "../../components/dashboard/WeeklyAverages";
 import AnomaliesLog from "../../components/dashboard/AnomaliesLog";
 import AnalysisReasons from "../../components/dashboard/AnalysisReasons";
-import MetricGauges from "../../components/dashboard/MetricGauges";
+import KeyMetricsGrid from "../../components/dashboard/KeyMetricsGrid";
 import MarketPersonality from "../../components/dashboard/MarketPersonality";
 import StrategicOutlook from "../../components/dashboard/StrategicOutlook";
 import PerformanceRecords from "../../components/dashboard/PerformanceRecords";
 import { AlertTriangle } from "lucide-react";
 
 import InfoTooltip from "../../components/dashboard/InfoTooltip";
+
+import ForecastIntelligence from "../../components/dashboard/ForecastIntelligence";
+import AnomalyIntelligenceStrip from "../../components/dashboard/AnomalyIntelligenceStrip";
+import BusinessHealthScorecard from "../../components/dashboard/BusinessHealthScorecard";
+import SeasonalityDeepDive from "../../components/dashboard/SeasonalityDeepDive";
 
 import { useDeleteDatasetMutation } from "../../hooks/mutations/useDatasetMutation";
 import { useDatasetQuery } from "../../hooks/queries/useDatasetsQuery";
@@ -287,71 +292,45 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <MetricGauges analytics={analytics} t={t} totalPoints={processed_data.length} />
-            </div>
-            
-            <div className={`${t.panelBg} rounded-[2rem] p-8 shadow-sm border ${t.border} flex flex-col transition-all hover:shadow-md hover:border-orange-500/30 group`}>
-              <div className="flex justify-between items-start mb-6">
-                <div className={`p-3 rounded-2xl ${analytics.acceleration === 'accelerating' ? t.emeraldSoft : t.amberSoft} group-hover:scale-110 transition-transform`}>
-                  <Activity className="w-5 h-5" />
-                </div>
-                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${analytics.acceleration === 'accelerating' ? t.emeraldSoft : t.amberSoft}`}>
-                  Strategic Signal
-                </div>
-              </div>
-              
-              <div className="flex-1 flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center gap-1 mb-2">
-                    <h4 className={`text-sm font-bold ${t.textMuted}`}>Growth Positioning</h4>
-                    <InfoTooltip text="Compares your current week's performance against your monthly average to see if your business is picking up speed or slowing down." />
-                  </div>
-                  <p className={`text-3xl font-black ${t.text} tracking-tight`}>
-                    {analytics.acceleration.charAt(0).toUpperCase() + analytics.acceleration.slice(1)}
-                  </p>
-                </div>
+          <KeyMetricsGrid analytics={analytics} />
+        </section>
 
-                <div className="mt-8 space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest opacity-60">
-                      <span className={t.text}>7D Momentum</span>
-                      <span className={t.text}>{analytics.change.last_7d.toFixed(1)}%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full ${analytics.change.last_7d >= 0 ? 'bg-emerald-500' : 'bg-red-500'}`}
-                        style={{ width: `${Math.min(100, Math.abs(analytics.change.last_7d) * 2)}%` }}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest opacity-60">
-                      <span className={t.text}>30D Baseline</span>
-                      <span className={t.text}>{analytics.change.last_30d.toFixed(1)}%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
-                      <div 
-                        className={`h-full rounded-full bg-blue-500`}
-                        style={{ width: `${Math.min(100, Math.abs(analytics.change.last_30d) * 2)}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* ═══════ DEEP DIVE: THE STORY BEHIND YOUR NUMBERS ═══════ */}
+        <div className="relative py-4">
+          <div className={`absolute inset-x-0 top-1/2 h-px ${t.name === 'dark' ? 'bg-neutral-800' : 'bg-neutral-200'}`} />
+          <div className="relative flex justify-center">
+            <span className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] ${t.panelBg} border ${t.border} ${t.textMuted}`}>
+              Deep Dive — The Story Behind Your Numbers
+            </span>
+          </div>
+        </div>
+
+        {/* --- SECTION: BUSINESS HEALTH --- */}
+        <section className="space-y-8">
+          <BusinessHealthScorecard analytics={analytics} t={t} />
+        </section>
+
+        {/* --- SECTION 3: MARKET DYNAMICS --- */}
+        <section className="space-y-8">
+          <MarketPersonality analytics={analytics} t={t} />
+        </section>
+
+        {/* --- SECTION 4: SEASONALITY DEEP DIVE --- */}
+        <section className="space-y-8">
+          <SeasonalityDeepDive analytics={analytics} seasonalityData={seasonalityData} />
+        </section>
+
+        {/* --- SECTION 5: CORE INTELLIGENCE --- */}
+        <section className="space-y-12">
+          <div className="flex items-center gap-3 px-2">
+            <div className={`p-2 rounded-xl bg-orange-500/10 text-orange-500`}>
+              <Activity className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className={`text-lg font-bold ${t.text}`}>The Full Picture</h3>
+              <p className={`text-xs ${t.textMuted}`}>Your complete revenue timeline with AI predictions and anomaly markers.</p>
             </div>
           </div>
-        </section>
-
-        {/* --- SECTION 2: MARKET DYNAMICS --- */}
-        <section className="space-y-8">
-          <MarketPersonality analytics={analytics} t={t} seasonalityData={seasonalityData} />
-        </section>
-
-        {/* --- SECTION 3: CORE INTELLIGENCE --- */}
-        <section className="space-y-12">
           <div className="w-full" ref={chartRef} ref-id="revenue-chart-container">
             <RevenueChart data={chartData} />
           </div>
@@ -362,27 +341,33 @@ const DashboardPage = () => {
           </div>
         </section>
 
-        {/* --- SECTION 4: STRATEGIC OUTLOOK --- */}
+        {/* --- SECTION 6: FORECAST INTELLIGENCE --- */}
+        <section className="space-y-8">
+          <ForecastIntelligence analytics={analytics} t={t} />
+        </section>
+
+        {/* --- SECTION 7: STRATEGIC OUTLOOK --- */}
         <section className="space-y-8">
           <StrategicOutlook analytics={analytics} t={t} />
         </section>
 
-        {/* --- SECTION 5: HISTORICAL LANDMARKS --- */}
+        {/* --- SECTION 8: HISTORICAL LANDMARKS --- */}
         <section className="space-y-8">
           <PerformanceRecords analytics={analytics} t={t} />
         </section>
 
-        {/* --- SECTION 6: INTELLIGENCE LOGS --- */}
+        {/* --- SECTION 9: EVENTS THAT NEED ATTENTION --- */}
         <section className="space-y-8">
           <div className="flex items-center gap-3 px-2">
             <div className={`p-2 rounded-xl bg-red-500/10 text-red-500`}>
               <AlertTriangle className="w-5 h-5" />
             </div>
             <div>
-              <h3 className={`text-lg font-bold ${t.text}`}>Intelligence Logs</h3>
-              <p className={`text-xs ${t.textMuted}`}>Chronological record of identified anomalies and pattern disruptions.</p>
+              <h3 className={`text-lg font-bold ${t.text}`}>Events That Need Your Attention</h3>
+              <p className={`text-xs ${t.textMuted}`}>Unusual spikes or drops in your data — and how much they matter.</p>
             </div>
           </div>
+          <AnomalyIntelligenceStrip analytics={analytics} t={t} />
           <AnomaliesLog anomalies={analytics.anomalies} analytics={analytics} />
         </section>
 

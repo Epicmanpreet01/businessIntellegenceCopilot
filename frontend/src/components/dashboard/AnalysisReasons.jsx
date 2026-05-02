@@ -11,7 +11,7 @@ const AnalysisReasons = ({ reasons }) => {
       className={`${t.panelBg} rounded-2xl p-6 shadow-sm border ${t.border} transition-all hover:shadow-md h-full`}
     >
       <div className="flex items-center gap-2 mb-6">
-        <h3 className={`text-lg font-bold ${t.text}`}>Root Cause Analysis</h3>
+        <h3 className={`text-lg font-bold ${t.text}`}>Why This Is Happening</h3>
         <InfoTooltip text="The 'Why' behind your numbers. This section explains the logical factors the AI identified as primary drivers for your current performance." />
       </div>
       <div className="space-y-4">

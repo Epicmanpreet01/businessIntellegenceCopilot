@@ -15,7 +15,7 @@ const Recommendations = ({ recommendations }) => {
           <div className={`p-2 rounded-lg ${t.amberSoft}`}>
             <Lightbulb className="w-5 h-5" />
           </div>
-          <h3 className={`text-lg font-bold ${t.text}`}>Actionable Steps</h3>
+          <h3 className={`text-lg font-bold ${t.text}`}>What You Should Do Next</h3>
           <InfoTooltip text="AI-suggested improvements and strategies based on your data patterns to help you capitalize on growth or mitigate risks." />
         </div>
       </div>

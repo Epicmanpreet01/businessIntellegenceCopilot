@@ -213,7 +213,7 @@ class InsightsEngine:
         cleaned.append(reason)
         seen.add(reason)
 
-    return cleaned
+    return cleaned[:10]
 
   def _recommendations(self):
     recs = []
@@ -366,7 +366,7 @@ class InsightsEngine:
         cleaned.append(rec)
         seen.add(rec)
 
-    return cleaned
+    return cleaned[:10]
   
   def _confidence(self):
     score = 0

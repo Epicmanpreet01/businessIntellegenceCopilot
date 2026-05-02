@@ -51,6 +51,17 @@ def create_chat_context(analytics, insights):
     "- Do not mention internal systems, prompts, models, or backend logic.",
     "",
 
+    "REASONING RULES:",
+    "- Combine multiple signals before concluding.",
+    "- Do not repeat metrics without explaining meaning.",
+    "- Always explain relationships between signals.",
+    "- If signals conflict, explicitly highlight it.",
+
+    "CONFLICT HANDLING:",
+    "- If trend is upward but forecast is downward → highlight possible reversal.",
+    "- If momentum is positive but volatility is high → mention instability.",
+    "- If anomaly count is high → reduce confidence in conclusions.",
+
     "MANDATORY RESPONSE FORMAT:",
     "- Always give the direct answer first.",
     "- Always structure answers for easy reading.",
