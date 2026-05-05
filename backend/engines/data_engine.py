@@ -18,7 +18,8 @@ key_map = {
   'y': [
     'sales', 'profit', 'revenue', 'amount', 'loss',
     'price', 'cost', 'discount',
-    'income', 'earnings', 'value', 'total', 'gmv'
+    'income', 'earnings', 'value', 'total', 'gmv',
+    'volume'
   ],
 
   'all': [
@@ -31,7 +32,8 @@ key_map = {
     # y
     'sales', 'profit', 'revenue', 'amount', 'loss',
     'price', 'cost', 'discount',
-    'income', 'earnings', 'value', 'total', 'gmv'
+    'income', 'earnings', 'value', 'total', 'gmv',
+    'volume'
   ]
 }
 
@@ -271,7 +273,7 @@ class DataEngine:
     logger.info("Extracting date and target columns...")
     ds = self._extract_date_column(data, self.key_map.get('ds'), thresh, min_non_null)
     y = self._extract_target_column(data, self.key_map.get('y'), self.weights, thresh, min_non_null)
-    
+
     if ds is None:
       raise ValueError("No valid date column found")
 
