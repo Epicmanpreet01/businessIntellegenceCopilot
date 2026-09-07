@@ -518,7 +518,6 @@ This project is proprietary software.
 See [LICENSE](./LICENSE) and [CLAUSES.txt](./CLAUSES.txt).
 
 ---
-
 <div align="center">
 
 ## The Bottom Line
